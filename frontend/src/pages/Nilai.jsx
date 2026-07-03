@@ -12,7 +12,8 @@ import {
   Flame,
   Crown,
   Target,
-  Award
+  Award,
+  Lock
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
@@ -267,8 +268,8 @@ export default function Nilai() {
                           <Icon className={`w-6 h-6 ${ach.unlocked ? ach.color : 'text-slate-400'}`} />
                         </div>
                         {!ach.unlocked && (
-                          <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-slate-300 border-2 border-white flex items-center justify-center text-[10px] text-white font-bold">
-                            🔒
+                          <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-slate-350 border-2 border-white flex items-center justify-center text-white">
+                            <Lock className="w-2.5 h-2.5 text-slate-500" />
                           </div>
                         )}
                       </div>
@@ -365,7 +366,15 @@ export default function Nilai() {
                   }`}>
                     <div className="flex items-center gap-4">
                       <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm shadow-sm ${rankBg}`}>
-                        {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : idx + 1}
+                        {idx === 0 ? (
+                          <Trophy className="w-4.5 h-4.5 text-white" />
+                        ) : idx === 1 ? (
+                          <Medal className="w-4.5 h-4.5 text-white" />
+                        ) : idx === 2 ? (
+                          <Medal className="w-4.5 h-4.5 text-white" />
+                        ) : (
+                          idx + 1
+                        )}
                       </div>
                       <div>
                         <p className="font-bold text-sm text-[var(--color-text)] leading-snug">{item.nama}</p>
