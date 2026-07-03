@@ -132,11 +132,11 @@ export function seedMateri() {
 
 <p>Tahukah kamu, internet yang kita pakai sekarang tidak langsung jadi seperti ini? Ada cerita panjang di belakangnya, lho! Yuk, kita lihat perjalanannya.</p>
 
-<h3>🚀 Awal Mula: Tahun 1960-an</h3>
+<h3>Awal Mula: Tahun 1960-an</h3>
 <p>Semua bermula dari proyek bernama <strong>ARPANET</strong> (Advanced Research Projects Agency Network) buatan Amerika Serikat. Tahun 1969, mereka berhasil menghubungkan <strong>4 komputer</strong> di 4 universitas berbeda. Ini adalah internet pertama di dunia!</p>
 
 <div class="card-jenis">
-  <h3>🧐 Fun Fact!</h3>
+  <h3>Fun Fact!</h3>
   <p>Komputer jaman dulu ukurannya sebesar satu ruangan! Bandingkan dengan HP-mu sekarang yang bisa digenggam.</p>
 </div>
 
@@ -164,7 +164,7 @@ export function seedMateri() {
 <p>Jaringan komputer itu ada beberapa jenis, tergantung seberapa luas area yang dicakupnya. Mulai dari yang kecil (satu ruangan) sampai yang sangat besar (seluruh dunia). Yuk, kita kenali satu per satu!</p>
 
 <div class="card-jenis">
-  <h3>🏫 1. LAN (Local Area Network)</h3>
+  <h3>1. LAN (Local Area Network)</h3>
   <p>LAN adalah jaringan yang mencakup area <strong>kecil</strong>, seperti satu ruangan, satu sekolah, atau satu gedung.</p>
   <ul>
     <li><strong>Jarak:</strong> 10 meter sampai 1 km</li>
@@ -172,32 +172,32 @@ export function seedMateri() {
     <li><strong>Contoh:</strong> Lab komputer sekolah, WiFi rumah, jaringan kantor</li>
     <li><strong>Biaya:</strong> Relatif murah</li>
   </ul>
-  <p>💡 <em>Bayangin LAN itu seperti grup WA satu kelas — cuma anggotanya orang-orang di kelas itu saja.</em></p>
+  <p><em>Bayangin LAN itu seperti grup WA satu kelas — cuma anggotanya orang-orang di kelas itu saja.</em></p>
 </div>
 
 <div class="card-jenis">
-  <h3>🏙️ 2. MAN (Metropolitan Area Network)</h3>
+  <h3>2. MAN (Metropolitan Area Network)</h3>
   <p>MAN adalah jaringan yang mencakup area <strong>satu kota</strong> atau wilayah metropolitan.</p>
   <ul>
     <li><strong>Jarak:</strong> 1 sampai 10 km</li>
     <li><strong>Kecepatan:</strong> Sedang sampai cepat</li>
     <li><strong>Contoh:</strong> Jaringan antar sekolah dalam satu kota, jaringan kantor pemerintah kota</li>
   </ul>
-  <p>💡 <em>Bayangin MAN seperti grup WA satu angkatan sekolah — anggotanya dari kelas yang berbeda-beda, tapi masih satu sekolah.</em></p>
+  <p><em>Bayangin MAN seperti grup WA satu angkatan sekolah — anggotanya dari kelas yang berbeda-beda, tapi masih satu sekolah.</em></p>
 </div>
 
 <div class="card-jenis">
-  <h3>🌍 3. WAN (Wide Area Network)</h3>
+  <h3>3. WAN (Wide Area Network)</h3>
   <p>WAN adalah jaringan yang mencakup area <strong>sangat luas</strong>, bisa antar kota, antar negara, bahkan antar benua!</p>
   <ul>
     <li><strong>Jarak:</strong> Lebih dari 10 km (tidak terbatas!)</li>
     <li><strong>Kecepatan:</strong> Bervariasi</li>
     <li><strong>Contoh:</strong> Internet, jaringan bank nasional, jaringan kantor cabang di berbagai kota</li>
   </ul>
-  <p>💡 <em>Bayangin WAN seperti grup internasional di WhatsApp — bisa chat dengan orang dari berbagai negara!</em></p>
+  <p><em>Bayangin WAN seperti grup internasional di WhatsApp — bisa chat dengan orang dari berbagai negara!</em></p>
 </div>
 
-<h3>📊 Perbandingan LAN, MAN, dan WAN</h3>
+<h3>Perbandingan LAN, MAN, dan WAN</h3>
 <table>
   <tr><th>Aspek</th><th>LAN</th><th>MAN</th><th>WAN</th></tr>
   <tr><td>Luas Area</td><td>Kecil (ruangan/gedung)</td><td>Sedang (satu kota)</td><td>Sangat Luas (negara/dunia)</td></tr>
@@ -213,10 +213,10 @@ export function seedMateri() {
 
 <p>Data dari komputer kamu sampai ke tujuan itu melalui "jalan". Jalannya bisa berupa kabel atau tanpa kabel (nirkabel). Inilah yang disebut <strong>media transmisi</strong>.</p>
 
-<h3>🔌 A. Media Kabel (Guided)</h3>
+<h3>A. Media Kabel (Guided)</h3>
 <p>Data dikirim melalui kabel fisik. Lebih stabil dan cepat, tapi terbatas oleh panjang kabel.</p>
 
-<h4>1️⃣ Kabel UTP (Unshielded Twisted Pair)</h4>
+<h4>Kabel UTP (Unshielded Twisted Pair)</h4>
 <p>Kabel yang paling sering dipakai di jaringan komputer. Warnanya biru, ujungnya pakai konektor RJ-45 (mirip colokan telepon, tapi lebih besar).</p>
 <ul>
   <li>Kecepatan: hingga 1 Gbps (cukup buat streaming dan gaming)</li>
@@ -225,7 +225,7 @@ export function seedMateri() {
   <li>Biasa dipakai di warnet, lab komputer, dan kantor</li>
 </ul>
 
-<h4>2️⃣ Kabel Fiber Optik</h4>
+<h4>Kabel Fiber Optik</h4>
 <p>Ini kabel paling canggih! Data dikirim dalam bentuk <strong>cahaya</strong>, bukan listrik. Makanya super cepat!</p>
 <ul>
   <li>Kecepatan: hingga 100 Gbps (100 kali lebih cepat dari UTP!)</li>
@@ -235,10 +235,10 @@ export function seedMateri() {
   <li>Biasa dipakai untuk jaringan internet utama (backbone)</li>
 </ul>
 
-<h3>📡 B. Media Nirkabel (Unguided)</h3>
+<h3>B. Media Nirkabel (Unguided)</h3>
 <p>Data dikirim menggunakan gelombang radio atau cahaya. Praktis karena tanpa kabel, tapi lebih gampang kena gangguan.</p>
 
-<h4>1️⃣ WiFi (Wireless Fidelity)</h4>
+<h4>WiFi (Wireless Fidelity)</h4>
 <p>Pasti kamu tahu WiFi, kan? Ini yang paling populer! WiFi menggunakan gelombang radio untuk mengirimkan data.</p>
 <ul>
   <li>Jangkauan: 30-100 meter (tergantung hambatan tembok)</li>
@@ -246,10 +246,10 @@ export function seedMateri() {
   <li>Praktis, tidak perlu kabel ke setiap perangkat</li>
 </ul>
 
-<h4>2️⃣ Bluetooth</h4>
+<h4>Bluetooth</h4>
 <p>Buat koneksi jarak dekat aja, maksimal 10 meter. Biasa dipakai buat kirim file HP-ke-HP, atau sambungin earphone nirkabel.</p>
 
-<h4>3️⃣ Data Seluler (4G/5G)</h4>
+<h4>Data Seluler (4G/5G)</h4>
 <p>Ini yang dipakai HP kamu kalau tidak pakai WiFi. Menggunakan sinyal dari menara BTS (Base Transceiver Station). 5G bahkan bisa download film dalam hitungan detik!</p>`
     },
     {
@@ -260,27 +260,27 @@ export function seedMateri() {
 <p>Supaya jaringan komputer bisa bekerja, ada beberapa perangkat (alat) yang diperlukan. Beberapa mungkin sudah sering kamu lihat di sekolah atau di rumah!</p>
 
 <div class="card-jenis">
-  <h3>📶 1. Router</h3>
+  <h3>1. Router</h3>
   <p>Router adalah perangkat yang menghubungkan jaringan lokal (LAN) ke internet. Router bertugas <strong>mengatur jalur data</strong> supaya sampai ke tujuan yang benar.</p>
   <ul>
     <li>Contoh: Modem WiFi di rumah kamu</li>
     <li>Fungsi: Menghubungkan perangkat di rumah ke internet</li>
-    <li>💡 <em>Router itu seperti satpam di pos penjagaan — dia yang tahu jalur mana yang harus dilewati supaya data sampai ke tujuan.</em></li>
+    <li><em>Router itu seperti satpam di pos penjagaan — dia yang tahu jalur mana yang harus dilewati supaya data sampai ke tujuan.</em></li>
   </ul>
 </div>
 
 <div class="card-jenis">
-  <h3>🔀 2. Switch / Hub</h3>
+  <h3>2. Switch / Hub</h3>
   <p>Switch adalah perangkat yang menghubungkan komputer-komputer dalam satu jaringan LAN. Bedanya, switch lebih pintar dari hub karena bisa mengirim data langsung ke komputer yang dituju.</p>
   <ul>
     <li>Biasa dipakai di lab komputer sekolah</li>
     <li>Fungsi: Menghubungkan komputer dalam satu ruangan/gedung</li>
-    <li>💡 <em>Switch itu seperti petugas di perpustakaan — dia tahu buku (data) harus dikembalikan ke rak mana.</em></li>
+    <li><em>Switch itu seperti petugas di perpustakaan — dia tahu buku (data) harus dikembalikan ke rak mana.</em></li>
   </ul>
 </div>
 
 <div class="card-jenis">
-  <h3>🌐 3. Modem</h3>
+  <h3>3. Modem</h3>
   <p>Modem (Modulator-Demodulator) adalah perangkat yang mengubah sinyal internet dari kabel telepon atau fiber optik menjadi sinyal yang bisa dipakai komputer.</p>
   <ul>
     <li>Biasanya jadi satu dengan router (disebut "modem router")</li>
@@ -289,7 +289,7 @@ export function seedMateri() {
 </div>
 
 <div class="card-jenis">
-  <h3>📡 4. Access Point (AP)</h3>
+  <h3>4. Access Point (AP)</h3>
   <p>Access Point adalah perangkat yang memancarkan sinyal WiFi. Biasanya dipasang di langit-langit ruangan.</p>
   <ul>
     <li>Fungsi: Menyebarkan sinyal WiFi ke area yang luas</li>
@@ -298,11 +298,11 @@ export function seedMateri() {
 </div>
 
 <div class="card-jenis">
-  <h3>🔌 5. Kabel dan Konektor RJ-45</h3>
+  <h3>5. Kabel dan Konektor RJ-45</h3>
   <p>Kabel UTP dengan konektor RJ-45 di ujungnya adalah "jalan" data pada jaringan kabel. Konektor RJ-45 bentuknya mirip colokan telepon tapi lebih besar.</p>
 </div>
 
-<h3>🧩 Bagaimana Semuanya Bekerja?</h3>
+<h3>Bagaimana Semuanya Bekerja?</h3>
 <p>Gambaran sederhananya: Modem menerima internet dari provider → Router mengatur data → Switch menghubungkan ke komputer → Access Point memancarkan WiFi. Semua perangkat ini bekerja sama supaya kamu bisa internetan dengan lancar!</p>`
     },
     {
@@ -312,7 +312,7 @@ export function seedMateri() {
 
 <p>Jaringan komputer (terutama internet) sudah mengubah cara kita hidup. Yuk lihat apa aja manfaatnya!</p>
 
-<h3>📚 1. Bidang Pendidikan</h3>
+<h3>1. Bidang Pendidikan</h3>
 <ul>
   <li>Kamu bisa <strong>belajar online</strong> dari rumah (seperti sekarang!)</li>
   <li>Kirim tugas lewat Google Classroom atau WhatsApp</li>
@@ -320,33 +320,33 @@ export function seedMateri() {
   <li>Nonton video pembelajaran di YouTube</li>
 </ul>
 
-<h3>💬 2. Bidang Komunikasi</h3>
+<h3>2. Bidang Komunikasi</h3>
 <ul>
   <li>Chat dengan teman lewat WhatsApp, Telegram, atau Instagram</li>
   <li>Video call dengan keluarga yang jauh (Zoom, Google Meet)</li>
   <li>Kirim email untuk keperluan formal</li>
 </ul>
 
-<h3>🛒 3. Bidang Ekonomi</h3>
+<h3>3. Bidang Ekonomi</h3>
 <ul>
   <li>Belanja online di Shopee, Tokopedia, Lazada</li>
   <li>Transfer uang lewat mobile banking</li>
   <li>GoFood / GrabFood — pesan makanan lewat aplikasi</li>
 </ul>
 
-<h3>🏥 4. Bidang Kesehatan</h3>
+<h3>4. Bidang Kesehatan</h3>
 <ul>
   <li>Konsultasi dokter online (telemedicine)</li>
   <li>Rekam medis tersimpan di komputer rumah sakit</li>
 </ul>
 
-<h3>🎮 5. Bidang Hiburan</h3>
+<h3>5. Bidang Hiburan</h3>
 <ul>
   <li>Nonton YouTube, Netflix, Spotify</li>
   <li>Main game online bareng teman (Mobile Legends, Free Fire, PUBG)</li>
 </ul>
 
-<h3>⚠️ Dampak Negatif yang Harus Kamu Waspadai</h3>
+<h3>Dampak Negatif yang Harus Kamu Waspadai</h3>
 <p>Jaringan komputer juga punya sisi negatif. Makanya kita harus pintar-pintar menggunakannya!</p>
 <ul>
   <li><strong>Kejahatan Siber:</strong> Hacking, pencurian data, phising (penipuan online)</li>
@@ -357,7 +357,7 @@ export function seedMateri() {
 </ul>
 
 <div class="card-jenis">
-  <h3>💡 Tips Aman Berinternet untuk Pelajar</h3>
+  <h3>Tips Aman Berinternet untuk Pelajar</h3>
   <ul>
     <li>Jangan pernah memberi password ke siapa pun</li>
     <li>Jangan klik link sembarangan yang dikirim orang tak dikenal</li>

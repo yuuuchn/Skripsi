@@ -305,9 +305,14 @@ img, svg {
   margin: 1.5rem 0;
   border-radius: 0.875rem;
   border: 1px solid #e2e8f0;
-  display: block;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+  display: table;
+}
+@media (max-width: 767px) {
+  .prose table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 .prose th, .prose td {
   padding: 0.875rem 1rem;
