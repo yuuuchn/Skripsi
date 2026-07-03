@@ -87,8 +87,7 @@ function AppContent() {
   return (
     <div className="relative min-h-screen">
       <PageLoaderProgress />
-      {!user && <NetworkBackground />}
-      {user && <DotField />}
+      {!user && <DotField />}
       {user && <Navbar />}
       <main className={`relative z-10 ${user ? 'pt-0' : ''}`}>
         <Routes>
