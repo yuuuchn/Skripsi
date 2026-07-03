@@ -173,7 +173,7 @@ export default function Navbar() {
 
       {/* 2. LEFT FLOATING SIDEBAR (Fades in when scrolled, desktop only) */}
       <nav 
-        className={`hidden md:flex flex-col justify-between py-6 px-0 fixed left-5 top-1/2 -translate-y-1/2 w-16 h-[440px] rounded-3xl shadow-xl shadow-indigo-500/5 border border-slate-200/80 bg-white/90 backdrop-blur-xl z-50 transition-all duration-300 ${
+        className={`hidden md:flex flex-col items-center gap-5 py-5 px-0 fixed left-5 top-1/2 -translate-y-1/2 w-16 h-auto rounded-3xl shadow-xl shadow-indigo-500/5 border border-slate-200/80 bg-white/90 backdrop-blur-xl z-50 transition-all duration-300 ${
           scrolled ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
       >
@@ -184,8 +184,11 @@ export default function Navbar() {
           </div>
         </Link>
 
+        {/* Divider */}
+        <div className="w-7 h-[1px] bg-slate-100" />
+
         {/* Sidebar nav links */}
-        <div className="flex flex-col gap-4 w-full items-center">
+        <div className="flex flex-col gap-3.5 w-full items-center">
           {navItems.map((item) => {
             const Icon = item.icon;
             const active = location.pathname === item.to || location.pathname.startsWith(item.to + '/');
@@ -227,8 +230,11 @@ export default function Navbar() {
           )}
         </div>
 
+        {/* Divider */}
+        <div className="w-7 h-[1px] bg-slate-100" />
+
         {/* Profile / Logout section in Sidebar */}
-        <div className="flex flex-col w-full gap-4 items-center pt-4 border-t border-slate-100/80">
+        <div className="flex flex-col w-full gap-3.5 items-center">
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center text-white text-xs font-bold shadow-md shadow-indigo-500/10" title={user?.nama}>
             {user?.nama?.charAt(0).toUpperCase()}
           </div>
