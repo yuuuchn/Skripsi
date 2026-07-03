@@ -1,7 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/axios';
 import { BookOpen, CheckCircle, ArrowRight, Clock, Star, ChevronRight, Laptop, History, Globe, Cable, Router, ShieldCheck, HelpCircle } from 'lucide-react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const iconMap = {
   '💻': Laptop,
@@ -29,15 +33,54 @@ const materiColors = [
 
 export default function Materi() {
   const [materiList, setMateriList] = useState([]);
+  const headerRef = useRef(null);
+  const gridRef = useRef(null);
 
   useEffect(() => {
     api.get('/materi').then((res) => setMateriList(res.data));
   }, []);
 
+  useEffect(() => {
+    if (materiList.length === 0) return;
+
+    // 1. Header reveal
+    if (headerRef.current) {
+      gsap.fromTo(headerRef.current,
+        { opacity: 0, y: -20 },
+        { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }
+      );
+    }
+
+    // 2. Cards staggered reveal on scroll
+    const cards = gridRef.current?.querySelectorAll('.materi-card');
+    if (cards && cards.length > 0) {
+      gsap.fromTo(cards,
+        { opacity: 0, y: 40, scale: 0.96 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.65,
+          stagger: 0.08,
+          ease: 'back.out(1.15)',
+          scrollTrigger: {
+            trigger: gridRef.current,
+            start: 'top 85%',
+            toggleActions: 'play none none none'
+          }
+        }
+      );
+    }
+
+    return () => {
+      ScrollTrigger.getAll().forEach(t => t.kill());
+    };
+  }, [materiList]);
+
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
       {/* Header / Breadcrumb */}
-      <div className="mb-8 animate-fade-in">
+      <div ref={headerRef} className="mb-8 opacity-0">
         <div className="flex items-center gap-1.5 text-xs font-bold text-[var(--color-text-secondary)] uppercase tracking-wider mb-3">
           <Link to="/dashboard" className="hover:text-[var(--color-brand-deep)] transition-colors">Beranda</Link>
           <ChevronRight className="w-3 h-3 text-slate-400" />
@@ -53,15 +96,14 @@ export default function Materi() {
       </div>
 
       {/* Materi grid */}
-      <div className="grid md:grid-cols-2 gap-6">
+      <div ref={gridRef} className="grid md:grid-cols-2 gap-6">
         {materiList.map((m, idx) => {
           const color = materiColors[idx % materiColors.length];
           return (
             <Link
               key={m.id}
               to={`/materi/${m.id}`}
-              className="card card-elevated overflow-hidden group flex flex-col justify-between border-slate-200/60 animate-fade-in-up"
-              style={{ animationDelay: `${idx * 0.08}s` }}
+              className="card card-elevated overflow-hidden group flex flex-col justify-between border-slate-200/60 materi-card opacity-0"
             >
               <div>
                 <div className="h-2.5" style={{ background: `linear-gradient(90deg, ${color.from}, ${color.to})` }} />
