@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import { BookOpen, CheckCircle, BarChart3, ArrowRight, Star, Trophy, Zap, Clock, Laptop, History, Globe, Cable, Router, ShieldCheck, HelpCircle } from 'lucide-react';
+import BorderGlow from '../components/BorderGlow';
 
 const iconMap = {
   '💻': Laptop,
@@ -41,12 +42,8 @@ export default function Dashboard() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Hero with ReactBits-style Border Glow */}
-      <div className="relative p-[1.5px] rounded-[24px] overflow-hidden mb-8 shadow-xl shadow-indigo-500/10 animate-fade-in-up z-10">
-        {/* Moving Gradient Border Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400 bg-[size:200%_200%] animate-gradient-border z-0" />
-        
-        {/* Inner Card Content */}
-        <div className="relative z-10 bg-gradient-to-br from-indigo-950 via-indigo-900 to-slate-900 p-8 md:p-12 text-white rounded-[22.5px] overflow-hidden">
+      <BorderGlow className="mb-8 shadow-xl shadow-indigo-500/10 animate-fade-in-up z-10">
+        <div className="p-8 md:p-12">
           {/* Glow ornaments */}
           <div className="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/4 blur-3xl animate-pulse-soft" />
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/4 blur-2xl animate-pulse-soft delay-1000" />
@@ -76,7 +73,7 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-      </div>
+      </BorderGlow>
 
       {/* Stats and Progress Row */}
       <div className="grid md:grid-cols-3 gap-6 mb-8">
