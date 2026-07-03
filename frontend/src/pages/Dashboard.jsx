@@ -41,33 +41,33 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      {/* Hero with ReactBits-style Border Glow */}
-      <BorderGlow className="mb-8 shadow-xl shadow-indigo-500/10 animate-fade-in-up z-10">
-        <div className="p-8 md:p-12">
-          {/* Glow ornaments */}
-          <div className="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/4 blur-3xl animate-pulse-soft" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/4 blur-2xl animate-pulse-soft delay-1000" />
+      {/* Hero with ReactBits-style Border Glow (White Card Theme) */}
+      <BorderGlow className="mb-8 shadow-md border border-slate-100 animate-fade-in-up z-10">
+        <div className="p-8 md:p-12 relative">
+          {/* Subtle light glow ornaments */}
+          <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/5 rounded-full -translate-y-1/2 translate-x-1/4 blur-3xl animate-pulse-soft" />
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/5 rounded-full translate-y-1/2 -translate-x-1/4 blur-2xl animate-pulse-soft delay-1000" />
           
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="max-w-xl">
-              <div className="inline-flex items-center gap-2 mb-3 bg-white/10 border border-white/20 px-3.5 py-1.5 rounded-full backdrop-blur-md">
-                <Zap className="w-4 h-4 text-amber-300 fill-amber-300" />
-                <span className="text-white text-xs font-bold uppercase tracking-wider">Platform Pembelajaran</span>
+              <div className="inline-flex items-center gap-2 mb-3 bg-indigo-50/80 border border-indigo-100/50 px-3.5 py-1.5 rounded-full backdrop-blur-md">
+                <Zap className="w-4 h-4 text-indigo-600 fill-indigo-100" />
+                <span className="text-indigo-700 text-xs font-bold uppercase tracking-wider">Platform Pembelajaran</span>
               </div>
-              <h1 className="font-display text-3xl md:text-5xl font-black mb-3 tracking-tight leading-none">
+              <h1 className="font-display text-3xl md:text-5xl font-black mb-3 tracking-tight leading-none text-indigo-950">
                 Halo, {user?.nama?.split(' ')[0]}!
               </h1>
-              <p className="text-white/80 text-base md:text-lg leading-relaxed font-medium">
+              <p className="text-slate-600 text-sm md:text-base leading-relaxed font-semibold">
                 {user?.kelas ? `Kelas ${user.kelas} — ` : ''}Mari perluas wawasanmu tentang dunia Jaringan Komputer hari ini!
               </p>
             </div>
             <div className="flex flex-row md:flex-col lg:flex-row gap-3 shrink-0">
-              <Link to="/materi" className="bg-white text-indigo-950 font-extrabold px-6 py-3 rounded-xl text-sm hover:bg-indigo-50 active:scale-95 transition-all flex items-center gap-2 shadow-lg shadow-black/10">
+              <Link to="/materi" className="bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold px-6 py-3 rounded-xl text-sm active:scale-95 transition-all flex items-center gap-2 shadow-lg shadow-indigo-600/15">
                 <BookOpen className="w-4.5 h-4.5" />
                 Mulai Belajar
               </Link>
-              <Link to="/nilai" className="bg-white/10 hover:bg-white/15 text-white font-bold px-6 py-3 rounded-xl text-sm active:scale-95 transition-all flex items-center gap-2 border border-white/20 backdrop-blur-sm">
-                <Trophy className="w-4.5 h-4.5 text-amber-300" />
+              <Link to="/nilai" className="bg-slate-100 hover:bg-slate-200/80 text-slate-700 font-bold px-6 py-3 rounded-xl text-sm active:scale-95 transition-all flex items-center gap-2 border border-slate-200/50">
+                <Trophy className="w-4.5 h-4.5 text-amber-500" />
                 Lihat Nilai
               </Link>
             </div>

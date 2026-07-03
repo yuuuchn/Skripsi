@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
 
-export default function BorderGlow({ children, className = '' }) {
+export default function BorderGlow({ children, className = '', innerClassName = 'bg-white' }) {
   const cardRef = useRef(null);
 
   useEffect(() => {
@@ -41,8 +41,8 @@ export default function BorderGlow({ children, className = '' }) {
         }}
       />
 
-      {/* Inner content container */}
-      <div className="relative z-10 w-full h-full bg-gradient-to-br from-indigo-950 via-indigo-900 to-slate-900 rounded-[22.5px] overflow-hidden">
+      {/* Inner content container - background configurable via props */}
+      <div className={`relative z-10 w-full h-full rounded-[22.5px] overflow-hidden ${innerClassName}`}>
         {children}
       </div>
     </div>
