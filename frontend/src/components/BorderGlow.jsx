@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
 
-export default function BorderGlow({ children, className = '', innerClassName = 'bg-white' }) {
+export default function BorderGlow({ children, className = '', innerClassName = 'bg-white dark:bg-slate-900' }) {
   const cardRef = useRef(null);
 
   useEffect(() => {

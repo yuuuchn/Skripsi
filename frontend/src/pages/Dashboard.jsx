@@ -118,7 +118,7 @@ export default function Dashboard() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Hero with ReactBits-style Border Glow (White Card Theme) */}
-      <BorderGlow className="mb-8 shadow-md border border-slate-100 animate-fade-in-up z-10">
+      <BorderGlow className="mb-8 shadow-md border border-slate-100 dark:border-slate-800/50 animate-fade-in-up z-10">
         <div className="p-8 md:p-12 relative">
           {/* Subtle light glow ornaments */}
           <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/5 rounded-full -translate-y-1/2 translate-x-1/4 blur-3xl animate-pulse-soft" />
@@ -126,14 +126,14 @@ export default function Dashboard() {
           
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="max-w-xl">
-              <div className="inline-flex items-center gap-2 mb-3 bg-indigo-50/80 border border-indigo-100/50 px-3.5 py-1.5 rounded-full backdrop-blur-md">
-                <Zap className="w-4 h-4 text-indigo-600 fill-indigo-100" />
-                <span className="text-indigo-700 text-xs font-bold uppercase tracking-wider">Platform Pembelajaran</span>
+              <div className="inline-flex items-center gap-2 mb-3 bg-indigo-50/80 dark:bg-indigo-950/40 border border-indigo-100/50 dark:border-indigo-900/30 px-3.5 py-1.5 rounded-full backdrop-blur-md">
+                <Zap className="w-4 h-4 text-indigo-600 dark:text-indigo-400 fill-indigo-100 dark:fill-indigo-950/60" />
+                <span className="text-indigo-700 dark:text-indigo-300 text-xs font-bold uppercase tracking-wider">Platform Pembelajaran</span>
               </div>
-              <h1 className="font-display text-3xl md:text-5xl font-black mb-3 tracking-tight leading-none text-indigo-950">
+              <h1 className="font-display text-3xl md:text-5xl font-black mb-3 tracking-tight leading-none text-indigo-950 dark:text-white">
                 Halo, {user?.nama?.split(' ')[0]}!
               </h1>
-              <p className="text-slate-600 text-sm md:text-base leading-relaxed font-semibold">
+              <p className="text-slate-600 dark:text-slate-350 text-sm md:text-base leading-relaxed font-semibold">
                 {user?.kelas ? `Kelas ${user.kelas} — ` : ''}Mari perluas wawasanmu tentang dunia Jaringan Komputer hari ini!
               </p>
             </div>
@@ -142,7 +142,7 @@ export default function Dashboard() {
                 <BookOpen className="w-4.5 h-4.5" />
                 Mulai Belajar
               </Link>
-              <Link to="/nilai" className="bg-slate-100 hover:bg-slate-200/80 text-slate-700 font-bold px-6 py-3 rounded-xl text-sm active:scale-95 transition-all flex items-center gap-2 border border-slate-200/50">
+              <Link to="/nilai" className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold px-6 py-3 rounded-xl text-sm active:scale-95 transition-all flex items-center gap-2 border border-slate-200/50 dark:border-slate-800/40">
                 <Trophy className="w-4.5 h-4.5 text-amber-500" />
                 Lihat Nilai
               </Link>
