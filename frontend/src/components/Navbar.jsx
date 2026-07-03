@@ -92,7 +92,7 @@ export default function Navbar() {
           {/* Mobile menu button */}
           <button 
             onClick={() => setOpen(!open)} 
-            className="md:hidden p-2 rounded-xl hover:bg-slate-100/60 dark:hover:bg-slate-800/60 active:scale-95 transition-all"
+            className="md:hidden p-2 rounded-xl hover:bg-slate-100/60 active:scale-95 transition-all"
           >
             {open ? <X className="w-5 h-5 text-[var(--color-text)]" /> : <Menu className="w-5 h-5 text-[var(--color-text)]" />}
           </button>
@@ -101,7 +101,7 @@ export default function Navbar() {
 
       {/* Mobile dropdown */}
       {open && (
-        <div className="md:hidden border-t border-[var(--color-border)] bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl animate-fade-in shadow-lg">
+        <div className="md:hidden border-t border-[var(--color-border)] bg-white/95 backdrop-blur-xl animate-fade-in shadow-lg">
           <div className="p-3 space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon;
