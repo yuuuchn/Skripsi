@@ -8,8 +8,8 @@ export default function DotField() {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     let animId;
-    const mouse = { x: null, y: null, radius: 160 };
-    const gridGap = 32; // Spacing between dots in the grid
+    const mouse = { x: null, y: null, radius: 180 };
+    const gridGap = 36; // Slightly larger gap for a cleaner grid distribution
 
     function resize() {
       canvas.width = window.innerWidth;
@@ -28,12 +28,13 @@ export default function DotField() {
           const x = i * gridGap;
           const y = j * gridGap;
 
-          let dotRadius = 1.2;
-          let opacity = 0.12;
+          // Increased base radius and opacity for clear visibility on light theme
+          let dotRadius = 2.0; 
+          let opacity = 0.28; 
           let drawX = x;
           let drawY = y;
 
-          // Mouse interaction (distort, scale, and glow dots near cursor)
+          // Mouse interaction (scale, glow, and distort dots near cursor)
           if (mouse.x !== null && mouse.y !== null) {
             const dx = x - mouse.x;
             const dy = y - mouse.y;
@@ -42,23 +43,23 @@ export default function DotField() {
             if (dist < mouse.radius) {
               const force = (mouse.radius - dist) / mouse.radius;
               
-              // 1. Glow effect (increase opacity)
-              opacity = 0.12 + force * 0.48;
+              // 1. Glow effect (increase opacity up to 0.8)
+              opacity = 0.28 + force * 0.52;
               
-              // 2. Magnify effect (increase dot radius)
-              dotRadius = 1.2 + force * 2.2;
+              // 2. Magnify effect (increase dot radius up to 4.5px)
+              dotRadius = 2.0 + force * 2.5;
 
               // 3. 3D holographic distortion displacement
               const angle = Math.atan2(dy, dx);
-              drawX = x + Math.cos(angle) * force * 8;
-              drawY = y + Math.sin(angle) * force * 8;
+              drawX = x + Math.cos(angle) * force * 10;
+              drawY = y + Math.sin(angle) * force * 10;
             }
           }
 
           // Draw the individual dot
           ctx.beginPath();
           ctx.arc(drawX, drawY, dotRadius, 0, Math.PI * 2);
-          ctx.fillStyle = '#6366f1'; // Indigo color
+          ctx.fillStyle = '#6366f1'; // Rich Indigo
           ctx.globalAlpha = opacity;
           ctx.fill();
         }
@@ -96,7 +97,7 @@ export default function DotField() {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-0"
-      style={{ opacity: 0.65 }}
+      style={{ opacity: 1 }} // Set to full opacity so inner canvas colors render clearly
     />
   );
 }
