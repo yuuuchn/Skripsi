@@ -148,7 +148,7 @@ export default function Login() {
 
       {/* Right panel — Aesthetic Card Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 md:p-12 relative z-10">
-        <div className="w-full max-w-md p-8 md:p-10 bg-white/80 dark:bg-slate-900/85 backdrop-blur-xl rounded-3xl border border-slate-100/80 dark:border-slate-800/80 shadow-2xl shadow-slate-100/50 dark:shadow-black/25 animate-fade-in-up">
+        <div className="w-full max-w-md p-8 md:p-10 bg-white/80 backdrop-blur-xl rounded-3xl border border-slate-100/80 shadow-2xl shadow-slate-100/50 animate-fade-in-up">
           
           {/* Mobile brand (Only visible on small screens) */}
           <div className="lg:hidden text-center mb-8">

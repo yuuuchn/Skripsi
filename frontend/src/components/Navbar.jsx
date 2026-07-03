@@ -1,7 +1,6 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useTheme } from '../context/ThemeContext';
-import { Globe, Home, BookOpen, Trophy, GraduationCap, LogOut, Menu, X, Sun, Moon } from 'lucide-react';
+import { Globe, Home, BookOpen, Trophy, GraduationCap, LogOut, Menu, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 const navItems = [
@@ -12,7 +11,6 @@ const navItems = [
 
 export default function Navbar() {
   const { user, logout } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);
@@ -96,14 +94,6 @@ export default function Navbar() {
 
           {/* Right side / Profile */}
           <div className="flex items-center gap-3">
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-brand-deep)] hover:bg-slate-100/50 dark:hover:bg-slate-800/50 active:scale-95 transition-all duration-200"
-              title={theme === 'light' ? 'Mode Gelap' : 'Mode Terang'}
-            >
-              {theme === 'light' ? <Moon className="w-4.5 h-4.5" /> : <Sun className="w-4.5 h-4.5 text-amber-400 fill-amber-300" />}
-            </button>
-
             <div className="flex items-center gap-3 pl-4 border-l border-[var(--color-border)]">
               <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center text-white text-xs font-bold shadow-md shadow-indigo-500/10">
                 {user?.nama?.charAt(0).toUpperCase()}
@@ -169,18 +159,7 @@ export default function Navbar() {
                 Panel Guru
               </Link>
             )}
-            <div className="border-t border-slate-100 dark:border-slate-800/60 my-1.5" />
-            <button
-              onClick={() => {
-                toggleTheme();
-                setOpen(false);
-              }}
-              className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-[var(--color-text-secondary)] hover:bg-slate-50 dark:hover:bg-slate-800 w-full transition-colors"
-            >
-              {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4 text-amber-500 fill-amber-400" />}
-              {theme === 'light' ? 'Mode Gelap' : 'Mode Terang'}
-            </button>
-            <div className="border-t border-slate-100 dark:border-slate-800/60 my-1.5" />
+            <div className="border-t border-slate-100 my-1.5" />
             <button 
               onClick={handleLogout} 
               className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-[var(--color-rose)] hover:bg-[var(--color-rose-soft)] w-full transition-colors"
@@ -256,13 +235,6 @@ export default function Navbar() {
 
         {/* Profile / Logout section in Sidebar */}
         <div className="flex flex-col w-full gap-3.5 items-center">
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-brand-deep)] hover:bg-slate-100/50 dark:hover:bg-slate-800/50 active:scale-95 transition-all duration-200"
-            title={theme === 'light' ? 'Mode Gelap' : 'Mode Terang'}
-          >
-            {theme === 'light' ? <Moon className="w-4.5 h-4.5" /> : <Sun className="w-4.5 h-4.5 text-amber-400 fill-amber-300" />}
-          </button>
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center text-white text-xs font-bold shadow-md shadow-indigo-500/10" title={user?.nama}>
             {user?.nama?.charAt(0).toUpperCase()}
           </div>

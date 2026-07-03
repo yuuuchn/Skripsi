@@ -87,7 +87,7 @@ export default function Materi() {
           <span className="text-[var(--color-brand-deep)] font-extrabold">Materi</span>
         </div>
         <h1 className="font-display text-3xl md:text-4xl font-extrabold text-[var(--color-text)] flex items-center gap-3 tracking-tight">
-          <div className="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shadow-sm shrink-0">
+          <div className="w-10 h-10 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shadow-sm shrink-0">
             <BookOpen className="w-5.5 h-5.5" />
           </div>
           Materi Pembelajaran
@@ -103,13 +103,13 @@ export default function Materi() {
             <Link
               key={m.id}
               to={`/materi/${m.id}`}
-              className="card card-elevated overflow-hidden group flex flex-col justify-between border-slate-200/60 dark:border-slate-800/80 materi-card opacity-0"
+              className="card card-elevated overflow-hidden group flex flex-col justify-between border-slate-200/60 materi-card opacity-0"
             >
               <div>
                 <div className="h-2.5" style={{ background: `linear-gradient(90deg, ${color.from}, ${color.to})` }} />
                 <div className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="w-14 h-14 rounded-2xl bg-slate-50 dark:bg-slate-800/80 flex items-center justify-center shadow-sm border border-slate-100/80 dark:border-slate-800/60 shrink-0 group-hover:scale-108 group-hover:rotate-3 transition-transform duration-300">
+                    <div className="w-14 h-14 rounded-2xl bg-slate-50 flex items-center justify-center shadow-sm border border-slate-100/80 shrink-0 group-hover:scale-108 group-hover:rotate-3 transition-transform duration-300">
                       {(() => {
                         const IconComp = iconMap[m.icon] || HelpCircle;
                         return <IconComp className="w-6 h-6" style={{ color: color.from }} />;
@@ -126,7 +126,7 @@ export default function Materi() {
                 </div>
               </div>
 
-              <div className="px-6 pb-6 pt-4 border-t border-slate-100/80 dark:border-slate-800/80 flex items-center justify-between bg-slate-50/40 dark:bg-slate-900/40">
+              <div className="px-6 pb-6 pt-4 border-t border-slate-100/80 flex items-center justify-between bg-slate-50/40">
                 {m.selesai ? (
                   <div className="flex items-center gap-1.5">
                     <span className="tag tag-success text-[10px]">
@@ -135,18 +135,18 @@ export default function Materi() {
                     </span>
                     {m.nilai !== null && (
                       <span className="tag tag-info text-[10px] font-bold">
-                        <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500 border-0" />
+                        <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-400 border-0" />
                         Skor: {m.nilai}
                       </span>
                     )}
                   </div>
                 ) : (
-                  <span className="tag tag-info text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-350 border-slate-200 dark:border-slate-700/50">
+                  <span className="tag tag-info text-[10px] bg-slate-100 text-slate-600 border-slate-200">
                     <Clock className="w-3.5 h-3.5" />
                     Belum dipelajari
                   </span>
                 )}
-                <div className="w-9 h-9 rounded-xl bg-white dark:bg-slate-800 group-hover:bg-[var(--color-brand-deep)] flex items-center justify-center shadow-sm border border-slate-100 dark:border-slate-800/60 group-hover:border-transparent transition-all duration-300">
+                <div className="w-9 h-9 rounded-xl bg-white group-hover:bg-[var(--color-brand-deep)] flex items-center justify-center shadow-sm border border-slate-100 group-hover:border-transparent transition-all duration-300">
                   <ArrowRight className="w-4.5 h-4.5 text-[var(--color-brand-deep)] group-hover:text-white group-hover:translate-x-0.5 transition-all duration-300" />
                 </div>
               </div>
