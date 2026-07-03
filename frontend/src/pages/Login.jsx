@@ -95,7 +95,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex bg-slate-50/50 relative overflow-hidden">
+    <div className="h-screen overflow-y-auto lg:overflow-hidden flex bg-slate-50/50 relative">
       {/* Decorative Background Blobs for Entire Page */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-indigo-100/40 blur-3xl" />
