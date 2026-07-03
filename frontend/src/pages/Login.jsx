@@ -2,7 +2,76 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Globe, User, Lock, ArrowRight, AlertTriangle } from 'lucide-react';
-import { IlustrasiJaringan } from '../components/NetworkIllustration';
+
+// Premium Aesthetic Global Network SVG
+function IlustrasiLoginHero() {
+  return (
+    <svg viewBox="0 0 400 260" className="w-full max-w-sm mx-auto animate-float-slow" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="200" cy="130" r="90" fill="url(#globeGlow)" opacity="0.15" />
+      
+      {/* Central Globe */}
+      <circle cx="200" cy="130" r="55" stroke="white" strokeWidth="2" strokeOpacity="0.4" />
+      <ellipse cx="200" cy="130" rx="20" ry="55" stroke="white" strokeWidth="1.5" strokeOpacity="0.3" />
+      <ellipse cx="200" cy="130" rx="55" ry="16" stroke="white" strokeWidth="1.5" strokeOpacity="0.3" />
+      <line x1="200" y1="75" x2="200" y2="185" stroke="white" strokeWidth="1.5" strokeOpacity="0.3" />
+      <line x1="145" y1="130" x2="255" y2="130" stroke="white" strokeWidth="1.5" strokeOpacity="0.3" />
+
+      {/* Orbit Rings */}
+      <ellipse cx="200" cy="130" rx="105" ry="40" stroke="white" strokeWidth="1" strokeDasharray="4 4" strokeOpacity="0.2" transform="rotate(-15 200 130)" />
+      <ellipse cx="200" cy="130" rx="125" ry="50" stroke="white" strokeWidth="1" strokeDasharray="3 3" strokeOpacity="0.15" transform="rotate(25 200 130)" />
+
+      {/* Connecting Lines */}
+      <line x1="200" y1="75" x2="200" y2="55" stroke="white" strokeWidth="1.5" strokeDasharray="3 3" strokeOpacity="0.4" />
+      <line x1="145" y1="130" x2="105" y2="130" stroke="white" strokeWidth="1.5" strokeDasharray="3 3" strokeOpacity="0.4" />
+      <line x1="255" y1="130" x2="295" y2="130" stroke="white" strokeWidth="1.5" strokeDasharray="3 3" strokeOpacity="0.4" />
+      <line x1="238" y1="168" x2="270" y2="185" stroke="white" strokeWidth="1.5" strokeDasharray="3 3" strokeOpacity="0.4" />
+      <line x1="162" y1="168" x2="130" y2="185" stroke="white" strokeWidth="1.5" strokeDasharray="3 3" strokeOpacity="0.4" />
+
+      {/* Orbiting particles */}
+      <circle cx="95" cy="105" r="3" fill="#67e8f9" />
+      <circle cx="295" cy="165" r="4" fill="#fbbf24" />
+      <circle cx="310" cy="80" r="3" fill="#a78bfa" />
+
+      {/* Nodes */}
+      {/* Node 1: Cloud (Top Center) */}
+      <g transform="translate(180, 20)">
+        <rect width="40" height="40" rx="12" fill="white" fillOpacity="0.12" stroke="white" strokeOpacity="0.25" strokeWidth="1.5" />
+        <path d="M14 24a3 3 0 0 1-0.75-5.9 4 4 0 0 1 7.8-1.5 2.5 2.5 0 0 1 2.45 2.9A3 3 0 0 1 22.5 26h-8.5Z" fill="white" />
+      </g>
+
+      {/* Node 2: Laptop (Left Middle) */}
+      <g transform="translate(65, 110)">
+        <rect width="40" height="40" rx="12" fill="white" fillOpacity="0.12" stroke="white" strokeOpacity="0.25" strokeWidth="1.5" />
+        <path d="M13 16h14v8H13v-8Zm-2 9h18v1.5H11V25Z" fill="white" />
+      </g>
+
+      {/* Node 3: Mobile Phone (Right Middle) */}
+      <g transform="translate(295, 110)">
+        <rect width="40" height="40" rx="12" fill="white" fillOpacity="0.12" stroke="white" strokeOpacity="0.25" strokeWidth="1.5" />
+        <path d="M16 14h8v12h-8V14Zm4 10h.01v.01H20V24Z" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+      </g>
+
+      {/* Node 4: Security Shield (Bottom Left) */}
+      <g transform="translate(105, 180)">
+        <rect width="40" height="40" rx="12" fill="white" fillOpacity="0.12" stroke="white" strokeOpacity="0.25" strokeWidth="1.5" />
+        <path d="M20 14s-5 1.5-5 4.5v4.5c0 3 5 6 5 6s5-3 5-6v-4.5c0-3-5-4.5-5-4.5Z" fill="white" />
+      </g>
+
+      {/* Node 5: Server / DB (Bottom Right) */}
+      <g transform="translate(255, 180)">
+        <rect width="40" height="40" rx="12" fill="white" fillOpacity="0.12" stroke="white" strokeOpacity="0.25" strokeWidth="1.5" />
+        <path d="M14 17c0-.8 2.7-1.5 6-1.5s6 .7 6 1.5m-12 2.5c0 .8 2.7 1.5 6 1.5s6-.7 6-1.5m-12-2.5v2.5m12-2.5v2.5m-12 2.5c0 .8 2.7 1.5 6 1.5s6-.7 6-1.5m-12-2.5v2.5m12-2.5v2.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+      </g>
+
+      <defs>
+        <radialGradient id="globeGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#ffffff" />
+          <stop offset="100%" stopColor="#4f46e5" />
+        </radialGradient>
+      </defs>
+    </svg>
+  );
+}
 
 export default function Login() {
   const [form, setForm] = useState({ username: '', password: '' });
@@ -33,47 +102,45 @@ export default function Login() {
         <div className="absolute -bottom-40 -left-40 w-[600px] h-[600px] rounded-full bg-cyan-100/30 blur-3xl" />
       </div>
 
-      {/* Left panel — Premium Branding Card Showcase */}
-      <div className="hidden lg:flex lg:w-1/2 p-12 items-center justify-center relative">
-        <div className="absolute inset-8 rounded-3xl gradient-brand overflow-hidden shadow-2xl shadow-indigo-500/10 flex items-center justify-center p-12">
-          {/* Decorative gradients in card */}
-          <div className="absolute inset-0">
-            <div className="absolute -top-20 -left-20 w-96 h-96 rounded-full bg-white/10 blur-3xl animate-pulse-soft" />
-            <div className="absolute -bottom-20 -right-20 w-96 h-96 rounded-full bg-indigo-300/20 blur-3xl animate-pulse-soft delay-1000" />
-            
-            {/* Fine Tech Grid Overlay */}
-            <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] bg-[size:24px_24px]" />
-          </div>
+      {/* Left panel — Edge-to-Edge Premium Gradient Showcase */}
+      <div className="hidden lg:flex lg:w-1/2 gradient-brand items-center justify-center p-16 relative overflow-hidden shadow-2xl">
+        {/* Decorative gradients in card */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-20 w-96 h-96 rounded-full bg-white/10 blur-3xl animate-pulse-soft" />
+          <div className="absolute bottom-20 right-20 w-96 h-96 rounded-full bg-indigo-300/20 blur-3xl animate-pulse-soft delay-1000" />
+          
+          {/* Fine Tech Grid Overlay */}
+          <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] bg-[size:24px_24px]" />
+        </div>
 
-          <div className="relative z-10 max-w-md text-center">
-            {/* Frosted glass frame for illustration */}
-            <div className="p-6 bg-white/5 border border-white/15 rounded-3xl shadow-2xl backdrop-blur-md animate-float mb-8">
-              <IlustrasiJaringan />
+        <div className="relative z-10 max-w-md text-center">
+          {/* Frosted glass frame for illustration */}
+          <div className="p-6 bg-white/5 border border-white/15 rounded-3xl shadow-2xl backdrop-blur-md mb-8">
+            <IlustrasiLoginHero />
+          </div>
+          
+          <h2 className="font-display text-4xl font-extrabold text-white tracking-tight leading-tight mb-4">
+            Belajar Jaringan Komputer
+          </h2>
+          <p className="text-white/85 text-sm leading-relaxed font-medium mb-8">
+            Media pembelajaran interaktif untuk siswa SMP. Pelajari konsep jaringan komputer dengan cara yang seru, mudah dipahami, dan menyenangkan!
+          </p>
+          
+          {/* Frosted Glass Stats Dock */}
+          <div className="flex justify-center gap-8 bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/15 shadow-xl">
+            <div className="text-center">
+              <div className="font-display text-2xl font-black text-white">6</div>
+              <div className="text-white/70 text-[9px] font-bold uppercase tracking-wider mt-0.5">Materi</div>
             </div>
-            
-            <h2 className="font-display text-4xl font-extrabold text-white tracking-tight leading-tight mb-4">
-              Belajar Jaringan Komputer
-            </h2>
-            <p className="text-white/80 text-sm leading-relaxed font-medium mb-8">
-              Media pembelajaran interaktif untuk siswa SMP. Pelajari konsep jaringan komputer dengan cara yang seru, mudah dipahami, dan menyenangkan!
-            </p>
-            
-            {/* Frosted Glass Stats Dock */}
-            <div className="flex justify-center gap-8 bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/15 shadow-xl">
-              <div className="text-center">
-                <div className="font-display text-2xl font-black text-white">6</div>
-                <div className="text-white/70 text-[9px] font-bold uppercase tracking-wider mt-0.5">Materi</div>
-              </div>
-              <div className="w-[1px] bg-white/10" />
-              <div className="text-center">
-                <div className="font-display text-2xl font-black text-white">32</div>
-                <div className="text-white/70 text-[9px] font-bold uppercase tracking-wider mt-0.5">Soal Kuis</div>
-              </div>
-              <div className="w-[1px] bg-white/10" />
-              <div className="text-center">
-                <div className="font-display text-2xl font-black text-white">5</div>
-                <div className="text-white/70 text-[9px] font-bold uppercase tracking-wider mt-0.5">Ilustrasi</div>
-              </div>
+            <div className="w-[1px] bg-white/10" />
+            <div className="text-center">
+              <div className="font-display text-2xl font-black text-white">32</div>
+              <div className="text-white/70 text-[9px] font-bold uppercase tracking-wider mt-0.5">Soal Kuis</div>
+            </div>
+            <div className="w-[1px] bg-white/10" />
+            <div className="text-center">
+              <div className="font-display text-2xl font-black text-white">5</div>
+              <div className="text-white/70 text-[9px] font-bold uppercase tracking-wider mt-0.5">Ilustrasi</div>
             </div>
           </div>
         </div>
@@ -152,7 +219,7 @@ export default function Login() {
           </form>
 
           <p className="text-center mt-6 text-xs font-bold text-[var(--color-text-secondary)]">
-            Belum punya akun?{' '}
+            Belum punya akun?   
             <Link to="/register" className="text-[var(--color-brand-deep)] hover:underline hover:text-[var(--color-brand)] transition-colors ml-1">
               Daftar sekarang
             </Link>
