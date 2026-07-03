@@ -1,9 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import { BookOpen, CheckCircle, BarChart3, ArrowRight, Star, Trophy, Zap, Clock, Laptop, History, Globe, Cable, Router, ShieldCheck, HelpCircle } from 'lucide-react';
 import BorderGlow from '../components/BorderGlow';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const iconMap = {
   '💻': Laptop,
@@ -34,10 +38,82 @@ export default function Dashboard() {
   const [progress, setProgress] = useState(null);
   const [materiList, setMateriList] = useState([]);
 
+  const statsContainerRef = useRef(null);
+  const progressCardRef = useRef(null);
+  const materiContainerRef = useRef(null);
+
   useEffect(() => {
     api.get('/materi').then((res) => setMateriList(res.data));
     api.get('/progress').then((res) => setProgress(res.data));
   }, []);
+
+  useEffect(() => {
+    if (materiList.length === 0 || !progress) return;
+
+    // 1. Stats Cards staggered reveal on scroll
+    const statsCards = statsContainerRef.current?.querySelectorAll('.stats-card');
+    if (statsCards && statsCards.length > 0) {
+      gsap.fromTo(statsCards,
+        { opacity: 0, y: 30, scale: 0.96 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.55,
+          stagger: 0.08,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: statsContainerRef.current,
+            start: 'top 88%',
+            toggleActions: 'play none none none'
+          }
+        }
+      );
+    }
+
+    // 2. Progress card reveal on scroll
+    if (progressCardRef.current) {
+      gsap.fromTo(progressCardRef.current,
+        { opacity: 0, y: 35 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.65,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: progressCardRef.current,
+            start: 'top 88%',
+            toggleActions: 'play none none none'
+          }
+        }
+      );
+    }
+
+    // 3. Materi card staggered reveal on scroll
+    const materiCards = materiContainerRef.current?.querySelectorAll('.materi-card');
+    if (materiCards && materiCards.length > 0) {
+      gsap.fromTo(materiCards,
+        { opacity: 0, y: 40, scale: 0.97 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: 'back.out(1.15)', // springy bounce
+          scrollTrigger: {
+            trigger: materiContainerRef.current,
+            start: 'top 85%',
+            toggleActions: 'play none none none'
+          }
+        }
+      );
+    }
+
+    return () => {
+      ScrollTrigger.getAll().forEach(t => t.kill());
+    };
+  }, [materiList, progress]);
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
@@ -76,13 +152,13 @@ export default function Dashboard() {
       </BorderGlow>
 
       {/* Stats and Progress Row */}
-      <div className="grid md:grid-cols-3 gap-6 mb-8">
+      <div ref={statsContainerRef} className="grid md:grid-cols-3 gap-6 mb-8">
         {[
           { icon: BookOpen, label: 'Total Materi', value: materiList.length, color: 'text-indigo-600', bg: 'bg-indigo-50 border-indigo-100/50' },
           { icon: CheckCircle, label: 'Selesai Dipelajari', value: progress?.selesai || 0, color: 'text-emerald-600', bg: 'bg-emerald-50 border-emerald-100/50' },
           { icon: BarChart3, label: 'Kemajuan Belajar', value: `${progress?.progress_persen || 0}%`, color: 'text-cyan-600', bg: 'bg-cyan-50 border-cyan-100/50' },
         ].map((s, i) => (
-          <div key={i} className="card p-6 flex items-center gap-4 animate-fade-in-up" style={{ animationDelay: `${i * 0.08}s` }}>
+          <div key={i} className="card p-6 flex items-center gap-4 stats-card opacity-0">
             <div className={`w-12 h-12 rounded-2xl ${s.bg} border flex items-center justify-center shrink-0`}>
               <s.icon className={`w-6 h-6 ${s.color}`} />
             </div>
@@ -96,7 +172,7 @@ export default function Dashboard() {
 
       {/* Progress detail card */}
       {progress && (
-        <div className="card p-6 mb-10 border border-slate-200/80 animate-fade-in-up" style={{ animationDelay: '0.24s' }}>
+        <div ref={progressCardRef} className="card p-6 mb-10 border border-slate-200/80 progress-card opacity-0">
           <div className="flex items-center justify-between mb-4.5">
             <div>
               <h2 className="font-display font-extrabold text-base text-[var(--color-text)] flex items-center gap-2">
@@ -122,7 +198,7 @@ export default function Dashboard() {
       )}
 
       {/* Materi List */}
-      <div className="animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+      <div ref={materiContainerRef}>
         <div className="flex items-center justify-between mb-6">
           <div>
             <h2 className="font-display font-extrabold text-2xl text-[var(--color-text)] flex items-center gap-2.5 tracking-tight">
@@ -143,10 +219,7 @@ export default function Dashboard() {
               <Link
                 key={m.id}
                 to={`/materi/${m.id}`}
-                className="card card-elevated overflow-hidden animate-fade-in-up group flex flex-col justify-between border-slate-200/60"
-                style={{ 
-                  animationDelay: `${(idx + 5) * 0.06}s`,
-                }}
+                className="card card-elevated overflow-hidden group flex flex-col justify-between border-slate-200/60 materi-card opacity-0"
               >
                 <div>
                   <div
