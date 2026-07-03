@@ -70,4 +70,26 @@ router.get('/admin', async (req, res) => {
   }
 });
 
+router.get('/leaderboard', async (req, res) => {
+  try {
+    const db = await getDb();
+    const leaderboard = queryAll(db,
+      `SELECT u.nama, u.kelas,
+              COALESCE(SUM(p.nilai), 0) as total_skor,
+              COUNT(CASE WHEN p.selesai = 1 THEN 1 END) as materi_selesai,
+              COALESCE(ROUND(AVG(p.nilai)), 0) as rata_rata
+       FROM users u
+       LEFT JOIN progress p ON u.id = p.user_id AND p.nilai IS NOT NULL
+       WHERE u.role = 'siswa'
+       GROUP BY u.id
+       ORDER BY total_skor DESC, rata_rata DESC, u.nama ASC
+       LIMIT 10`
+    );
+
+    res.json(leaderboard);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;
