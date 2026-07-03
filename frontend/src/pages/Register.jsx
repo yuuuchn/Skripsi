@@ -128,7 +128,7 @@ export default function Register() {
           </div>
 
           <div className="mb-8 text-center lg:text-left">
-            <h2 className="font-display text-3xl font-black text-[var(--color-text)] tracking-tight">Buat Akun Baru 📝</h2>
+            <h2 className="font-display text-3xl font-black text-[var(--color-text)] tracking-tight">Buat Akun Baru</h2>
             <p className="text-[var(--color-text-secondary)] text-sm font-medium mt-1.5">Lengkapi data di bawah ini untuk mendaftar</p>
           </div>
 

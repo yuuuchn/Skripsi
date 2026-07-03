@@ -5,20 +5,20 @@ export default function PerangkatJaringan() {
 
       <rect x="10" y="40" width="70" height="50" rx="10" fill="#3b82f6" />
       <text x="45" y="62" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">Modem</text>
-      <text x="45" y="74" textAnchor="middle" fill="#bfdbfe" fontSize="7">🌐 Internet</text>
+      <text x="45" y="74" textAnchor="middle" fill="#bfdbfe" fontSize="7">Koneksi Internet</text>
 
       <rect x="110" y="40" width="70" height="50" rx="10" fill="#8b5cf6" />
       <text x="145" y="62" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">Router</text>
-      <text x="145" y="74" textAnchor="middle" fill="#ddd6fe" fontSize="7">🔀 Atur jalur</text>
+      <text x="145" y="74" textAnchor="middle" fill="#ddd6fe" fontSize="7">Atur Jalur</text>
 
       <rect x="210" y="40" width="70" height="50" rx="10" fill="#10b981" />
       <text x="245" y="62" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">Switch</text>
-      <text x="245" y="74" textAnchor="middle" fill="#a7f3d0" fontSize="7">🔗 Hubungkan</text>
+      <text x="245" y="74" textAnchor="middle" fill="#a7f3d0" fontSize="7">Hubungkan</text>
 
       <rect x="310" y="40" width="70" height="50" rx="10" fill="#f59e0b" />
       <text x="345" y="62" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">Access</text>
       <text x="345" y="74" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">Point</text>
-      <text x="345" y="86" textAnchor="middle" fill="#fde68a" fontSize="7">📡 WiFi</text>
+      <text x="345" y="86" textAnchor="middle" fill="#fde68a" fontSize="7">Sinyal WiFi</text>
 
       <rect x="420" y="40" width="70" height="50" rx="10" fill="#ef4444" />
       <text x="455" y="62" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">Kabel +</text>

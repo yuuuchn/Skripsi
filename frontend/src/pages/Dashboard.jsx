@@ -53,7 +53,7 @@ export default function Dashboard() {
               <span className="text-white text-xs font-bold uppercase tracking-wider">Platform Pembelajaran</span>
             </div>
             <h1 className="font-display text-3xl md:text-5xl font-black mb-3 tracking-tight leading-none">
-              Halo, {user?.nama?.split(' ')[0]}! 👋
+              Halo, {user?.nama?.split(' ')[0]}!
             </h1>
             <p className="text-white/80 text-base md:text-lg leading-relaxed font-medium">
               {user?.kelas ? `Kelas ${user.kelas} — ` : ''}Mari perluas wawasanmu tentang dunia Jaringan Komputer hari ini!

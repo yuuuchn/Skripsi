@@ -37,49 +37,49 @@ export default function Navbar() {
   // Desktop uses 'fixed' position for both states with a spacer, completely preventing layout jumps.
   // Mobile remains as a standard, simple, non-animating sticky header.
   const navClass = scrolled
-    ? "glass-navbar z-50 transition-all duration-500 ease-in-out " +
+    ? "glass-navbar z-50 morph-navbar " +
       "md:fixed md:left-5 md:top-1/2 md:-translate-y-1/2 md:w-16 md:h-[440px] md:rounded-3xl md:flex md:flex-col md:justify-between md:py-6 md:px-0 md:shadow-xl md:shadow-indigo-500/5 md:border md:border-slate-200/80 " +
       "sticky top-0 w-full h-16 flex items-center md:translate-x-0"
-    : "glass-navbar z-50 transition-all duration-500 ease-in-out " +
+    : "glass-navbar z-50 morph-navbar " +
       "md:fixed md:top-0 md:left-0 md:w-full md:h-16 md:rounded-none md:shadow-sm md:border-b md:border-[var(--color-border)] " +
       "sticky top-0 w-full h-16 flex items-center";
 
   const containerClass = scrolled
-    ? "max-w-6xl mx-auto px-4 flex items-center justify-between w-full h-full " +
+    ? "max-w-6xl mx-auto px-4 flex items-center justify-between w-full h-full morph-navbar " +
       "md:flex-col md:h-full md:px-0 md:py-0 md:justify-between md:items-center"
-    : "max-w-6xl mx-auto px-4 h-full flex items-center justify-between w-full";
+    : "max-w-6xl mx-auto px-4 h-full flex items-center justify-between w-full morph-navbar";
 
   const brandClass = scrolled
-    ? "flex items-center gap-2.5 group " +
+    ? "flex items-center gap-2.5 group morph-navbar " +
       "md:flex-col md:gap-0 md:w-full md:justify-center"
-    : "flex items-center gap-2.5 group";
+    : "flex items-center gap-2.5 group morph-navbar";
 
   const logoWrapperClass = scrolled
-    ? "w-9 h-9 rounded-xl gradient-brand flex items-center justify-center text-white shadow-md shadow-indigo-500/10 group-hover:scale-105 group-hover:shadow-indigo-500/20 transition-all duration-300 " +
+    ? "w-9 h-9 rounded-xl gradient-brand flex items-center justify-center text-white shadow-md shadow-indigo-500/10 group-hover:scale-105 group-hover:shadow-indigo-500/20 morph-navbar " +
       "md:w-10 md:h-10"
-    : "w-9 h-9 rounded-xl gradient-brand flex items-center justify-center text-white shadow-md shadow-indigo-500/10 group-hover:scale-105 group-hover:shadow-indigo-500/20 transition-all duration-300";
+    : "w-9 h-9 rounded-xl gradient-brand flex items-center justify-center text-white shadow-md shadow-indigo-500/10 group-hover:scale-105 group-hover:shadow-indigo-500/20 morph-navbar";
 
   const brandTextClass = scrolled
-    ? "hidden sm:block md:hidden"
-    : "hidden sm:block";
+    ? "hidden sm:block md:hidden morph-navbar"
+    : "hidden sm:block morph-navbar";
 
   const menuListClass = scrolled
-    ? "hidden md:flex items-center gap-1.5 " +
+    ? "hidden md:flex items-center gap-1.5 morph-navbar " +
       "md:flex-col md:gap-4 md:w-full md:items-center"
-    : "hidden md:flex items-center gap-1.5";
+    : "hidden md:flex items-center gap-1.5 morph-navbar";
 
   const rightSideClass = scrolled
-    ? "flex items-center gap-3 md:flex-col md:w-full md:gap-4"
-    : "flex items-center gap-3";
+    ? "flex items-center gap-3 morph-navbar md:flex-col md:w-full md:gap-4"
+    : "flex items-center gap-3 morph-navbar";
 
   const profileWrapperClass = scrolled
-    ? "hidden md:flex items-center gap-3 pl-4 border-l border-[var(--color-border)] " +
+    ? "hidden md:flex items-center gap-3 pl-4 border-l border-[var(--color-border)] morph-navbar " +
       "md:flex-col md:border-l-0 md:pl-0 md:pt-4 md:border-t md:w-full md:items-center"
-    : "hidden md:flex items-center gap-3 pl-4 border-l border-[var(--color-border)]";
+    : "hidden md:flex items-center gap-3 pl-4 border-l border-[var(--color-border)] morph-navbar";
 
   const profileDetailsClass = scrolled
-    ? "text-xs leading-tight md:hidden"
-    : "text-xs leading-tight";
+    ? "text-xs leading-tight md:hidden morph-navbar"
+    : "text-xs leading-tight morph-navbar";
 
   return (
     <>
@@ -190,10 +190,10 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Mobile dropdown */}
+        {/* Floating Mobile dropdown matching the card style theme */}
         {open && (
-          <div className="md:hidden border-t border-[var(--color-border)] bg-white/95 backdrop-blur-xl animate-fade-in shadow-lg w-full">
-            <div className="p-3 space-y-1">
+          <div className="md:hidden absolute top-18 right-4 w-52 bg-white/95 backdrop-blur-xl rounded-2xl border border-slate-200/60 shadow-xl p-3.5 z-50 animate-scale-in">
+            <div className="space-y-1">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const active = location.pathname === item.to || location.pathname.startsWith(item.to + '/');
@@ -202,13 +202,13 @@ export default function Navbar() {
                     key={item.to}
                     to={item.to}
                     onClick={() => setOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                    className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
                       active
                         ? 'bg-indigo-50/80 text-[var(--color-brand-deep)] border border-indigo-100/50 shadow-sm'
-                        : 'text-[var(--color-text-secondary)] hover:bg-slate-50'
+                        : 'text-[var(--color-text-secondary)] hover:bg-slate-50 hover:text-[var(--color-text)]'
                     }`}
                   >
-                    <Icon className="w-4.5 h-4.5" />
+                    <Icon className="w-4 h-4" />
                     {item.label}
                   </Link>
                 );
@@ -217,22 +217,22 @@ export default function Navbar() {
                 <Link 
                   to="/admin" 
                   onClick={() => setOpen(false)} 
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
                     location.pathname === '/admin'
-                      ? 'bg-indigo-50/80 text-[var(--color-brand-deep)] border border-indigo-100/50'
-                      : 'text-[var(--color-text-secondary)] hover:bg-slate-50'
+                      ? 'bg-indigo-50/80 text-[var(--color-brand-deep)] border border-indigo-100/50 shadow-sm'
+                      : 'text-[var(--color-text-secondary)] hover:bg-slate-50 hover:text-[var(--color-text)]'
                   }`}
                 >
-                  <GraduationCap className="w-4.5 h-4.5" />
+                  <GraduationCap className="w-4 h-4" />
                   Panel Guru
                 </Link>
               )}
-              <div className="border-t border-[var(--color-border)] my-2" />
+              <div className="border-t border-slate-100 my-1.5" />
               <button 
                 onClick={handleLogout} 
-                className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-[var(--color-rose)] hover:bg-[var(--color-rose-soft)] w-full transition-colors"
+                className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-[var(--color-rose)] hover:bg-[var(--color-rose-soft)] w-full transition-colors"
               >
-                <LogOut className="w-4.5 h-4.5" />
+                <LogOut className="w-4 h-4" />
                 Keluar
               </button>
             </div>

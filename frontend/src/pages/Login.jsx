@@ -160,7 +160,7 @@ export default function Login() {
           </div>
 
           <div className="mb-8 text-center lg:text-left">
-            <h2 className="font-display text-3xl font-black text-[var(--color-text)] tracking-tight">Selamat Datang 👋</h2>
+            <h2 className="font-display text-3xl font-black text-[var(--color-text)] tracking-tight">Selamat Datang</h2>
             <p className="text-[var(--color-text-secondary)] text-sm font-medium mt-1.5">Silakan masuk untuk mulai belajar jaringan komputer</p>
           </div>
 

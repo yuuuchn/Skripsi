@@ -31,7 +31,7 @@ export function IlustrasiLAN() {
   return (
     <svg viewBox="0 0 400 160" className="w-full">
       <rect x="140" y="10" width="120" height="36" rx="18" fill="#06b6d4" />
-      <text x="200" y="33" textAnchor="middle" fill="white" fontSize="12" fontWeight="bold">📍 LAN</text>
+      <text x="200" y="33" textAnchor="middle" fill="white" fontSize="12" fontWeight="bold">LAN</text>
 
       <rect x="10" y="70" width="70" height="45" rx="6" fill="#3b82f6" />
       <text x="45" y="96" textAnchor="middle" fill="white" fontSize="9">PC 1</text>
@@ -59,25 +59,25 @@ export function IlustrasiMAN() {
   return (
     <svg viewBox="0 0 400 160" className="w-full">
       <rect x="140" y="10" width="120" height="36" rx="18" fill="#8b5cf6" />
-      <text x="200" y="33" textAnchor="middle" fill="white" fontSize="12" fontWeight="bold">📍 MAN</text>
+      <text x="200" y="33" textAnchor="middle" fill="white" fontSize="12" fontWeight="bold">MAN</text>
 
       <rect x="10" y="70" width="90" height="55" rx="8" fill="#3b82f6" />
       <text x="55" y="92" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold">Kampus A</text>
-      <text x="55" y="108" textAnchor="middle" fill="#bfdbfe" fontSize="8">📍 Pusat Kota</text>
+      <text x="55" y="108" textAnchor="middle" fill="#bfdbfe" fontSize="8">Pusat Kota</text>
 
       <rect x="155" y="70" width="90" height="55" rx="8" fill="#10b981" />
       <text x="200" y="92" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold">Kampus B</text>
-      <text x="200" y="108" textAnchor="middle" fill="#a7f3d0" fontSize="8">📍 Timur Kota</text>
+      <text x="200" y="108" textAnchor="middle" fill="#a7f3d0" fontSize="8">Timur Kota</text>
 
       <rect x="300" y="70" width="90" height="55" rx="8" fill="#f59e0b" />
       <text x="345" y="92" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold">Kampus C</text>
-      <text x="345" y="108" textAnchor="middle" fill="#fde68a" fontSize="8">📍 Barat Kota</text>
+      <text x="345" y="108" textAnchor="middle" fill="#fde68a" fontSize="8">Barat Kota</text>
 
       <line x1="100" y1="97" x2="155" y2="97" stroke="#94a3b8" strokeWidth="2" strokeDasharray="5,3" />
       <line x1="245" y1="97" x2="300" y2="97" stroke="#94a3b8" strokeWidth="2" strokeDasharray="5,3" />
 
       <rect x="130" y="140" width="140" height="16" rx="8" fill="#e2e8f0" />
-      <text x="200" y="152" textAnchor="middle" fill="#475569" fontSize="8">🌆 Area 1 Kota (10-50 km)</text>
+      <text x="200" y="152" textAnchor="middle" fill="#475569" fontSize="8">Area 1 Kota (10-50 km)</text>
     </svg>
   );
 }
@@ -86,22 +86,22 @@ export function IlustrasiWAN() {
   return (
     <svg viewBox="0 0 400 180" className="w-full">
       <rect x="140" y="10" width="120" height="36" rx="18" fill="#ef4444" />
-      <text x="200" y="33" textAnchor="middle" fill="white" fontSize="12" fontWeight="bold">📍 WAN</text>
+      <text x="200" y="33" textAnchor="middle" fill="white" fontSize="12" fontWeight="bold">WAN</text>
 
       <circle cx="50" cy="90" r="28" fill="#3b82f6" />
       <text x="50" y="87" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">Jakarta</text>
-      <text x="50" y="99" textAnchor="middle" fill="#bfdbfe" fontSize="7">🇮🇩</text>
+      <text x="50" y="99" textAnchor="middle" fill="#bfdbfe" fontSize="7">ID</text>
 
       <circle cx="200" cy="75" r="28" fill="#10b981" />
       <text x="200" y="72" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">Singapura</text>
-      <text x="200" y="84" textAnchor="middle" fill="#a7f3d0" fontSize="7">🇸🇬</text>
+      <text x="200" y="84" textAnchor="middle" fill="#a7f3d0" fontSize="7">SG</text>
 
       <circle cx="350" cy="100" r="28" fill="#f59e0b" />
       <text x="350" y="97" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">Tokyo</text>
-      <text x="350" y="109" textAnchor="middle" fill="#fde68a" fontSize="7">🇯🇵</text>
+      <text x="350" y="109" textAnchor="middle" fill="#fde68a" fontSize="7">JP</text>
 
       <circle cx="200" cy="150" r="20" fill="#8b5cf6" />
-      <text x="200" y="154" textAnchor="middle" fill="white" fontSize="7">🌍 Internet</text>
+      <text x="200" y="154" textAnchor="middle" fill="white" fontSize="7">Internet</text>
 
       <line x1="78" y1="90" x2="172" y2="85" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="4,3" />
       <line x1="228" y1="85" x2="322" y2="100" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="4,3" />
@@ -132,7 +132,7 @@ export function IlustrasiMediaKabel() {
       <circle cx="200" cy="40" r="3" fill="#f59e0b" />
       <circle cx="220" cy="40" r="3" fill="#f59e0b" />
       <circle cx="240" cy="40" r="3" fill="#f59e0b" />
-      <text x="200" y="62" textAnchor="middle" fill="#64748b" fontSize="8">100+ km — 100 Gbps 🚀</text>
+      <text x="200" y="62" textAnchor="middle" fill="#64748b" fontSize="8">100+ km — 100 Gbps</text>
 
       <text x="340" y="25" textAnchor="middle" fill="#10b981" fontSize="12" fontWeight="bold">WiFi</text>
       <rect x="290" y="32" width="100" height="16" rx="8" fill="#34d399" opacity="0.3" />
@@ -147,7 +147,7 @@ export function IlustrasiMediaKabel() {
 export function IlustrasiTopologi() {
   return (
     <svg viewBox="0 0 400 180" className="w-full">
-      <text x="80" y="20" textAnchor="middle" fill="#3b82f6" fontSize="11" fontWeight="bold">⭐ Topologi Star</text>
+      <text x="80" y="20" textAnchor="middle" fill="#3b82f6" fontSize="11" fontWeight="bold">Topologi Star</text>
       <circle cx="80" cy="80" r="10" fill="#3b82f6" />
       <text x="80" y="84" textAnchor="middle" fill="white" fontSize="7">Hub</text>
       <circle cx="30" cy="140" r="8" fill="#10b981" />
@@ -157,7 +157,7 @@ export function IlustrasiTopologi() {
       <line x1="80" y1="90" x2="80" y2="142" stroke="#94a3b8" strokeWidth="1" />
       <line x1="80" y1="90" x2="130" y2="134" stroke="#94a3b8" strokeWidth="1" />
 
-      <text x="280" y="20" textAnchor="middle" fill="#8b5cf6" fontSize="11" fontWeight="bold">🔗 Topologi Bus</text>
+      <text x="280" y="20" textAnchor="middle" fill="#8b5cf6" fontSize="11" fontWeight="bold">Topologi Bus</text>
       <line x1="190" y1="80" x2="370" y2="80" stroke="#8b5cf6" strokeWidth="3" />
       <circle cx="205" cy="80" r="3" fill="#ef4444" />
       <circle cx="245" cy="80" r="3" fill="#ef4444" />
@@ -226,7 +226,7 @@ export function IlustrasiDampakJaringan() {
       {/* Benefits Box (Sisi Positif) */}
       <rect x="10" y="10" width="250" height="150" rx="12" fill="#10b981" fillOpacity="0.06" stroke="#10b981" strokeWidth="1.5" />
       <rect x="25" y="22" width="220" height="24" rx="12" fill="#10b981" />
-      <text x="135" y="38" textAnchor="middle" fill="white" fontSize="10.5" fontWeight="extrabold">💚 Dampak Positif (Manfaat)</text>
+      <text x="135" y="38" textAnchor="middle" fill="white" fontSize="10.5" fontWeight="extrabold">Dampak Positif (Manfaat)</text>
       
       <circle cx="30" cy="70" r="3" fill="#10b981" />
       <text x="42" y="73" fill="#1e293b" fontSize="9">
@@ -254,7 +254,7 @@ export function IlustrasiDampakJaringan() {
       {/* Negative Impact Box (Sisi Negatif) */}
       <rect x="300" y="10" width="250" height="150" rx="12" fill="#ef4444" fillOpacity="0.06" stroke="#ef4444" strokeWidth="1.5" />
       <rect x="315" y="22" width="220" height="24" rx="12" fill="#ef4444" />
-      <text x="425" y="38" textAnchor="middle" fill="white" fontSize="10.5" fontWeight="extrabold">⚠️ Dampak Negatif (Bahaya)</text>
+      <text x="425" y="38" textAnchor="middle" fill="white" fontSize="10.5" fontWeight="extrabold">Dampak Negatif (Bahaya)</text>
 
           <circle cx="320" cy="70" r="3" fill="#ef4444" />
           <text x="332" y="73" fill="#1e293b" fontSize="9">
