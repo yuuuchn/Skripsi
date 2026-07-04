@@ -87,6 +87,25 @@ export default function Dashboard() {
           }
         }
       );
+
+      // Animate progress bar fill inside progress card
+      const barFill = progressCardRef.current.querySelector('.progress-bar-fill');
+      if (barFill) {
+        gsap.fromTo(barFill,
+          { width: '0%' },
+          {
+            width: `${progress.progress_persen || 0}%`,
+            duration: 1.2,
+            delay: 0.15,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: progressCardRef.current,
+              start: 'top 88%',
+              toggleActions: 'play none none none'
+            }
+          }
+        );
+      }
     }
 
     // 3. Materi card staggered reveal on scroll
@@ -187,9 +206,9 @@ export default function Dashboard() {
           </div>
           <div className="bg-slate-100 rounded-full h-3.5 p-0.5 overflow-hidden">
             <div
-              className="h-full rounded-full transition-all duration-1000 ease-out"
+              className="h-full rounded-full progress-bar-fill"
               style={{
-                width: `${progress.progress_persen}%`,
+                width: '0%',
                 background: 'linear-gradient(90deg, #4f46e5, #06b6d4)',
               }}
             />
