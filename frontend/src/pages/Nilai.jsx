@@ -18,6 +18,7 @@ import {
 import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import ScrollReveal from '../components/ScrollReveal';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -182,7 +183,13 @@ export default function Nilai() {
           </div>
           Nilai & Pencapaian Kuis
         </h1>
-        <p className="text-[var(--color-text-secondary)] text-sm md:text-base mt-2 font-medium">Lacak rekam jejak prestasi, buka lencana kejuaraan, dan lihat peringkat Anda</p>
+        <ScrollReveal
+          baseOpacity={0.2}
+          blurStrength={4}
+          textClassName="text-[var(--color-text-secondary)] text-sm md:text-base mt-2 font-medium block"
+        >
+          Lacak rekam jejak prestasi, buka lencana kejuaraan, dan lihat peringkat Anda
+        </ScrollReveal>
       </div>
 
       {/* Tabs Selector */}

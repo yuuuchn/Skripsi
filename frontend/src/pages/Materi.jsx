@@ -4,6 +4,7 @@ import api from '../api/axios';
 import { BookOpen, CheckCircle, ArrowRight, Clock, Star, ChevronRight, Laptop, History, Globe, Cable, Router, ShieldCheck, HelpCircle } from 'lucide-react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import ScrollReveal from '../components/ScrollReveal';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -92,7 +93,13 @@ export default function Materi() {
           </div>
           Materi Pembelajaran
         </h1>
-        <p className="text-[var(--color-text-secondary)] text-sm md:text-base mt-2 font-medium">Pelajari jaringan komputer dari tingkat dasar hingga mahir dengan modul interaktif</p>
+        <ScrollReveal
+          baseOpacity={0.2}
+          blurStrength={4}
+          textClassName="text-[var(--color-text-secondary)] text-sm md:text-base mt-2 font-medium block"
+        >
+          Pelajari jaringan komputer dari tingkat dasar hingga mahir dengan modul interaktif
+        </ScrollReveal>
       </div>
 
       {/* Materi grid */}

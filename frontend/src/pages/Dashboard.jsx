@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import { BookOpen, CheckCircle, BarChart3, ArrowRight, Star, Trophy, Zap, Clock, Laptop, History, Globe, Cable, Router, ShieldCheck, HelpCircle } from 'lucide-react';
 import BorderGlow from '../components/BorderGlow';
+import ScrollReveal from '../components/ScrollReveal';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -152,9 +153,13 @@ export default function Dashboard() {
               <h1 className="font-display text-3xl md:text-5xl font-black mb-3 tracking-tight leading-none text-indigo-950">
                 Halo, {user?.nama?.split(' ')[0]}!
               </h1>
-              <p className="text-slate-600 text-sm md:text-base leading-relaxed font-semibold">
-                {user?.kelas ? `Kelas ${user.kelas} — ` : ''}Mari perluas wawasanmu tentang dunia Jaringan Komputer hari ini!
-              </p>
+              <ScrollReveal
+                baseOpacity={0.2}
+                blurStrength={4}
+                textClassName="text-slate-600 text-sm md:text-base leading-relaxed font-semibold block"
+              >
+                {`${user?.kelas ? `Kelas ${user.kelas} — ` : ''}Mari perluas wawasanmu tentang dunia Jaringan Komputer hari ini!`}
+              </ScrollReveal>
             </div>
             <div className="flex flex-row md:flex-col lg:flex-row gap-3 shrink-0">
               <Link to="/materi" className="bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold px-6 py-3 rounded-xl text-sm active:scale-95 transition-all flex items-center gap-2 shadow-lg shadow-indigo-600/15">
