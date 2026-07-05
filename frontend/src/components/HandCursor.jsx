@@ -42,6 +42,12 @@ export default function HandCursor() {
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        videoRef.current.muted = true;
+        videoRef.current.setAttribute('muted', '');
+        videoRef.current.setAttribute('playsinline', '');
+        videoRef.current.play().catch(err => {
+          console.warn("Explicit video play failed:", err);
+        });
       }
 
       // 2. Load MediaPipe HandLandmarker
@@ -112,7 +118,7 @@ export default function HandCursor() {
     const alpha = 0.22; // Low-pass filter smoothing coefficient (lower = smoother but has delay)
 
     const detect = () => {
-      if (video.readyState >= 2) {
+      if (video.videoWidth > 0) {
         const now = performance.now();
         if (video.currentTime !== lastVideoTime) {
           lastVideoTime = video.currentTime;
