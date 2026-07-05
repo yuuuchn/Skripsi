@@ -20,13 +20,9 @@ export default function HandCursor() {
   const pinchingRef = useRef(false);
   const streamRef = useRef(null);
   
-  // Refs for tracking scroll and drag states
-  const prevIndexY = useRef(null);
+  // Refs for tracking click state
   const pinchStartX = useRef(0);
   const pinchStartY = useRef(0);
-  const pinchStartRawX = useRef(0);
-  const pinchStartRawY = useRef(0);
-  const hasDragged = useRef(false);
 
   // Toggle hand cursor mode
   const handleToggle = async () => {
@@ -96,8 +92,6 @@ export default function HandCursor() {
     setIsPinching(false);
     setIsScrolling(false);
     pinchingRef.current = false;
-    prevIndexY.current = null;
-    hasDragged.current = false;
 
     // Stop camera stream
     if (streamRef.current) {
@@ -151,96 +145,87 @@ export default function HandCursor() {
             
             if (results.landmarks && results.landmarks.length > 0) {
               const landmarks = results.landmarks[0];
-              
-              // 2. Draw ONLY index finger and thumb skeleton landmarks on top of the camera frame
-              if (ctx && canvas) {
-                drawHandSkeleton(ctx, landmarks);
-              }
 
-              // Key landmarks
+              // Key landmarks (only index finger tip & thumb tip needed)
               const indexTip = landmarks[8];
               const indexKnuckle = landmarks[6];
               const thumbTip = landmarks[4];
 
               if (indexTip && thumbTip && indexKnuckle) {
                 // Coordinate mapping from normalized camera [0.0 - 1.0] to viewport pixels
-                const scaleX = (1 - indexTip.x - 0.22) / 0.56; // Bounding box X [0.22 - 0.78]
-                const scaleY = (indexTip.y - 0.22) / 0.56;    // Bounding box Y [0.22 - 0.78]
-                
-                const clampedX = Math.max(0, Math.min(1, scaleX));
-                const clampedY = Math.max(0, Math.min(1, scaleY));
+                // Using 0.22 to 0.78 bounding box for ergonomic screen reach
+                const scaleX = (1 - indexTip.x - 0.22) / 0.56;
+                const scaleY = (indexTip.y - 0.22) / 0.56;
 
-                const targetX = clampedX * window.innerWidth;
-                const targetY = clampedY * window.innerHeight;
+                // Detect if the hand is in the scroll zones
+                // Top 22% of camera is Scroll Up, Bottom 22% of camera is Scroll Down
+                const isScrollUpActive = scaleY <= 0;
+                const isScrollDownActive = scaleY >= 1;
 
-                // Pinch Gesture detection for click & scroll (Index tip and Thumb tip distance)
-                const dx = thumbTip.x - indexTip.x;
-                const dy = thumbTip.y - indexTip.y;
-                const dz = thumbTip.z - indexTip.z;
-                const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                // Draw skeleton landmarks & scroll zones overlay on canvas
+                if (ctx && canvas) {
+                  drawScrollZones(ctx, isScrollUpActive, isScrollDownActive);
+                  drawHandSkeleton(ctx, landmarks);
+                }
 
-                const clickThreshold = 0.048;
-                const freezeThreshold = 0.062;
-
-                const isPinchActive = distance < clickThreshold;
-
-                if (isPinchActive) {
-                  // --- PINCH ACTIVE STATE ---
-                  if (!pinchingRef.current) {
-                    // Start of Pinch
-                    pinchingRef.current = true;
-                    setIsPinching(true);
-                    hasDragged.current = false;
-                    
-                    // Save starting coordinates (both screen coordinates & raw camera values)
-                    pinchStartX.current = cursorRef.current.x;
-                    pinchStartY.current = cursorRef.current.y;
-                    pinchStartRawX.current = indexTip.x;
-                    pinchStartRawY.current = indexTip.y;
-                    prevIndexY.current = indexTip.y;
-                  } else {
-                    // Continuing Pinch - Calculate if hand is dragging to scroll
-                    const dry = indexTip.y - pinchStartRawY.current;
-                    const drx = indexTip.x - pinchStartRawX.current;
-                    const dragDist = Math.sqrt(drx * drx + dry * dry);
-                    const dragDistPixels = dragDist * window.innerHeight;
-
-                    // If dragged more than 22 pixels, activate scroll mode and suppress click
-                    if (dragDistPixels > 22) {
-                      hasDragged.current = true;
-                      setIsScrolling(true);
-
-                      if (prevIndexY.current !== null) {
-                        const deltaY = indexTip.y - prevIndexY.current;
-                        const scrollAmount = deltaY * window.innerHeight * 2.3; // Responsive scroll multiplier
-                        window.scrollBy(0, scrollAmount);
-                      }
-                      prevIndexY.current = indexTip.y;
-                    } else {
-                      prevIndexY.current = indexTip.y;
-                    }
-                  }
+                if (isScrollUpActive) {
+                  // Hand is in the upper Scroll Up zone
+                  setIsScrolling(true);
+                  setIsPinching(false);
+                  pinchingRef.current = false;
+                  window.scrollBy(0, -11); // Scroll Up speed
+                } else if (isScrollDownActive) {
+                  // Hand is in the lower Scroll Down zone
+                  setIsScrolling(true);
+                  setIsPinching(false);
+                  pinchingRef.current = false;
+                  window.scrollBy(0, 11); // Scroll Down speed
                 } else {
-                  // --- PINCH RELEASED STATE ---
-                  if (pinchingRef.current) {
-                    pinchingRef.current = false;
-                    setIsPinching(false);
-                    setIsScrolling(false);
-                    prevIndexY.current = null;
+                  // Hand is in the middle POINTER zone
+                  setIsScrolling(false);
 
-                    // Trigger click ONLY if we didn't drag to scroll
-                    if (!hasDragged.current) {
-                      triggerClick(pinchStartX.current, pinchStartY.current);
-                    }
-                  }
+                  const clampedX = Math.max(0, Math.min(1, scaleX));
+                  const clampedY = Math.max(0, Math.min(1, scaleY));
 
-                  // Pointer Movement Mode (Only active when not pinching and distance is above freeze threshold)
-                  if (distance >= freezeThreshold) {
+                  const targetX = clampedX * window.innerWidth;
+                  const targetY = clampedY * window.innerHeight;
+
+                  // Pinch Gesture detection for click
+                  const dx = thumbTip.x - indexTip.x;
+                  const dy = thumbTip.y - indexTip.y;
+                  const dz = thumbTip.z - indexTip.z;
+                  const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+                  const clickThreshold = 0.048;
+                  const freezeThreshold = 0.062; // Freeze threshold to lock cursor
+
+                  // Anti-slip lock: freeze cursor position while preparing to click
+                  if (distance >= freezeThreshold && !pinchingRef.current) {
                     cursorRef.current.x = cursorRef.current.x * (1 - alpha) + targetX * alpha;
                     cursorRef.current.y = cursorRef.current.y * (1 - alpha) + targetY * alpha;
                     setCursorPos({ x: cursorRef.current.x, y: cursorRef.current.y });
                   }
+
+                  if (distance < clickThreshold) {
+                    if (!pinchingRef.current) {
+                      pinchingRef.current = true;
+                      setIsPinching(true);
+                      pinchStartX.current = cursorRef.current.x;
+                      pinchStartY.current = cursorRef.current.y;
+                      triggerClick(cursorRef.current.x, cursorRef.current.y);
+                    }
+                  } else {
+                    if (pinchingRef.current) {
+                      pinchingRef.current = false;
+                      setIsPinching(false);
+                    }
+                  }
                 }
+              }
+            } else {
+              // Draw scroll zones even when no hand is detected
+              if (ctx && canvas) {
+                drawScrollZones(ctx, false, false);
               }
             }
           }
@@ -263,6 +248,40 @@ export default function HandCursor() {
       }
     };
   }, [active]);
+
+  // Helper to draw scroll zones on the preview canvas
+  const drawScrollZones = (ctx, isActiveTop, isActiveBottom) => {
+    const w = ctx.canvas.width;
+    const h = ctx.canvas.height;
+    
+    // Top Zone (Scroll Up)
+    ctx.fillStyle = isActiveTop ? 'rgba(16, 185, 129, 0.28)' : 'rgba(99, 102, 241, 0.12)';
+    ctx.fillRect(0, 0, w, h * 0.22);
+    
+    ctx.strokeStyle = isActiveTop ? '#10b981' : '#4f46e5/50';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(0, h * 0.22);
+    ctx.lineTo(w, h * 0.22);
+    ctx.stroke();
+    
+    ctx.fillStyle = isActiveTop ? '#10b981' : '#a5b4fc';
+    ctx.font = 'bold 8px system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('▲ SCROLL UP ZONE', w / 2, h * 0.14);
+    
+    // Bottom Zone (Scroll Down)
+    ctx.fillStyle = isActiveBottom ? 'rgba(16, 185, 129, 0.28)' : 'rgba(99, 102, 241, 0.12)';
+    ctx.fillRect(0, h * 0.78, w, h * 0.22);
+    
+    ctx.beginPath();
+    ctx.moveTo(0, h * 0.78);
+    ctx.lineTo(w, h * 0.78);
+    ctx.stroke();
+    
+    ctx.fillStyle = isActiveBottom ? '#10b981' : '#a5b4fc';
+    ctx.fillText('▼ SCROLL DOWN ZONE', w / 2, h * 0.92);
+  };
 
   // Helper to draw ONLY index finger and thumb landmarks/skeleton on canvas
   const drawHandSkeleton = (ctx, landmarks) => {
@@ -392,7 +411,7 @@ export default function HandCursor() {
               : '0 0 10px 2px rgba(99, 102, 241, 0.4)'
           }}
         >
-          {/* Cyan dot for standard pointing, Rose for pinching (clicking), Emerald for scrolling */}
+          {/* Cyan dot for standard pointing, Rose for pinching (clicking), Emerald with icon for scrolling */}
           <div className={`w-2.5 h-2.5 rounded-full transition-colors duration-150 flex items-center justify-center text-[6px] text-white font-extrabold ${
             isScrolling ? 'bg-emerald-500' : isPinching ? 'bg-rose-500' : 'bg-cyan-400'
           }`}>
