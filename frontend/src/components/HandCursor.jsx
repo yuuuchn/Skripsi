@@ -7,6 +7,7 @@ export default function HandCursor() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isPinching, setIsPinching] = useState(false);
+  const [isScrolling, setIsScrolling] = useState(false);
   const [ripples, setRipples] = useState([]);
   
   const videoRef = useRef(null);
@@ -18,6 +19,9 @@ export default function HandCursor() {
   const animationFrameId = useRef(null);
   const pinchingRef = useRef(false);
   const streamRef = useRef(null);
+  
+  // Refs for tracking scroll delta
+  const prevIndexY = useRef(null);
 
   // Toggle hand cursor mode
   const handleToggle = async () => {
@@ -32,7 +36,7 @@ export default function HandCursor() {
     setLoading(true);
     setError(null);
     try {
-      // 1. Get webcam stream with relaxed constraints for maximum device compatibility
+      // 1. Get webcam stream
       const stream = await navigator.mediaDevices.getUserMedia({
         video: true,
         audio: false
@@ -52,7 +56,7 @@ export default function HandCursor() {
         }
       }
 
-      // 2. Load MediaPipe HandLandmarker from CDN
+      // 2. Load MediaPipe HandLandmarker
       if (!landmarkerRef.current) {
         const vision = await FilesetResolver.forVisionTasks(
           "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm"
@@ -82,7 +86,9 @@ export default function HandCursor() {
     setActive(false);
     setLoading(false);
     setIsPinching(false);
+    setIsScrolling(false);
     pinchingRef.current = false;
+    prevIndexY.current = null;
 
     // Stop camera stream
     if (streamRef.current) {
@@ -137,50 +143,91 @@ export default function HandCursor() {
             if (results.landmarks && results.landmarks.length > 0) {
               const landmarks = results.landmarks[0];
               
-              // 2. Draw skeleton landmarks on top of the camera frame
+              // 2. Draw ONLY index finger and thumb skeleton landmarks on top of the camera frame
               if (ctx && canvas) {
                 drawHandSkeleton(ctx, landmarks);
               }
 
-              // Index finger tip (Landmark 8) and Thumb tip (Landmark 4)
+              // Index finger tip (8), Thumb tip (4), Middle finger tip (12)
               const indexTip = landmarks[8];
               const thumbTip = landmarks[4];
+              const middleTip = landmarks[12];
+              
+              // Knuckles to detect finger state (extended or folded)
+              const indexKnuckle = landmarks[6];
+              const middleKnuckle = landmarks[10];
+              const ringTip = landmarks[16];
+              const ringKnuckle = landmarks[14];
 
-              if (indexTip && thumbTip) {
-                // Coordinate mapping from normalized camera [0.0 - 1.0] to viewport pixels
-                const scaleX = (1 - indexTip.x - 0.22) / 0.56; // Bounding box X [0.22 - 0.78]
-                const scaleY = (indexTip.y - 0.22) / 0.56;    // Bounding box Y [0.22 - 0.78]
+              if (indexTip && thumbTip && middleTip && indexKnuckle && middleKnuckle && ringTip && ringKnuckle) {
                 
-                const clampedX = Math.max(0, Math.min(1, scaleX));
-                const clampedY = Math.max(0, Math.min(1, scaleY));
-
-                const targetX = clampedX * window.innerWidth;
-                const targetY = clampedY * window.innerHeight;
-
-                // Smoothing
-                cursorRef.current.x = cursorRef.current.x * (1 - alpha) + targetX * alpha;
-                cursorRef.current.y = cursorRef.current.y * (1 - alpha) + targetY * alpha;
+                // --- DETECT GESTURES ---
                 
-                setCursorPos({ x: cursorRef.current.x, y: cursorRef.current.y });
+                // 1. Finger Extension States (Y axis: 0 is top, 1 is bottom)
+                const indexExtended = indexTip.y < indexKnuckle.y;
+                const middleExtended = middleTip.y < middleKnuckle.y;
+                const ringFolded = ringTip.y > ringKnuckle.y;
 
-                // Pinch Gesture detection
-                const dx = thumbTip.x - indexTip.x;
-                const dy = thumbTip.y - indexTip.y;
-                const dz = thumbTip.z - indexTip.z;
-                const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                // 2. Scroll Mode Gesture: Peace Sign (Index & Middle fingers extended, Ring finger folded)
+                const detectScrollMode = indexExtended && middleExtended && ringFolded;
 
-                const clickThreshold = 0.048;
-
-                if (distance < clickThreshold) {
-                  if (!pinchingRef.current) {
-                    pinchingRef.current = true;
-                    setIsPinching(true);
-                    triggerClick(cursorRef.current.x, cursorRef.current.y);
+                if (detectScrollMode) {
+                  // SCROLL MODE ACTIVE
+                  setIsScrolling(true);
+                  setIsPinching(false);
+                  pinchingRef.current = false;
+                  
+                  // Calculate vertical movement (delta Y) for scrolling
+                  if (prevIndexY.current !== null) {
+                    const dy = indexTip.y - prevIndexY.current;
+                    const scrollAmount = dy * window.innerHeight * 1.6; // Scroll sensitivity multiplier
+                    
+                    window.scrollBy({
+                      top: scrollAmount,
+                      behavior: 'auto'
+                    });
                   }
+                  prevIndexY.current = indexTip.y;
                 } else {
-                  if (pinchingRef.current) {
-                    pinchingRef.current = false;
-                    setIsPinching(false);
+                  // POINTER MODE ACTIVE
+                  setIsScrolling(false);
+                  prevIndexY.current = null;
+
+                  // Coordinate mapping from normalized camera [0.0 - 1.0] to viewport pixels
+                  const scaleX = (1 - indexTip.x - 0.22) / 0.56; // Bounding box X [0.22 - 0.78]
+                  const scaleY = (indexTip.y - 0.22) / 0.56;    // Bounding box Y [0.22 - 0.78]
+                  
+                  const clampedX = Math.max(0, Math.min(1, scaleX));
+                  const clampedY = Math.max(0, Math.min(1, scaleY));
+
+                  const targetX = clampedX * window.innerWidth;
+                  const targetY = clampedY * window.innerHeight;
+
+                  // Smoothing
+                  cursorRef.current.x = cursorRef.current.x * (1 - alpha) + targetX * alpha;
+                  cursorRef.current.y = cursorRef.current.y * (1 - alpha) + targetY * alpha;
+                  
+                  setCursorPos({ x: cursorRef.current.x, y: cursorRef.current.y });
+
+                  // Pinch Gesture detection for click (Index tip and Thumb tip distance)
+                  const dx = thumbTip.x - indexTip.x;
+                  const dy = thumbTip.y - indexTip.y;
+                  const dz = thumbTip.z - indexTip.z;
+                  const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+                  const clickThreshold = 0.048;
+
+                  if (distance < clickThreshold) {
+                    if (!pinchingRef.current) {
+                      pinchingRef.current = true;
+                      setIsPinching(true);
+                      triggerClick(cursorRef.current.x, cursorRef.current.y);
+                    }
+                  } else {
+                    if (pinchingRef.current) {
+                      pinchingRef.current = false;
+                      setIsPinching(false);
+                    }
                   }
                 }
               }
@@ -206,37 +253,58 @@ export default function HandCursor() {
     };
   }, [active]);
 
-  // Helper to draw landmarks skeleton on canvas
+  // Helper to draw ONLY index finger and thumb landmarks/skeleton on canvas
   const drawHandSkeleton = (ctx, landmarks) => {
     ctx.strokeStyle = '#4f46e5';
     ctx.lineWidth = 3;
-    ctx.beginPath();
     
-    const connections = [
-      [0, 1], [1, 2], [2, 3], [3, 4], // Thumb
-      [0, 5], [5, 6], [6, 7], [7, 8], // Index
-      [5, 9], [9, 10], [10, 11], [11, 12], // Middle
-      [9, 13], [13, 14], [14, 15], [15, 16], // Ring
-      [13, 17], [17, 18], [18, 19], [19, 20], // Pinky
-      [0, 17] // Palm base
-    ];
-
-    for (const [start, end] of connections) {
-      const startPt = landmarks[start];
-      const endPt = landmarks[end];
-      if (startPt && endPt) {
-        ctx.moveTo(startPt.x * ctx.canvas.width, startPt.y * ctx.canvas.height);
-        ctx.lineTo(endPt.x * ctx.canvas.width, endPt.y * ctx.canvas.height);
+    // 1. Draw Index Finger Path (0 -> 5 -> 6 -> 7 -> 8)
+    ctx.beginPath();
+    const indexPath = [0, 5, 6, 7, 8];
+    for (let i = 0; i < indexPath.length; i++) {
+      const pt = landmarks[indexPath[i]];
+      if (pt) {
+        if (i === 0) ctx.moveTo(pt.x * ctx.canvas.width, pt.y * ctx.canvas.height);
+        else ctx.lineTo(pt.x * ctx.canvas.width, pt.y * ctx.canvas.height);
       }
     }
     ctx.stroke();
 
-    // Draw landmark joints
+    // 2. Draw Thumb Path (0 -> 1 -> 2 -> 3 -> 4)
+    ctx.beginPath();
+    const thumbPath = [0, 1, 2, 3, 4];
+    for (let i = 0; i < thumbPath.length; i++) {
+      const pt = landmarks[thumbPath[i]];
+      if (pt) {
+        if (i === 0) ctx.moveTo(pt.x * ctx.canvas.width, pt.y * ctx.canvas.height);
+        else ctx.lineTo(pt.x * ctx.canvas.width, pt.y * ctx.canvas.height);
+      }
+    }
+    ctx.stroke();
+
+    // 3. Connect Thumb Base to Index Base (1 to 5) for palm base connection
+    ctx.beginPath();
+    const pt1 = landmarks[1];
+    const pt5 = landmarks[5];
+    if (pt1 && pt5) {
+      ctx.moveTo(pt1.x * ctx.canvas.width, pt1.y * ctx.canvas.height);
+      ctx.lineTo(pt5.x * ctx.canvas.width, pt5.y * ctx.canvas.height);
+    }
+    ctx.stroke();
+
+    // 4. Draw Joint Nodes only for Index (5, 6, 7, 8), Thumb (1, 2, 3, 4), and Base (0)
     ctx.fillStyle = '#22d3ee';
-    for (const landmark of landmarks) {
-      ctx.beginPath();
-      ctx.arc(landmark.x * ctx.canvas.width, landmark.y * ctx.canvas.height, 4.5, 0, 2 * Math.PI);
-      ctx.fill();
+    const activeJoints = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+    for (const jointIdx of activeJoints) {
+      const pt = landmarks[jointIdx];
+      if (pt) {
+        ctx.beginPath();
+        // Highlight fingertips (4 and 8)
+        const radius = (jointIdx === 4 || jointIdx === 8) ? 6 : 4;
+        ctx.fillStyle = (jointIdx === 4 || jointIdx === 8) ? '#f43f5e' : '#22d3ee';
+        ctx.arc(pt.x * ctx.canvas.width, pt.y * ctx.canvas.height, radius, 0, 2 * Math.PI);
+        ctx.fill();
+      }
     }
   };
 
@@ -306,13 +374,20 @@ export default function HandCursor() {
           style={{ 
             left: `${cursorPos.x}px`, 
             top: `${cursorPos.y}px`, 
-            transform: `translate(-50%, -50%) scale(${isPinching ? 0.75 : 1})`,
+            transform: `translate(-50%, -50%) scale(${isPinching ? 0.75 : isScrolling ? 1.2 : 1})`,
             boxShadow: isPinching 
               ? '0 0 15px 4px rgba(244, 63, 94, 0.6)' 
+              : isScrolling
+              ? '0 0 15px 4px rgba(16, 185, 129, 0.6)'
               : '0 0 10px 2px rgba(99, 102, 241, 0.4)'
           }}
         >
-          <div className={`w-2.5 h-2.5 rounded-full transition-colors duration-150 ${isPinching ? 'bg-rose-500' : 'bg-cyan-400'}`} />
+          {/* Cyan dot for standard pointing, Rose for pinching (clicking), Emerald with icon for scrolling */}
+          <div className={`w-2.5 h-2.5 rounded-full transition-colors duration-150 flex items-center justify-center text-[6px] text-white font-extrabold ${
+            isPinching ? 'bg-rose-500' : isScrolling ? 'bg-emerald-500' : 'bg-cyan-400'
+          }`}>
+            {isScrolling && '↕'}
+          </div>
         </div>
       )}
 
