@@ -241,9 +241,9 @@ export default function HandCursor() {
 
               if (indexTip && thumbTip && indexKnuckle) {
                  // Coordinate mapping from normalized camera [0.0 - 1.0] to viewport pixels
-                 // Using topBound (0.22) and bottomBound (0.70) for comfort
+                 // Using topBound (0.22) and bottomBound (0.60) for comfort
                  const topBound = 0.22;
-                 const bottomBound = 0.70;
+                 const bottomBound = 0.60;
                  const rangeY = bottomBound - topBound;
 
                  const scaleX = (1 - indexTip.x - 0.22) / 0.56;
@@ -377,15 +377,15 @@ export default function HandCursor() {
     
     // Bottom Zone (Scroll Down)
     ctx.fillStyle = isActiveBottom ? 'rgba(16, 185, 129, 0.28)' : 'rgba(99, 102, 241, 0.12)';
-    ctx.fillRect(0, h * 0.70, w, h * 0.30);
+    ctx.fillRect(0, h * 0.60, w, h * 0.40);
     
     ctx.beginPath();
-    ctx.moveTo(0, h * 0.70);
-    ctx.lineTo(w, h * 0.70);
+    ctx.moveTo(0, h * 0.60);
+    ctx.lineTo(w, h * 0.60);
     ctx.stroke();
     
     ctx.fillStyle = isActiveBottom ? '#10b981' : '#a5b4fc';
-    ctx.fillText('▼ SCROLL DOWN (JEMPOL)', w / 2, h * 0.88);
+    ctx.fillText('▼ SCROLL DOWN (JEMPOL)', w / 2, h * 0.82);
   };
 
   // Helper to draw ONLY index finger and thumb landmarks/skeleton on canvas
