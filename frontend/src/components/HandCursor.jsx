@@ -240,37 +240,41 @@ export default function HandCursor() {
               const thumbTip = landmarks[4];
 
               if (indexTip && thumbTip && indexKnuckle) {
-                // Coordinate mapping from normalized camera [0.0 - 1.0] to viewport pixels
-                const scaleX = (1 - indexTip.x - 0.22) / 0.56;
-                const scaleY = (indexTip.y - 0.22) / 0.56;
+                 // Coordinate mapping from normalized camera [0.0 - 1.0] to viewport pixels
+                 // Using topBound (0.22) and bottomBound (0.70) for comfort
+                 const topBound = 0.22;
+                 const bottomBound = 0.70;
+                 const rangeY = bottomBound - topBound;
 
-                // --- CUSTOM SCROLL ZONES TARGETING SPECIFIC FINGERS ---
-                // Scroll Up: INDEX FINGER tip (8) in upper zone (scaleY <= 0)
-                const isScrollUpActive = scaleY <= 0;
-                
-                // Scroll Down: THUMB tip (4) in lower zone (Y >= 0.78)
-                const thumbScaleY = (thumbTip.y - 0.22) / 0.56;
-                const isScrollDownActive = thumbScaleY >= 1;
+                 const scaleX = (1 - indexTip.x - 0.22) / 0.56;
+                 const scaleY = (indexTip.y - topBound) / rangeY;
 
-                // Draw skeleton landmarks & scroll zones overlay on canvas
-                if (ctx && canvas) {
-                  drawScrollZones(ctx, isScrollUpActive, isScrollDownActive);
-                  drawHandSkeleton(ctx, landmarks);
-                }
+                 // --- CUSTOM SCROLL ZONES TARGETING SPECIFIC FINGERS ---
+                 // Scroll Up: Only triggered when INDEX FINGER tip (8) enters the upper zone (indexTip.y <= topBound)
+                 const isScrollUpActive = indexTip.y <= topBound;
+                 
+                 // Scroll Down: Only triggered when THUMB tip (4) enters the lower zone (thumbTip.y >= bottomBound)
+                 const isScrollDownActive = thumbTip.y >= bottomBound;
 
-                if (isScrollUpActive) {
-                  // Hand is in upper Scroll Up zone
-                  targetScrollVelocity = -15; // Set target upward velocity
-                  setIsScrolling(true);
-                  setIsPinching(false);
-                  pinchingRef.current = false;
-                } else if (isScrollDownActive) {
-                  // Hand is in lower Scroll Down zone
-                  targetScrollVelocity = 15; // Set target downward velocity
-                  setIsScrolling(true);
-                  setIsPinching(false);
-                  pinchingRef.current = false;
-                } else {
+                 // Draw skeleton landmarks & scroll zones overlay on canvas
+                 if (ctx && canvas) {
+                   drawScrollZones(ctx, isScrollUpActive, isScrollDownActive);
+                   drawHandSkeleton(ctx, landmarks);
+                 }
+
+                 if (isScrollUpActive) {
+                   // Hand is in upper Scroll Up zone
+                   targetScrollVelocity = -15; // Set target upward velocity
+                   setIsScrolling(true);
+                   setIsPinching(false);
+                   pinchingRef.current = false;
+                 } else if (isScrollDownActive) {
+                   // Hand is in lower Scroll Down zone
+                   targetScrollVelocity = 15; // Set target downward velocity
+                   setIsScrolling(true);
+                   setIsPinching(false);
+                   pinchingRef.current = false;
+                 } else {
                   // Hand is in the middle POINTER zone
                   setIsScrolling(false);
 
@@ -373,15 +377,15 @@ export default function HandCursor() {
     
     // Bottom Zone (Scroll Down)
     ctx.fillStyle = isActiveBottom ? 'rgba(16, 185, 129, 0.28)' : 'rgba(99, 102, 241, 0.12)';
-    ctx.fillRect(0, h * 0.78, w, h * 0.22);
+    ctx.fillRect(0, h * 0.70, w, h * 0.30);
     
     ctx.beginPath();
-    ctx.moveTo(0, h * 0.78);
-    ctx.lineTo(w, h * 0.78);
+    ctx.moveTo(0, h * 0.70);
+    ctx.lineTo(w, h * 0.70);
     ctx.stroke();
     
     ctx.fillStyle = isActiveBottom ? '#10b981' : '#a5b4fc';
-    ctx.fillText('▼ SCROLL DOWN (JEMPOL)', w / 2, h * 0.92);
+    ctx.fillText('▼ SCROLL DOWN (JEMPOL)', w / 2, h * 0.88);
   };
 
   // Helper to draw ONLY index finger and thumb landmarks/skeleton on canvas
