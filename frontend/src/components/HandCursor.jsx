@@ -22,10 +22,8 @@ export default function HandCursor() {
   // Toggle hand cursor mode
   const handleToggle = async () => {
     if (active) {
-      // Stop tracking
       stopTracking();
     } else {
-      // Start tracking
       await startTracking();
     }
   };
@@ -34,9 +32,9 @@ export default function HandCursor() {
     setLoading(true);
     setError(null);
     try {
-      // 1. Get webcam stream
+      // 1. Get webcam stream with relaxed constraints for maximum device compatibility
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { width: 320, height: 240, frameRate: { max: 30 } },
+        video: true,
         audio: false
       });
       streamRef.current = stream;
@@ -45,12 +43,16 @@ export default function HandCursor() {
         videoRef.current.muted = true;
         videoRef.current.setAttribute('muted', '');
         videoRef.current.setAttribute('playsinline', '');
-        videoRef.current.play().catch(err => {
-          console.warn("Explicit video play failed:", err);
-        });
+        
+        // Force video play
+        try {
+          await videoRef.current.play();
+        } catch (playErr) {
+          console.warn("Webcam video play trigger issue:", playErr);
+        }
       }
 
-      // 2. Load MediaPipe HandLandmarker
+      // 2. Load MediaPipe HandLandmarker from CDN
       if (!landmarkerRef.current) {
         const vision = await FilesetResolver.forVisionTasks(
           "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm"
@@ -70,7 +72,7 @@ export default function HandCursor() {
       setLoading(false);
     } catch (err) {
       console.error("Failed to start hand tracking:", err);
-      setError("Gagal mengakses kamera. Pastikan izin kamera telah diberikan.");
+      setError(`Gagal mengakses kamera/model AI: ${err.message || err}`);
       setLoading(false);
       stopTracking();
     }
@@ -115,75 +117,83 @@ export default function HandCursor() {
     const ctx = canvas ? canvas.getContext('2d') : null;
 
     let lastVideoTime = -1;
-    const alpha = 0.22; // Low-pass filter smoothing coefficient (lower = smoother but has delay)
+    const alpha = 0.22; // Smoothing coefficient
 
     const detect = () => {
-      if (video.videoWidth > 0) {
-        const now = performance.now();
-        if (video.currentTime !== lastVideoTime) {
-          lastVideoTime = video.currentTime;
-          
-          const results = landmarker.detectForVideo(video, now);
-          
-          if (results.landmarks && results.landmarks.length > 0) {
-            const landmarks = results.landmarks[0];
+      try {
+        if (video.videoWidth > 0) {
+          // 1. Draw mirrored camera frame onto the canvas
+          if (ctx && canvas) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          }
+
+          const now = performance.now();
+          if (video.currentTime !== lastVideoTime) {
+            lastVideoTime = video.currentTime;
             
-            // Draw skeleton landmarks on preview canvas
-            if (ctx && canvas) {
-              drawHandSkeleton(ctx, landmarks);
-            }
-
-            // Index finger tip (Landmark 8) and Thumb tip (Landmark 4)
-            const indexTip = landmarks[8];
-            const thumbTip = landmarks[4];
-
-            if (indexTip && thumbTip) {
-              // Coordinate mapping from normalized camera [0.0 - 1.0] to viewport pixels
-              // Mirror coordinates because camera feed is mirrored
-              const scaleX = (1 - indexTip.x - 0.22) / 0.56; // Bounding box X [0.22 - 0.78]
-              const scaleY = (indexTip.y - 0.22) / 0.56;    // Bounding box Y [0.22 - 0.78]
+            const results = landmarker.detectForVideo(video, now);
+            
+            if (results.landmarks && results.landmarks.length > 0) {
+              const landmarks = results.landmarks[0];
               
-              const clampedX = Math.max(0, Math.min(1, scaleX));
-              const clampedY = Math.max(0, Math.min(1, scaleY));
+              // 2. Draw skeleton landmarks on top of the camera frame
+              if (ctx && canvas) {
+                drawHandSkeleton(ctx, landmarks);
+              }
 
-              const targetX = clampedX * window.innerWidth;
-              const targetY = clampedY * window.innerHeight;
+              // Index finger tip (Landmark 8) and Thumb tip (Landmark 4)
+              const indexTip = landmarks[8];
+              const thumbTip = landmarks[4];
 
-              // Apply smoothing (Low pass filter)
-              cursorRef.current.x = cursorRef.current.x * (1 - alpha) + targetX * alpha;
-              cursorRef.current.y = cursorRef.current.y * (1 - alpha) + targetY * alpha;
-              
-              setCursorPos({ x: cursorRef.current.x, y: cursorRef.current.y });
+              if (indexTip && thumbTip) {
+                // Coordinate mapping from normalized camera [0.0 - 1.0] to viewport pixels
+                const scaleX = (1 - indexTip.x - 0.22) / 0.56; // Bounding box X [0.22 - 0.78]
+                const scaleY = (indexTip.y - 0.22) / 0.56;    // Bounding box Y [0.22 - 0.78]
+                
+                const clampedX = Math.max(0, Math.min(1, scaleX));
+                const clampedY = Math.max(0, Math.min(1, scaleY));
 
-              // Calculate distance between thumb tip & index tip for Pinch Gesture (Click)
-              const dx = thumbTip.x - indexTip.x;
-              const dy = thumbTip.y - indexTip.y;
-              const dz = thumbTip.z - indexTip.z;
-              const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                const targetX = clampedX * window.innerWidth;
+                const targetY = clampedY * window.innerHeight;
 
-              const clickThreshold = 0.048; // Pinch distance threshold
+                // Smoothing
+                cursorRef.current.x = cursorRef.current.x * (1 - alpha) + targetX * alpha;
+                cursorRef.current.y = cursorRef.current.y * (1 - alpha) + targetY * alpha;
+                
+                setCursorPos({ x: cursorRef.current.x, y: cursorRef.current.y });
 
-              if (distance < clickThreshold) {
-                if (!pinchingRef.current) {
-                  pinchingRef.current = true;
-                  setIsPinching(true);
-                  triggerClick(cursorRef.current.x, cursorRef.current.y);
-                }
-              } else {
-                if (pinchingRef.current) {
-                  pinchingRef.current = false;
-                  setIsPinching(false);
+                // Pinch Gesture detection
+                const dx = thumbTip.x - indexTip.x;
+                const dy = thumbTip.y - indexTip.y;
+                const dz = thumbTip.z - indexTip.z;
+                const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+                const clickThreshold = 0.048;
+
+                if (distance < clickThreshold) {
+                  if (!pinchingRef.current) {
+                    pinchingRef.current = true;
+                    setIsPinching(true);
+                    triggerClick(cursorRef.current.x, cursorRef.current.y);
+                  }
+                } else {
+                  if (pinchingRef.current) {
+                    pinchingRef.current = false;
+                    setIsPinching(false);
+                  }
                 }
               }
             }
-          } else {
-            // Clear canvas if no hand detected
-            if (ctx && canvas) {
-              ctx.clearRect(0, 0, canvas.width, canvas.height);
-            }
           }
         }
+      } catch (detectErr) {
+        console.error("Error in detection loop:", detectErr);
+        setError(`AI Error: ${detectErr.message || detectErr}`);
+        stopTracking();
+        return;
       }
+      
       animationFrameId.current = requestAnimationFrame(detect);
     };
 
@@ -198,9 +208,6 @@ export default function HandCursor() {
 
   // Helper to draw landmarks skeleton on canvas
   const drawHandSkeleton = (ctx, landmarks) => {
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    
-    // Draw connections
     ctx.strokeStyle = '#4f46e5';
     ctx.lineWidth = 3;
     ctx.beginPath();
@@ -228,7 +235,7 @@ export default function HandCursor() {
     ctx.fillStyle = '#22d3ee';
     for (const landmark of landmarks) {
       ctx.beginPath();
-      ctx.arc(landmark.x * ctx.canvas.width, landmark.y * ctx.canvas.height, 4, 0, 2 * Math.PI);
+      ctx.arc(landmark.x * ctx.canvas.width, landmark.y * ctx.canvas.height, 4.5, 0, 2 * Math.PI);
       ctx.fill();
     }
   };
@@ -292,7 +299,7 @@ export default function HandCursor() {
         }
       `}</style>
 
-      {/* 1. Global Virtual Cursor Overlay (Only active when tracking) */}
+      {/* 1. Global Virtual Cursor Overlay */}
       {active && (
         <div 
           className="fixed w-6 h-6 rounded-full border border-white shadow-xl pointer-events-none z-[99999] transition-transform duration-75 flex items-center justify-center bg-indigo-500/35"
@@ -318,7 +325,7 @@ export default function HandCursor() {
         />
       ))}
 
-      {/* 3. Floating Control Button (Bottom Right) */}
+      {/* 3. Floating Control Button */}
       <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end gap-3.5">
         {error && (
           <div className="bg-rose-50 border border-rose-200 text-rose-600 text-xs px-3.5 py-2.5 rounded-xl shadow-lg flex items-center gap-2 max-w-xs animate-bounce">
@@ -335,7 +342,6 @@ export default function HandCursor() {
               ? 'bg-rose-600 hover:bg-rose-700 text-white shadow-rose-600/10' 
               : 'bg-white hover:bg-slate-50 text-indigo-600 border border-slate-100 hover:shadow-indigo-500/5'
           }`}
-          title={active ? 'Matikan Pointer Tangan' : 'Aktifkan Pointer Tangan'}
         >
           {loading ? (
             <>
@@ -356,21 +362,23 @@ export default function HandCursor() {
         </button>
       </div>
 
-      {/* 4. Mini PIP-style Camera Feed Window (Bottom Left) */}
+      {/* 4. Mini PIP-style Camera Feed Window */}
       {active && (
         <div className="fixed bottom-6 left-6 w-44 h-33 bg-slate-900 border-2 border-indigo-500/80 rounded-2xl overflow-hidden shadow-2xl z-[9999] flex items-center justify-center">
-          <div className="relative w-full h-full transform -scale-x-100"> {/* Mirrors feed for user */}
+          <div className="relative w-full h-full transform -scale-x-100">
+            {/* Hidden video element used for tracking */}
             <video 
               ref={videoRef}
               autoPlay 
               playsInline 
               muted 
-              className="absolute inset-0 w-full h-full object-cover opacity-65"
+              className="hidden"
             />
+            {/* Canvas renders both webcam video frame & hand skeleton overlay */}
             <canvas 
               ref={canvasRef}
-              width={176}
-              height={132}
+              width={320}
+              height={240}
               className="absolute inset-0 w-full h-full object-cover"
             />
           </div>
