@@ -241,10 +241,10 @@ export default function HandCursor() {
 
               if (indexTip && thumbTip && indexKnuckle) {
                  // Coordinate mapping from normalized camera [0.0 - 1.0] to viewport pixels
-                 // Using topBound (0.22) and bottomBound (0.60) for comfort
-                 const topBound = 0.22;
-                 const bottomBound = 0.60;
-                 const rangeY = bottomBound - topBound;
+                  // Using topBound (0.15) and bottomBound (0.75) for compact scroll zones
+                  const topBound = 0.15;
+                  const bottomBound = 0.75;
+                  const rangeY = bottomBound - topBound;
 
                  const scaleX = (1 - indexTip.x - 0.22) / 0.56;
                  const scaleY = (indexTip.y - topBound) / rangeY;
@@ -362,33 +362,33 @@ export default function HandCursor() {
     const w = ctx.canvas.width;
     const h = ctx.canvas.height;
     
-    // Top Zone (Scroll Up)
+    // Top Zone (Scroll Up - 15%)
     ctx.fillStyle = isActiveTop ? 'rgba(16, 185, 129, 0.28)' : 'rgba(99, 102, 241, 0.12)';
-    ctx.fillRect(0, 0, w, h * 0.22);
+    ctx.fillRect(0, 0, w, h * 0.15);
     
     ctx.strokeStyle = isActiveTop ? '#10b981' : 'rgba(99, 102, 241, 0.3)';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.moveTo(0, h * 0.22);
-    ctx.lineTo(w, h * 0.22);
+    ctx.moveTo(0, h * 0.15);
+    ctx.lineTo(w, h * 0.15);
     ctx.stroke();
     
     ctx.fillStyle = isActiveTop ? '#10b981' : '#a5b4fc';
     ctx.font = 'bold 8px system-ui, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('▲ SCROLL UP (TELUNJUK)', w / 2, h * 0.14);
+    ctx.fillText('▲ SCROLL UP (TELUNJUK)', w / 2, h * 0.10);
     
-    // Bottom Zone (Scroll Down)
+    // Bottom Zone (Scroll Down - 25%)
     ctx.fillStyle = isActiveBottom ? 'rgba(16, 185, 129, 0.28)' : 'rgba(99, 102, 241, 0.12)';
-    ctx.fillRect(0, h * 0.60, w, h * 0.40);
+    ctx.fillRect(0, h * 0.75, w, h * 0.25);
     
     ctx.beginPath();
-    ctx.moveTo(0, h * 0.60);
-    ctx.lineTo(w, h * 0.60);
+    ctx.moveTo(0, h * 0.75);
+    ctx.lineTo(w, h * 0.75);
     ctx.stroke();
     
     ctx.fillStyle = isActiveBottom ? '#10b981' : '#a5b4fc';
-    ctx.fillText('▼ SCROLL DOWN (JEMPOL)', w / 2, h * 0.82);
+    ctx.fillText('▼ SCROLL DOWN (JEMPOL)', w / 2, h * 0.90);
   };
 
   // Helper to draw ONLY index finger and thumb landmarks/skeleton on canvas
