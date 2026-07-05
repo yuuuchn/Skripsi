@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://15f1-114-10-98-174.ngrok-free.app.app/api',
+  baseURL: 'https://e62f-114-10-98-174.ngrok-free.appapp/api',
 });
 
 api.interceptors.request.use((config) => {
