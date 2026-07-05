@@ -183,7 +183,7 @@ export function seedMateri() {
     <li><strong>Kecepatan:</strong> Sedang sampai cepat</li>
     <li><strong>Contoh:</strong> Jaringan antar sekolah dalam satu kota, jaringan kantor pemerintah kota</li>
   </ul>
-  <p><em>Bayangin MAN seperti grup WA satu angkatan sekolah — anggotanya dari kelas yang berbeda-beda, tapi masih satu sekolah.</em></p>
+  <p><em>Bayangin MAN seperti grup WA antar semua sekolah di satu kota — anggotanya dari sekolah yang berbeda-beda, tapi masih satu kota yang sama.</em></p>
 </div>
 
 <div class="card-jenis">
@@ -359,12 +359,24 @@ export function seedMateri() {
 <div class="card-jenis">
   <h3>Tips Aman Berinternet untuk Pelajar</h3>
   <ul>
-    <li>Jangan pernah memberi password ke siapa pun</li>
-    <li>Jangan klik link sembarangan yang dikirim orang tak dikenal</li>
-    <li>Batasi waktu main HP, jangan sampai lupa belajar!</li>
-    <li>Kalau dapat berita, cek dulu kebenarannya</li>
+    <li><strong>Jaga Password:</strong> Jangan pernah memberi password ke siapa pun, termasuk teman dekat. Gunakan kombinasi huruf, angka, dan simbol.</li>
+    <li><strong>Waspada Link Mencurigakan:</strong> Jangan klik link sembarangan yang dikirim orang tak dikenal — bisa jadi phishing (penipuan) yang mencuri data kamu.</li>
+    <li><strong>Atur Waktu Layar:</strong> Batasi waktu bermain HP/game online. Sisihkan waktu untuk belajar, olahraga, dan istirahat cukup.</li>
+    <li><strong>Cek Kebenaran Berita:</strong> Sebelum menyebarkan berita atau informasi, cek dulu kebenarannya di sumber terpercaya. Jangan ikut menyebarkan hoax!</li>
+    <li><strong>Jaga Privasi:</strong> Jangan sembarangan membagikan foto, alamat rumah, atau nomor telepon di media sosial.</li>
+    <li><strong>Laporkan Cyber Bullying:</strong> Kalau kamu atau temanmu menjadi korban perundungan online, segera laporkan ke orang tua atau guru.</li>
   </ul>
-</div>`
+</div>
+
+<h3>Perbandingan Dampak Positif dan Negatif</h3>
+<table>
+  <tr><th>Dampak Positif</th><th>Dampak Negatif</th></tr>
+  <tr><td>Belajar online jadi mudah</td><td>Kecanduan media sosial dan game</td></tr>
+  <tr><td>Komunikasi lebih cepat</td><td>Cyber bullying dan pelecehan online</td></tr>
+  <tr><td>Akses informasi tanpa batas</td><td>Penyebaran hoax dan berita palsu</td></tr>
+  <tr><td>Belanja dan transaksi praktis</td><td>Penipuan online (phishing, scam)</td></tr>
+  <tr><td>Hiburan dan kreativitas</td><td>Malware dan pencurian data</td></tr>
+</table>`
     }
   ];
 
@@ -384,171 +396,316 @@ export function seedQuiz() {
   );
 
   const quizData = [
-    // Materi 1: Pengertian
+    // ── Materi 1: Pengertian Jaringan Komputer (10 soal) ──
     {
-      materi_id: 1, soal: 'Apa itu jaringan komputer?',
-      a: 'Satu komputer yang terhubung ke listrik', b: 'Dua atau lebih komputer yang saling terhubung',
-      c: 'Aplikasi di handphone', d: 'Sebuah jenis printer', jawaban: 'b'
+      materi_id: 1, soal: 'Apa yang dimaksud dengan jaringan komputer?',
+      a: 'Satu komputer yang terhubung ke listrik', b: 'Dua atau lebih komputer yang saling terhubung untuk berbagi data',
+      c: 'Aplikasi di handphone', d: 'Sebuah jenis printer canggih', jawaban: 'b'
     },
     {
-      materi_id: 1, soal: 'Contoh berbagi sumber daya dalam jaringan adalah...',
-      a: 'Menyalakan komputer', b: 'Satu printer dipakai banyak komputer',
-      c: 'Mematikan WiFi', d: 'Menginstall game', jawaban: 'b'
+      materi_id: 1, soal: 'Contoh berbagi sumber daya (resource sharing) dalam jaringan adalah...',
+      a: 'Menyalakan komputer sendirian', b: 'Satu printer dipakai oleh banyak komputer sekaligus',
+      c: 'Mematikan WiFi router', d: 'Menginstall game di komputer', jawaban: 'b'
     },
     {
-      materi_id: 1, soal: 'Di bawah ini yang BUKAN manfaat jaringan komputer adalah...',
-      a: 'Berkomunikasi dengan teman', b: 'Berbagi data',
-      c: 'Membuat komputer jadi lebih mahal', d: 'Mengakses internet', jawaban: 'c'
+      materi_id: 1, soal: 'Di bawah ini yang BUKAN merupakan manfaat jaringan komputer adalah...',
+      a: 'Berkomunikasi dengan teman lewat chat', b: 'Berbagi file dan data antar komputer',
+      c: 'Membuat komputer secara otomatis menjadi lebih mahal', d: 'Mengakses informasi di internet', jawaban: 'c'
     },
     {
-      materi_id: 1, soal: 'Contoh jaringan komputer di sekolah adalah...',
-      a: 'Perpustakaan buku', b: 'Lab komputer yang terhubung',
-      c: 'Kantin sekolah', d: 'Lapangan olahraga', jawaban: 'b'
+      materi_id: 1, soal: 'Contoh penerapan jaringan komputer di lingkungan sekolah adalah...',
+      a: 'Rak buku di perpustakaan', b: 'Komputer-komputer di laboratorium yang saling terhubung',
+      c: 'Kantin dan koperasi sekolah', d: 'Lapangan olahraga dan aula', jawaban: 'b'
     },
     {
-      materi_id: 1, soal: 'Apa yang bisa dilakukan dengan adanya jaringan komputer?',
-      a: 'Mencetak dokumen dari komputer lain', b: 'Membuat komputer baru',
-      c: 'Menambah RAM', d: 'Mempercepat kipas komputer', jawaban: 'a'
-    },
-    // Materi 2: Sejarah
-    {
-      materi_id: 2, soal: 'Apa nama proyek awal yang menjadi cikal bakal internet?',
-      a: 'NASA', b: 'ARPANET',
-      c: 'Microsoft', d: 'Google', jawaban: 'b'
+      materi_id: 1, soal: 'Salah satu keuntungan utama jaringan komputer di kantor adalah...',
+      a: 'Karyawan bisa mencetak dokumen dari printer yang sama tanpa pindah tempat', b: 'Komputer jadi lebih cepat prosesnya',
+      c: 'Layar monitor menjadi lebih besar', d: 'Keyboard tidak perlu diganti', jawaban: 'a'
     },
     {
-      materi_id: 2, soal: 'Pada tahun berapa ARPANET pertama kali menghubungkan 4 komputer?',
+      materi_id: 1, soal: 'WiFi di rumah yang menghubungkan HP, laptop, dan Smart TV ke internet adalah contoh...',
+      a: 'Jaringan kabel fiber optik', b: 'Jaringan komputer nirkabel',
+      c: 'Jaringan telepon kabel', d: 'Jaringan listrik rumah', jawaban: 'b'
+    },
+    {
+      materi_id: 1, soal: 'Tujuan utama dibuatnya jaringan komputer adalah...',
+      a: 'Supaya komputer terlihat lebih keren', b: 'Agar komputer bisa saling berbagi data, berkomunikasi, dan memakai perangkat bersama',
+      c: 'Untuk mempercepat prosesor komputer', d: 'Menambah kapasitas harddisk', jawaban: 'b'
+    },
+    {
+      materi_id: 1, soal: 'Ketika kamu mengirim tugas ke guru melalui WhatsApp, kamu sedang memanfaatkan jaringan komputer untuk...',
+      a: 'Berbagi perangkat keras', b: 'Komunikasi dan berbagi data',
+      c: 'Memperbaiki komputer', d: 'Menyimpan file secara offline', jawaban: 'b'
+    },
+    {
+      materi_id: 1, soal: 'Analogi yang tepat untuk menggambarkan jaringan komputer adalah...',
+      a: 'Buku yang dibaca sendirian di kamar', b: 'Sinyal HP yang menghubungkan kamu dengan teman-teman',
+      c: 'Baterai yang mengisi daya laptop', d: 'Layar monitor yang menampilkan gambar', jawaban: 'b'
+    },
+    {
+      materi_id: 1, soal: 'Apa yang terjadi jika komputer di lab sekolah tidak terhubung dalam jaringan?',
+      a: 'Komputer menjadi lebih cepat', b: 'Siswa tidak bisa berbagi file atau memakai printer bersama',
+      c: 'Internet menjadi lebih kencang', d: 'Layar komputer menjadi lebih jernih', jawaban: 'b'
+    },
+
+    // ── Materi 2: Sejarah Internet (10 soal) ──
+    {
+      materi_id: 2, soal: 'Apa nama proyek yang menjadi cikal bakal lahirnya internet?',
+      a: 'NASA Space Program', b: 'ARPANET',
+      c: 'Microsoft Windows', d: 'Google Search', jawaban: 'b'
+    },
+    {
+      materi_id: 2, soal: 'Pada tahun berapa ARPANET pertama kali berhasil menghubungkan 4 komputer?',
       a: '1959', b: '1969',
       c: '1979', d: '1989', jawaban: 'b'
     },
     {
-      materi_id: 2, soal: 'Siapa yang menemukan World Wide Web (WWW)?',
+      materi_id: 2, soal: 'Siapa ilmuwan yang menemukan World Wide Web (WWW)?',
       a: 'Vint Cerf', b: 'Bob Kahn',
       c: 'Tim Berners-Lee', d: 'Mark Zuckerberg', jawaban: 'c'
     },
     {
-      materi_id: 2, soal: 'Indonesia pertama kali terhubung internet pada tahun...',
+      materi_id: 2, soal: 'Indonesia pertama kali terhubung ke internet pada tahun...',
       a: '1990', b: '1994',
       c: '2000', d: '2005', jawaban: 'b'
     },
     {
-      materi_id: 2, soal: 'Apa kepanjangan dari ARPANET?',
+      materi_id: 2, soal: 'Kepanjangan dari ARPANET adalah...',
       a: 'Advanced Research Projects Agency Network', b: 'American Research Program Network',
       c: 'Asian Radio Program Network', d: 'Automatic Router Protocol Network', jawaban: 'a'
     },
-    // Materi 3: Jenis-jenis
     {
-      materi_id: 3, soal: 'Jaringan yang mencakup satu gedung sekolah disebut...',
+      materi_id: 2, soal: 'Protokol TCP/IP yang menjadi bahasa standar komunikasi internet dikembangkan oleh...',
+      a: 'Tim Berners-Lee dan Steve Jobs', b: 'Vint Cerf dan Bob Kahn',
+      c: 'Bill Gates dan Mark Zuckerberg', d: 'Albert Einstein dan Thomas Edison', jawaban: 'b'
+    },
+    {
+      materi_id: 2, soal: 'Nama penyedia layanan internet (ISP) pertama di Indonesia adalah...',
+      a: 'Telkom', b: 'IndoNet',
+      c: 'Indosat', d: 'XL Axiata', jawaban: 'b'
+    },
+    {
+      materi_id: 2, soal: 'Pada tahun berapa World Wide Web (WWW) ditemukan sehingga kita bisa melihat gambar dan teks di internet?',
+      a: '1969', b: '1983',
+      c: '1990', d: '2000', jawaban: 'c'
+    },
+    {
+      materi_id: 2, soal: 'Sebelum ada WiFi dan data seluler, cara komputer bisa internetan adalah...',
+      a: 'Menggunakan remote control', b: 'Dihubungkan dengan kabel panjang ke jaringan',
+      c: 'Memakai antena TV', d: 'Mengunakan baterai khusus', jawaban: 'b'
+    },
+    {
+      materi_id: 2, soal: 'Pada tahun 1983, ARPANET resmi menggunakan protokol standar internet yaitu...',
+      a: 'HTTP', b: 'WWW',
+      c: 'TCP/IP', d: 'WiFi 6', jawaban: 'c'
+    },
+
+    // ── Materi 3: LAN, MAN, WAN (10 soal) ──
+    {
+      materi_id: 3, soal: 'Jaringan yang mencakup satu gedung sekolah atau lab komputer disebut...',
       a: 'LAN', b: 'MAN',
       c: 'WAN', d: 'VAN', jawaban: 'a'
     },
     {
-      materi_id: 3, soal: 'Jaringan yang mencakup satu kota disebut...',
+      materi_id: 3, soal: 'Jaringan komputer yang mencakup wilayah satu kota disebut...',
       a: 'LAN', b: 'MAN',
       c: 'WAN', d: 'PAN', jawaban: 'b'
     },
     {
-      materi_id: 3, soal: 'Contoh jaringan WAN yang paling terkenal adalah...',
-      a: 'Lab komputer sekolah', b: 'Jaringan WiFi kantor',
-      c: 'Internet', d: 'Jaringan Bluetooth', jawaban: 'c'
+      materi_id: 3, soal: 'Contoh jaringan WAN yang paling dikenal dan dipakai seluruh dunia adalah...',
+      a: 'Lab komputer sekolah', b: 'Jaringan WiFi di kantor',
+      c: 'Internet', d: 'Koneksi Bluetooth', jawaban: 'c'
     },
     {
-      materi_id: 3, soal: 'Dari yang terkecil ke terbesar, urutan jaringan yang benar adalah...',
+      materi_id: 3, soal: 'Urutan jenis jaringan dari cakupan area terkecil ke terluas yang benar adalah...',
       a: 'WAN - MAN - LAN', b: 'LAN - WAN - MAN',
       c: 'LAN - MAN - WAN', d: 'MAN - LAN - WAN', jawaban: 'c'
     },
     {
-      materi_id: 3, soal: 'Keunggulan LAN dibanding WAN adalah...',
-      a: 'Jangkauan lebih luas', b: 'Biaya lebih murah dan kecepatan lebih tinggi',
-      c: 'Bisa dipakai di seluruh dunia', d: 'Tidak perlu kabel', jawaban: 'b'
+      materi_id: 3, soal: 'Keunggulan LAN dibandingkan WAN dalam hal biaya dan kecepatan adalah...',
+      a: 'LAN jangkauannya lebih luas dari WAN', b: 'LAN lebih murah biayanya dan kecepatannya lebih tinggi',
+      c: 'LAN bisa dipakai di seluruh dunia', d: 'LAN tidak membutuhkan kabel sama sekali', jawaban: 'b'
     },
     {
-      materi_id: 3, soal: 'Jaringan yang paling luas jangkauannya adalah...',
+      materi_id: 3, soal: 'Jaringan antar kantor pemerintah dalam satu kota Palembang adalah contoh...',
       a: 'LAN', b: 'MAN',
-      c: 'WAN', d: 'PAN', jawaban: 'c'
+      c: 'WAN', d: 'PAN', jawaban: 'b'
     },
-    // Materi 4: Media Transmisi
     {
-      materi_id: 4, soal: 'Kabel yang paling sering dipakai untuk jaringan LAN adalah...',
-      a: 'Fiber optik', b: 'UTP',
-      c: 'Kabel coaxial', d: 'Kabel listrik', jawaban: 'b'
+      materi_id: 3, soal: 'WiFi di rumahmu yang menghubungkan HP dan laptop termasuk jenis jaringan...',
+      a: 'WAN', b: 'MAN',
+      c: 'LAN', d: 'Internet global', jawaban: 'c'
+    },
+    {
+      materi_id: 3, soal: 'Jaringan komputer yang menghubungkan kantor-kantor bank di seluruh Indonesia termasuk jenis...',
+      a: 'LAN', b: 'MAN',
+      c: 'WAN', d: 'Bluetooth', jawaban: 'c'
+    },
+    {
+      materi_id: 3, soal: 'Kepanjangan dari LAN adalah...',
+      a: 'Large Area Network', b: 'Local Area Network',
+      c: 'Long Access Network', d: 'Linked Area Node', jawaban: 'b'
+    },
+    {
+      materi_id: 3, soal: 'Mengapa biaya membangun WAN lebih mahal dibandingkan LAN?',
+      a: 'Karena WAN menggunakan perangkat yang lebih murah', b: 'Karena WAN hanya ada di satu gedung',
+      c: 'Karena WAN mencakup area yang sangat luas sehingga butuh infrastruktur yang besar', d: 'Karena WAN tidak memerlukan kabel', jawaban: 'c'
+    },
+
+    // ── Materi 4: Media Transmisi (10 soal) ──
+    {
+      materi_id: 4, soal: 'Kabel jaringan yang paling umum dipakai untuk menghubungkan komputer di lab sekolah adalah...',
+      a: 'Fiber optik', b: 'Kabel UTP',
+      c: 'Kabel coaxial', d: 'Kabel listrik PLN', jawaban: 'b'
     },
     {
       materi_id: 4, soal: 'Fiber optik mengirimkan data dalam bentuk...',
-      a: 'Listrik', b: 'Cahaya',
-      c: 'Gelombang radio', d: 'Suara', jawaban: 'b'
+      a: 'Arus listrik', b: 'Cahaya (sinar laser/LED)',
+      c: 'Gelombang radio', d: 'Gelombang suara', jawaban: 'b'
     },
     {
-      materi_id: 4, soal: 'Apa kelebihan fiber optik dibanding kabel UTP?',
-      a: 'Lebih murah', b: 'Lebih mudah dipasang',
-      c: 'Kecepatan lebih tinggi dan jarak lebih jauh', d: 'Tidak perlu konektor', jawaban: 'c'
+      materi_id: 4, soal: 'Apa keunggulan utama fiber optik dibandingkan kabel UTP?',
+      a: 'Lebih murah harganya', b: 'Lebih mudah dan cepat dipasang',
+      c: 'Kecepatan sangat tinggi dan bisa menjangkau jarak yang jauh', d: 'Tidak perlu konektor di ujungnya', jawaban: 'c'
     },
     {
-      materi_id: 4, soal: 'Media transmisi nirkabel yang jangkauannya 30-100 meter adalah...',
+      materi_id: 4, soal: 'Media transmisi nirkabel yang memiliki jangkauan 30–100 meter dan sering dipakai di rumah adalah...',
       a: 'Bluetooth', b: 'WiFi',
-      c: 'Inframerah', d: 'Satelit', jawaban: 'b'
+      c: 'Inframerah', d: 'Sinyal satelit', jawaban: 'b'
     },
     {
-      materi_id: 4, soal: 'Konektor yang dipakai di ujung kabel UTP adalah...',
-      a: 'USB', b: 'HDMI',
+      materi_id: 4, soal: 'Konektor yang dipasang di ujung kabel UTP untuk disambungkan ke komputer atau switch adalah...',
+      a: 'USB Type-A', b: 'HDMI',
       c: 'RJ-45', d: 'VGA', jawaban: 'c'
     },
     {
-      materi_id: 4, soal: 'Bluetooth biasanya dipakai untuk...',
-      a: 'Internet jarak jauh', b: 'Kirim data jarak dekat (maks 10m)',
-      c: 'Menonton TV', d: 'Mengisi baterai', jawaban: 'b'
+      materi_id: 4, soal: 'Bluetooth paling cocok digunakan untuk...',
+      a: 'Koneksi internet jarak jauh lintas kota', b: 'Mengirim file antar perangkat dalam jarak dekat (maks 10 meter)',
+      c: 'Menonton streaming video HD', d: 'Mengisi daya baterai secara nirkabel', jawaban: 'b'
     },
-    // Materi 5: Perangkat
     {
-      materi_id: 5, soal: 'Perangkat yang menghubungkan perangkat di rumah ke internet adalah...',
+      materi_id: 4, soal: 'Media transmisi yang menggunakan kabel fisik untuk mengirimkan data disebut...',
+      a: 'Media nirkabel (unguided)', b: 'Media kabel (guided)',
+      c: 'Media satelit', d: 'Media inframerah', jawaban: 'b'
+    },
+    {
+      materi_id: 4, soal: 'Sinyal yang digunakan oleh HP kamu saat tidak ada WiFi dan tetap bisa internetan adalah...',
+      a: 'Bluetooth', b: 'Inframerah',
+      c: 'Data seluler (4G/5G)', d: 'Kabel UTP', jawaban: 'c'
+    },
+    {
+      materi_id: 4, soal: 'Jarak maksimal kabel UTP agar sinyal masih optimal adalah...',
+      a: '10 meter', b: '50 meter',
+      c: '100 meter', d: '1 kilometer', jawaban: 'c'
+    },
+    {
+      materi_id: 4, soal: 'Fiber optik biasanya dipakai untuk...',
+      a: 'Menghubungkan dua komputer dalam satu meja', b: 'Jaringan utama (backbone) internet antar kota atau negara',
+      c: 'Koneksi Bluetooth earphone', d: 'Sinyal remote control TV', jawaban: 'b'
+    },
+
+    // ── Materi 5: Perangkat Jaringan (10 soal) ──
+    {
+      materi_id: 5, soal: 'Perangkat jaringan yang bertugas menghubungkan jaringan rumah (LAN) ke internet adalah...',
       a: 'Switch', b: 'Router',
       c: 'Kabel UTP', d: 'Printer', jawaban: 'b'
     },
     {
-      materi_id: 5, soal: 'Apa fungsi switch dalam jaringan?',
-      a: 'Memancarkan sinyal WiFi', b: 'Menghubungkan komputer dalam satu jaringan',
-      c: 'Menyimpan data', d: 'Mencetak dokumen', jawaban: 'b'
+      materi_id: 5, soal: 'Fungsi utama switch dalam jaringan komputer adalah...',
+      a: 'Memancarkan sinyal WiFi ke seluruh ruangan', b: 'Menghubungkan beberapa komputer dalam satu jaringan LAN',
+      c: 'Menyimpan data dan file dokumen', d: 'Mencetak dokumen dari komputer', jawaban: 'b'
     },
     {
-      materi_id: 5, soal: 'Perangkat yang memancarkan sinyal WiFi disebut...',
+      materi_id: 5, soal: 'Perangkat yang dipasang di langit-langit ruangan dan berfungsi memancarkan sinyal WiFi disebut...',
       a: 'Modem', b: 'Switch',
-      c: 'Access Point', d: 'Router', jawaban: 'c'
+      c: 'Access Point (AP)', d: 'Router', jawaban: 'c'
     },
     {
-      materi_id: 5, soal: 'Konektor RJ-45 berbentuk mirip dengan...',
-      a: 'Colokan listrik', b: 'Colokan telepon (lebih besar)',
-      c: 'USB', d: 'HDMI', jawaban: 'b'
+      materi_id: 5, soal: 'Modem adalah perangkat yang berfungsi untuk...',
+      a: 'Mencetak dokumen secara nirkabel', b: 'Menyimpan data dalam jumlah besar',
+      c: 'Mengubah sinyal dari provider internet agar bisa digunakan komputer', d: 'Memancarkan sinyal Bluetooth', jawaban: 'c'
     },
     {
-      materi_id: 5, soal: 'Router bertugas untuk...',
-      a: 'Menyimpan file', b: 'Mengatur jalur data ke tujuan yang benar',
-      c: 'Menampilkan gambar', d: 'Mencetak dokumen', jawaban: 'b'
-    },
-    // Materi 6: Manfaat
-    {
-      materi_id: 6, soal: 'Contoh manfaat jaringan di bidang pendidikan adalah...',
-      a: 'Transfer uang', b: 'Belajar online dan kirim tugas',
-      c: 'Pesan makanan', d: 'Main game', jawaban: 'b'
+      materi_id: 5, soal: 'Router sering dianalogikan seperti satpam di pos penjagaan karena...',
+      a: 'Router menjaga keamanan fisik gedung kantor', b: 'Router mengatur dan mengarahkan data ke jalur dan tujuan yang benar',
+      c: 'Router hanya bekerja pada malam hari', d: 'Router memeriksa identitas pengguna secara manual', jawaban: 'b'
     },
     {
-      materi_id: 6, soal: 'Apa dampak NEGATIF dari jaringan komputer?',
-      a: 'Belajar jadi mudah', b: 'Komunikasi jadi cepat',
-      c: 'Kejahatan siber seperti hacking', d: 'Mengakses informasi', jawaban: 'c'
+      materi_id: 5, soal: 'Alur kerja perangkat jaringan yang benar dari internet ke komputer pengguna adalah...',
+      a: 'Switch → Router → Modem → Komputer', b: 'Modem → Router → Switch → Komputer',
+      c: 'Komputer → Switch → Modem → Router', d: 'Router → Modem → Switch → Komputer', jawaban: 'b'
     },
     {
-      materi_id: 6, soal: 'Contoh e-commerce (belanja online) adalah...',
-      a: 'Zoom', b: 'Shopee',
-      c: 'YouTube', d: 'WhatsApp', jawaban: 'b'
+      materi_id: 5, soal: 'Perangkat jaringan yang paling sering kamu lihat di rumah dan berfungsi ganda sebagai modem sekaligus router disebut...',
+      a: 'Access Point murni', b: 'Switch 24 port',
+      c: 'Modem router (modem WiFi)', d: 'Repeater jaringan', jawaban: 'c'
     },
     {
-      materi_id: 6, soal: 'Yang termasuk cyber bullying adalah...',
-      a: 'Belajar kelompok', b: 'Mengirim tugas',
-      c: 'Merundung teman di media sosial', d: 'Nonton film', jawaban: 'c'
+      materi_id: 5, soal: 'Di lab komputer sekolah, perangkat yang menghubungkan semua komputer dalam satu ruangan adalah...',
+      a: 'Router', b: 'Switch atau Hub',
+      c: 'Access Point', d: 'Modem', jawaban: 'b'
     },
     {
-      materi_id: 6, soal: 'Tips aman berinternet yang benar adalah...',
-      a: 'Memberi password ke teman', b: 'Klik link sembarangan',
-      c: 'Tidak memberi password ke siapa pun', d: 'Main game sampai lupa waktu', jawaban: 'c'
+      materi_id: 5, soal: 'Kepanjangan dari AP dalam jaringan komputer adalah...',
+      a: 'Application Program', b: 'Antenna Port',
+      c: 'Access Point', d: 'Area Protocol', jawaban: 'c'
+    },
+    {
+      materi_id: 5, soal: 'Apa perbedaan utama antara Switch dan Hub?',
+      a: 'Switch lebih mahal tapi fungsinya sama persis dengan Hub', b: 'Hub lebih pintar karena bisa mengirim data langsung ke tujuan',
+      c: 'Switch lebih pintar karena mengirim data langsung ke komputer yang dituju, bukan ke semua', d: 'Hub hanya bisa digunakan di rumah, Switch hanya di kantor', jawaban: 'c'
+    },
+
+    // ── Materi 6: Manfaat & Dampak (10 soal) ──
+    {
+      materi_id: 6, soal: 'Contoh pemanfaatan jaringan komputer di bidang pendidikan adalah...',
+      a: 'Transfer uang antar rekening bank', b: 'Belajar online dan mengirim tugas lewat Google Classroom',
+      c: 'Memesan makanan lewat aplikasi GoFood', d: 'Main game Mobile Legends', jawaban: 'b'
+    },
+    {
+      materi_id: 6, soal: 'Manakah di bawah ini yang termasuk dampak NEGATIF dari jaringan komputer?',
+      a: 'Belajar jadi lebih mudah dengan e-learning', b: 'Komunikasi dengan keluarga jauh jadi lebih cepat',
+      c: 'Kejahatan siber seperti hacking dan pencurian data', d: 'Akses informasi dari seluruh dunia', jawaban: 'c'
+    },
+    {
+      materi_id: 6, soal: 'Shopee dan Tokopedia adalah contoh platform e-commerce, yaitu layanan jaringan komputer di bidang...',
+      a: 'Pendidikan', b: 'Kesehatan',
+      c: 'Ekonomi (belanja online)', d: 'Hiburan', jawaban: 'c'
+    },
+    {
+      materi_id: 6, soal: 'Merundung atau menghina teman melalui media sosial seperti Instagram atau TikTok disebut...',
+      a: 'Hacking', b: 'Phishing',
+      c: 'Cyber bullying', d: 'Malware', jawaban: 'c'
+    },
+    {
+      materi_id: 6, soal: 'Tips aman berinternet yang paling tepat adalah...',
+      a: 'Membagikan password ke teman dekat agar bisa saling bantu', b: 'Mengklik link menarik dari orang tidak dikenal',
+      c: 'Tidak memberikan password kepada siapa pun dan menjaga privasi data', d: 'Main game online sampai larut malam karena gratis', jawaban: 'c'
+    },
+    {
+      materi_id: 6, soal: 'Konsultasi dokter secara online melalui aplikasi adalah contoh manfaat jaringan komputer di bidang...',
+      a: 'Ekonomi', b: 'Hiburan',
+      c: 'Kesehatan (telemedicine)', d: 'Pendidikan', jawaban: 'c'
+    },
+    {
+      materi_id: 6, soal: 'Virus atau program jahat yang bisa merusak dan mencuri data di komputer kamu disebut...',
+      a: 'Hoax', b: 'Malware',
+      c: 'Cyber bullying', d: 'Spam', jawaban: 'b'
+    },
+    {
+      materi_id: 6, soal: 'Penipuan online yang dilakukan dengan cara mengirim link atau pesan palsu untuk mencuri data pengguna disebut...',
+      a: 'Malware', b: 'Cyber bullying',
+      c: 'Phishing', d: 'Hoax', jawaban: 'c'
+    },
+    {
+      materi_id: 6, soal: 'Cara yang tepat untuk mencegah penyebaran hoax di media sosial adalah...',
+      a: 'Langsung share ke semua kontak agar semua tahu', b: 'Cek kebenaran informasi di sumber terpercaya sebelum menyebarkan',
+      c: 'Abaikan saja karena tidak berbahaya', d: 'Bagikan hanya ke grup keluarga saja', jawaban: 'b'
+    },
+    {
+      materi_id: 6, soal: 'Nonton YouTube, mendengarkan Spotify, dan bermain game online adalah contoh manfaat jaringan di bidang...',
+      a: 'Pendidikan', b: 'Kesehatan',
+      c: 'Ekonomi', d: 'Hiburan', jawaban: 'd'
     }
   ];
 
