@@ -56,7 +56,7 @@ export default function HandCursor() {
         }
       }
 
-      // 2. Load MediaPipe HandLandmarker (Using LITE model for high FPS & low latency)
+      // 2. Load MediaPipe HandLandmarker
       if (!landmarkerRef.current) {
         const vision = await FilesetResolver.forVisionTasks(
           "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm"
@@ -148,28 +148,26 @@ export default function HandCursor() {
                 drawHandSkeleton(ctx, landmarks);
               }
 
-              // Index finger tip (8), Thumb tip (4), Middle finger tip (12)
+              // Key landmarks
               const indexTip = landmarks[8];
+              const indexKnuckle = landmarks[6];
               const thumbTip = landmarks[4];
               const middleTip = landmarks[12];
-              
-              // Knuckles to detect finger state (extended or folded)
-              const indexKnuckle = landmarks[6];
               const middleKnuckle = landmarks[10];
               const ringTip = landmarks[16];
               const ringKnuckle = landmarks[14];
 
               if (indexTip && thumbTip && middleTip && indexKnuckle && middleKnuckle && ringTip && ringKnuckle) {
                 
-                // --- DETECT GESTURES ---
+                // --- ERGONOMIC GESTURE CLASSIFIER ---
                 
-                // 1. Finger Extension States (Y axis: 0 is top, 1 is bottom)
+                // Check if fingers are extended (Y axis: 0 is top, 1 is bottom)
                 const indexExtended = indexTip.y < indexKnuckle.y;
                 const middleExtended = middleTip.y < middleKnuckle.y;
-                const ringFolded = ringTip.y > ringKnuckle.y;
+                const ringExtended = ringTip.y < ringKnuckle.y;
 
-                // 2. Scroll Mode Gesture: Peace Sign (Index & Middle fingers extended, Ring finger folded)
-                const detectScrollMode = indexExtended && middleExtended && ringFolded;
+                // 1. Scroll Mode: Open Palm / Telapak Terbuka (Index, Middle, and Ring fingers all extended)
+                const detectScrollMode = indexExtended && middleExtended && ringExtended;
 
                 if (detectScrollMode) {
                   // SCROLL MODE ACTIVE
@@ -180,7 +178,7 @@ export default function HandCursor() {
                   // Calculate vertical movement (delta Y) for scrolling
                   if (prevIndexY.current !== null) {
                     const dy = indexTip.y - prevIndexY.current;
-                    const scrollAmount = dy * window.innerHeight * 1.6; // Scroll sensitivity multiplier
+                    const scrollAmount = dy * window.innerHeight * 1.8; // Scroll sensitivity multiplier
                     
                     window.scrollBy({
                       top: scrollAmount,
@@ -189,7 +187,7 @@ export default function HandCursor() {
                   }
                   prevIndexY.current = indexTip.y;
                 } else {
-                  // POINTER MODE ACTIVE
+                  // POINTER MODE ACTIVE (Single index finger or other states)
                   setIsScrolling(false);
                   prevIndexY.current = null;
 
@@ -210,11 +208,10 @@ export default function HandCursor() {
                   const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
                   const clickThreshold = 0.048;
-                  const freezeThreshold = 0.062; // Freeze threshold (slightly larger to lock cursor before click occurs)
+                  const freezeThreshold = 0.062; // Freeze threshold
 
                   // --- ANTI-SLIP / FREEZE LOGIC ---
-                  // If the user's fingers are very close to pinching (click), we freeze the cursor position.
-                  // This prevents the cursor from drifting or shifting as the index finger moves to meet the thumb.
+                  // Freeze cursor position when index finger is closing in to click to prevent sliding
                   if (distance >= freezeThreshold && !pinchingRef.current) {
                     cursorRef.current.x = cursorRef.current.x * (1 - alpha) + targetX * alpha;
                     cursorRef.current.y = cursorRef.current.y * (1 - alpha) + targetY * alpha;
@@ -303,7 +300,6 @@ export default function HandCursor() {
       const pt = landmarks[jointIdx];
       if (pt) {
         ctx.beginPath();
-        // Highlight fingertips (4 and 8)
         const radius = (jointIdx === 4 || jointIdx === 8) ? 6 : 4;
         ctx.fillStyle = (jointIdx === 4 || jointIdx === 8) ? '#f43f5e' : '#22d3ee';
         ctx.arc(pt.x * ctx.canvas.width, pt.y * ctx.canvas.height, radius, 0, 2 * Math.PI);
