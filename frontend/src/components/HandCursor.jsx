@@ -24,6 +24,91 @@ export default function HandCursor() {
   const pinchStartX = useRef(0);
   const pinchStartY = useRef(0);
 
+  // Smooth scroll velocity refs (Physics-based damping)
+  const scrollVelocity = useRef(0);
+  
+  // Draggable preview window state
+  const [position, setPosition] = useState({ x: 24, y: window.innerHeight - 200 });
+  const isDragging = useRef(false);
+  const dragStart = useRef({ x: 0, y: 0 });
+
+  // Initialize PIP window position on mount / resize
+  useEffect(() => {
+    setPosition({
+      x: 24,
+      y: window.innerHeight - 172 - 24 // Bottom-left margin
+    });
+  }, []);
+
+  // Drag handlers for mouse
+  const handleMouseDown = (e) => {
+    const header = e.target.closest('.drag-header');
+    if (header) {
+      isDragging.current = true;
+      dragStart.current = {
+        x: e.clientX - position.x,
+        y: e.clientY - position.y
+      };
+      e.preventDefault();
+    }
+  };
+
+  // Drag handlers for touch devices
+  const handleTouchStart = (e) => {
+    const header = e.target.closest('.drag-header');
+    if (header) {
+      isDragging.current = true;
+      const touch = e.touches[0];
+      dragStart.current = {
+        x: touch.clientX - position.x,
+        y: touch.clientY - position.y
+      };
+    }
+  };
+
+  // Setup drag event listeners
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (!isDragging.current) return;
+      const newX = e.clientX - dragStart.current.x;
+      const newY = e.clientY - dragStart.current.y;
+
+      // Keep widget inside viewport boundaries
+      const boundedX = Math.max(8, Math.min(window.innerWidth - 192 - 8, newX)); // 192px is w-48
+      const boundedY = Math.max(8, Math.min(window.innerHeight - 172 - 8, newY)); // 172px is widget height
+      
+      setPosition({ x: boundedX, y: boundedY });
+    };
+
+    const handleMouseUp = () => {
+      isDragging.current = false;
+    };
+
+    const handleTouchMove = (e) => {
+      if (!isDragging.current) return;
+      const touch = e.touches[0];
+      const newX = touch.clientX - dragStart.current.x;
+      const newY = touch.clientY - dragStart.current.y;
+
+      const boundedX = Math.max(8, Math.min(window.innerWidth - 192 - 8, newX));
+      const boundedY = Math.max(8, Math.min(window.innerHeight - 172 - 8, newY));
+
+      setPosition({ x: boundedX, y: boundedY });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('touchend', handleMouseUp);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleMouseUp);
+    };
+  }, [position]);
+
   // Toggle hand cursor mode
   const handleToggle = async () => {
     if (active) {
@@ -92,6 +177,7 @@ export default function HandCursor() {
     setIsPinching(false);
     setIsScrolling(false);
     pinchingRef.current = false;
+    scrollVelocity.current = 0;
 
     // Stop camera stream
     if (streamRef.current) {
@@ -129,6 +215,8 @@ export default function HandCursor() {
     const alpha = 0.22; // Smoothing coefficient
 
     const detect = () => {
+      let targetScrollVelocity = 0; // Local target velocity for this frame
+
       try {
         if (video.videoWidth > 0) {
           // 1. Draw mirrored camera frame onto the canvas
@@ -153,15 +241,14 @@ export default function HandCursor() {
 
               if (indexTip && thumbTip && indexKnuckle) {
                 // Coordinate mapping from normalized camera [0.0 - 1.0] to viewport pixels
-                // Using 0.22 to 0.78 bounding box for ergonomic screen reach
                 const scaleX = (1 - indexTip.x - 0.22) / 0.56;
                 const scaleY = (indexTip.y - 0.22) / 0.56;
 
                 // --- CUSTOM SCROLL ZONES TARGETING SPECIFIC FINGERS ---
-                // Scroll Up: Only triggered when INDEX FINGER tip (8) enters the upper zone (scaleY <= 0)
+                // Scroll Up: INDEX FINGER tip (8) in upper zone (scaleY <= 0)
                 const isScrollUpActive = scaleY <= 0;
                 
-                // Scroll Down: Only triggered when THUMB tip (4) enters the lower zone (Y >= 0.78)
+                // Scroll Down: THUMB tip (4) in lower zone (Y >= 0.78)
                 const thumbScaleY = (thumbTip.y - 0.22) / 0.56;
                 const isScrollDownActive = thumbScaleY >= 1;
 
@@ -172,17 +259,17 @@ export default function HandCursor() {
                 }
 
                 if (isScrollUpActive) {
-                  // Index finger is in upper zone -> Scroll Up
+                  // Hand is in upper Scroll Up zone
+                  targetScrollVelocity = -15; // Set target upward velocity
                   setIsScrolling(true);
                   setIsPinching(false);
                   pinchingRef.current = false;
-                  window.scrollBy(0, -11); // Scroll Up speed
                 } else if (isScrollDownActive) {
-                  // Thumb is in lower zone -> Scroll Down
+                  // Hand is in lower Scroll Down zone
+                  targetScrollVelocity = 15; // Set target downward velocity
                   setIsScrolling(true);
                   setIsPinching(false);
                   pinchingRef.current = false;
-                  window.scrollBy(0, 11); // Scroll Down speed
                 } else {
                   // Hand is in the middle POINTER zone
                   setIsScrolling(false);
@@ -193,17 +280,15 @@ export default function HandCursor() {
                   const targetX = clampedX * window.innerWidth;
                   const targetY = clampedY * window.innerHeight;
 
-                  // --- STABLE 2D PINCH DETECTION (FIXED BUG) ---
-                  // Calculate distance in 2D (X and Y only) to avoid noisy 3D depth jumps
+                  // Stable 2D pinch distance (no noisy Z axis)
                   const dx = thumbTip.x - indexTip.x;
                   const dy = thumbTip.y - indexTip.y;
                   const distance = Math.sqrt(dx * dx + dy * dy);
 
-                  // Slightly widened thresholds for highly reliable 2D clicking
                   const clickThreshold = 0.054;
                   const freezeThreshold = 0.068;
 
-                  // Anti-slip lock: freeze cursor position while preparing to click
+                  // Anti-slip lock
                   if (distance >= freezeThreshold && !pinchingRef.current) {
                     cursorRef.current.x = cursorRef.current.x * (1 - alpha) + targetX * alpha;
                     cursorRef.current.y = cursorRef.current.y * (1 - alpha) + targetY * alpha;
@@ -234,6 +319,18 @@ export default function HandCursor() {
             }
           }
         }
+
+        // --- VELOCITY INTERPOLATION & PHYSICS SMOOTH SCROLL (ANTI-STUTTER) ---
+        // Damping factor of 0.82 ensures smooth acceleration and deceleration (inertia)
+        scrollVelocity.current = scrollVelocity.current * 0.82 + targetScrollVelocity * 0.18;
+        if (Math.abs(scrollVelocity.current) < 0.1) {
+          scrollVelocity.current = 0;
+        }
+
+        if (scrollVelocity.current !== 0) {
+          window.scrollBy(0, scrollVelocity.current);
+        }
+
       } catch (detectErr) {
         console.error("Error in detection loop:", detectErr);
         setError(`AI Error: ${detectErr.message || detectErr}`);
@@ -471,17 +568,24 @@ export default function HandCursor() {
       </div>
 
       {/* 4. Mini PIP-style Camera Feed Window */}
-      <div className={`fixed bottom-6 left-6 w-48 bg-slate-950 border-2 border-indigo-500/80 rounded-2xl overflow-hidden shadow-2xl z-[9999] flex-col ${active ? 'flex' : 'hidden'}`}>
-        {/* Sleek Header Bar */}
-        <div className="flex items-center justify-between w-full px-3.5 py-2 bg-slate-900 border-b border-indigo-500/20 select-none">
+      <div 
+        className={`fixed w-48 bg-slate-950 border-2 border-indigo-500/80 rounded-2xl overflow-hidden shadow-2xl z-[9999] flex-col ${active ? 'flex' : 'hidden'}`}
+        style={{ left: `${position.x}px`, top: `${position.y}px` }}
+      >
+        {/* Sleek Draggable Header Bar */}
+        <div 
+          onMouseDown={handleMouseDown}
+          onTouchStart={handleTouchStart}
+          className="drag-header flex items-center justify-between w-full px-3.5 py-2 bg-slate-905 border-b border-indigo-500/20 select-none cursor-grab active:cursor-grabbing hover:bg-slate-900 transition-colors"
+        >
           {/* Decorative Window Controls */}
-          <div className="flex gap-1.5">
+          <div className="flex gap-1.5 pointer-events-none">
             <div className="w-2 h-2 rounded-full bg-rose-500/70" />
             <div className="w-2 h-2 rounded-full bg-amber-500/70" />
             <div className="w-2 h-2 rounded-full bg-emerald-500/70" />
           </div>
           {/* AI Active Pulse Badge */}
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 pointer-events-none">
             <span className="relative flex h-1.5 w-1.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
@@ -491,7 +595,7 @@ export default function HandCursor() {
         </div>
 
         {/* Camera / Canvas Content Body */}
-        <div className="relative w-full h-36 transform -scale-x-100 bg-slate-950">
+        <div className="relative w-full h-36 transform -scale-x-100 bg-slate-950 pointer-events-none">
           {/* Hidden video element used for tracking */}
           <video 
             ref={videoRef}
