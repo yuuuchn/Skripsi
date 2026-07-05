@@ -157,10 +157,13 @@ export default function HandCursor() {
                 const scaleX = (1 - indexTip.x - 0.22) / 0.56;
                 const scaleY = (indexTip.y - 0.22) / 0.56;
 
-                // Detect if the hand is in the scroll zones
-                // Top 22% of camera is Scroll Up, Bottom 22% of camera is Scroll Down
+                // --- CUSTOM SCROLL ZONES TARGETING SPECIFIC FINGERS ---
+                // Scroll Up: Only triggered when INDEX FINGER tip (8) enters the upper zone (scaleY <= 0)
                 const isScrollUpActive = scaleY <= 0;
-                const isScrollDownActive = scaleY >= 1;
+                
+                // Scroll Down: Only triggered when THUMB tip (4) enters the lower zone (Y >= 0.78)
+                const thumbScaleY = (thumbTip.y - 0.22) / 0.56;
+                const isScrollDownActive = thumbScaleY >= 1;
 
                 // Draw skeleton landmarks & scroll zones overlay on canvas
                 if (ctx && canvas) {
@@ -169,13 +172,13 @@ export default function HandCursor() {
                 }
 
                 if (isScrollUpActive) {
-                  // Hand is in the upper Scroll Up zone
+                  // Index finger is in upper zone -> Scroll Up
                   setIsScrolling(true);
                   setIsPinching(false);
                   pinchingRef.current = false;
                   window.scrollBy(0, -11); // Scroll Up speed
                 } else if (isScrollDownActive) {
-                  // Hand is in the lower Scroll Down zone
+                  // Thumb is in lower zone -> Scroll Down
                   setIsScrolling(true);
                   setIsPinching(false);
                   pinchingRef.current = false;
@@ -190,14 +193,15 @@ export default function HandCursor() {
                   const targetX = clampedX * window.innerWidth;
                   const targetY = clampedY * window.innerHeight;
 
-                  // Pinch Gesture detection for click
+                  // --- STABLE 2D PINCH DETECTION (FIXED BUG) ---
+                  // Calculate distance in 2D (X and Y only) to avoid noisy 3D depth jumps
                   const dx = thumbTip.x - indexTip.x;
                   const dy = thumbTip.y - indexTip.y;
-                  const dz = thumbTip.z - indexTip.z;
-                  const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                  const distance = Math.sqrt(dx * dx + dy * dy);
 
-                  const clickThreshold = 0.048;
-                  const freezeThreshold = 0.062; // Freeze threshold to lock cursor
+                  // Slightly widened thresholds for highly reliable 2D clicking
+                  const clickThreshold = 0.054;
+                  const freezeThreshold = 0.068;
 
                   // Anti-slip lock: freeze cursor position while preparing to click
                   if (distance >= freezeThreshold && !pinchingRef.current) {
@@ -258,7 +262,7 @@ export default function HandCursor() {
     ctx.fillStyle = isActiveTop ? 'rgba(16, 185, 129, 0.28)' : 'rgba(99, 102, 241, 0.12)';
     ctx.fillRect(0, 0, w, h * 0.22);
     
-    ctx.strokeStyle = isActiveTop ? '#10b981' : '#4f46e5/50';
+    ctx.strokeStyle = isActiveTop ? '#10b981' : 'rgba(99, 102, 241, 0.3)';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
     ctx.moveTo(0, h * 0.22);
@@ -268,7 +272,7 @@ export default function HandCursor() {
     ctx.fillStyle = isActiveTop ? '#10b981' : '#a5b4fc';
     ctx.font = 'bold 8px system-ui, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('▲ SCROLL UP ZONE', w / 2, h * 0.14);
+    ctx.fillText('▲ SCROLL UP (TELUNJUK)', w / 2, h * 0.14);
     
     // Bottom Zone (Scroll Down)
     ctx.fillStyle = isActiveBottom ? 'rgba(16, 185, 129, 0.28)' : 'rgba(99, 102, 241, 0.12)';
@@ -280,7 +284,7 @@ export default function HandCursor() {
     ctx.stroke();
     
     ctx.fillStyle = isActiveBottom ? '#10b981' : '#a5b4fc';
-    ctx.fillText('▼ SCROLL DOWN ZONE', w / 2, h * 0.92);
+    ctx.fillText('▼ SCROLL DOWN (JEMPOL)', w / 2, h * 0.92);
   };
 
   // Helper to draw ONLY index finger and thumb landmarks/skeleton on canvas
