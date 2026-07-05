@@ -67,7 +67,10 @@ export default function HandCursor() {
             delegate: "GPU"
           },
           runningMode: "VIDEO",
-          numHands: 1
+          numHands: 1,
+          minHandDetectionConfidence: 0.38,
+          minHandPresenceConfidence: 0.38,
+          minTrackingConfidence: 0.35
         });
         landmarkerRef.current = landmarker;
       }
