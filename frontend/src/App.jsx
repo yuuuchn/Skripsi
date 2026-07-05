@@ -13,6 +13,7 @@ import Nilai from './pages/Nilai';
 import Admin from './pages/Admin';
 import PageTransition from './components/PageTransition';
 import DotField from './components/DotField';
+import HandCursor from './components/HandCursor';
 import { Globe } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -89,6 +90,7 @@ function AppContent() {
       <PageLoaderProgress />
       {!user && <DotField />}
       {user && <Navbar />}
+      <HandCursor />
       <main className={`relative z-10 ${user ? 'pt-0' : ''}`}>
         <Routes>
           <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <PageTransition><Login /></PageTransition>} />
