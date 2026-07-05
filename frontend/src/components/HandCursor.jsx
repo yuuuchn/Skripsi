@@ -56,14 +56,14 @@ export default function HandCursor() {
         }
       }
 
-      // 2. Load MediaPipe HandLandmarker
+      // 2. Load MediaPipe HandLandmarker (Using LITE model for high FPS & low latency)
       if (!landmarkerRef.current) {
         const vision = await FilesetResolver.forVisionTasks(
           "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm"
         );
         const landmarker = await HandLandmarker.createFromOptions(vision, {
           baseOptions: {
-            modelAssetPath: "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",
+            modelAssetPath: "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/lite/1/hand_landmarker.task",
             delegate: "GPU"
           },
           runningMode: "VIDEO",
@@ -203,12 +203,6 @@ export default function HandCursor() {
                   const targetX = clampedX * window.innerWidth;
                   const targetY = clampedY * window.innerHeight;
 
-                  // Smoothing
-                  cursorRef.current.x = cursorRef.current.x * (1 - alpha) + targetX * alpha;
-                  cursorRef.current.y = cursorRef.current.y * (1 - alpha) + targetY * alpha;
-                  
-                  setCursorPos({ x: cursorRef.current.x, y: cursorRef.current.y });
-
                   // Pinch Gesture detection for click (Index tip and Thumb tip distance)
                   const dx = thumbTip.x - indexTip.x;
                   const dy = thumbTip.y - indexTip.y;
@@ -216,6 +210,16 @@ export default function HandCursor() {
                   const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
                   const clickThreshold = 0.048;
+                  const freezeThreshold = 0.062; // Freeze threshold (slightly larger to lock cursor before click occurs)
+
+                  // --- ANTI-SLIP / FREEZE LOGIC ---
+                  // If the user's fingers are very close to pinching (click), we freeze the cursor position.
+                  // This prevents the cursor from drifting or shifting as the index finger moves to meet the thumb.
+                  if (distance >= freezeThreshold && !pinchingRef.current) {
+                    cursorRef.current.x = cursorRef.current.x * (1 - alpha) + targetX * alpha;
+                    cursorRef.current.y = cursorRef.current.y * (1 - alpha) + targetY * alpha;
+                    setCursorPos({ x: cursorRef.current.x, y: cursorRef.current.y });
+                  }
 
                   if (distance < clickThreshold) {
                     if (!pinchingRef.current) {
