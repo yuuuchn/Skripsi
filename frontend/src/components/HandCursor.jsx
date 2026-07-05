@@ -332,7 +332,10 @@ export default function HandCursor() {
         }
 
         if (scrollVelocity.current !== 0) {
-          window.scrollBy(0, scrollVelocity.current);
+          window.scrollBy({
+            top: scrollVelocity.current,
+            behavior: 'instant'
+          });
         }
 
       } catch (detectErr) {
