@@ -363,31 +363,29 @@ export default function HandCursor() {
       </div>
 
       {/* 4. Mini PIP-style Camera Feed Window */}
-      {active && (
-        <div className="fixed bottom-6 left-6 w-44 h-33 bg-slate-900 border-2 border-indigo-500/80 rounded-2xl overflow-hidden shadow-2xl z-[9999] flex items-center justify-center">
-          <div className="relative w-full h-full transform -scale-x-100">
-            {/* Hidden video element used for tracking */}
-            <video 
-              ref={videoRef}
-              autoPlay 
-              playsInline 
-              muted 
-              className="hidden"
-            />
-            {/* Canvas renders both webcam video frame & hand skeleton overlay */}
-            <canvas 
-              ref={canvasRef}
-              width={320}
-              height={240}
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-          </div>
-          <div className="absolute top-2 left-2 bg-indigo-600/90 text-[8px] font-extrabold text-white px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm animate-pulse flex items-center gap-1">
-            <Sparkles className="w-2.5 h-2.5 fill-white" />
-            <span>AI Tracking Active</span>
-          </div>
+      <div className={`fixed bottom-6 left-6 w-44 h-33 bg-slate-900 border-2 border-indigo-500/80 rounded-2xl overflow-hidden shadow-2xl z-[9999] items-center justify-center ${active ? 'flex' : 'hidden'}`}>
+        <div className="relative w-full h-full transform -scale-x-100">
+          {/* Hidden video element used for tracking */}
+          <video 
+            ref={videoRef}
+            autoPlay 
+            playsInline 
+            muted 
+            className="hidden"
+          />
+          {/* Canvas renders both webcam video frame & hand skeleton overlay */}
+          <canvas 
+            ref={canvasRef}
+            width={320}
+            height={240}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
         </div>
-      )}
+        <div className="absolute top-2 left-2 bg-indigo-600/90 text-[8px] font-extrabold text-white px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm animate-pulse flex items-center gap-1">
+          <Sparkles className="w-2.5 h-2.5 fill-white" />
+          <span>AI Tracking Active</span>
+        </div>
+      </div>
     </>
   );
 }
