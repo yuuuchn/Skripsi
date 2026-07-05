@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://e62f-114-10-98-174.ngrok-free.appapp/api',
+  baseURL: 'https://valarie-octadic-arboreally.ngrok-free.dev/api',
 });
 
 api.interceptors.request.use((config) => {
