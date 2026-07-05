@@ -20,8 +20,9 @@ export default function HandCursor() {
   const pinchingRef = useRef(false);
   const streamRef = useRef(null);
   
-  // Refs for tracking scroll delta
+  // Refs for tracking scroll delta and debouncing
   const prevIndexY = useRef(null);
+  const scrollActiveFrames = useRef(0);
 
   // Toggle hand cursor mode
   const handleToggle = async () => {
@@ -173,6 +174,14 @@ export default function HandCursor() {
                 const detectScrollMode = indexExtended && middleExtended && ringExtended;
 
                 if (detectScrollMode) {
+                  scrollActiveFrames.current = 14; // Hold scroll mode active for next 14 frames to bridge any short dropouts
+                } else if (scrollActiveFrames.current > 0) {
+                  scrollActiveFrames.current -= 1;
+                }
+
+                const isCurrentlyScrolling = scrollActiveFrames.current > 0;
+
+                if (isCurrentlyScrolling) {
                   // SCROLL MODE ACTIVE
                   setIsScrolling(true);
                   setIsPinching(false);
@@ -181,7 +190,7 @@ export default function HandCursor() {
                   // Calculate vertical movement (delta Y) for scrolling
                   if (prevIndexY.current !== null) {
                     const dy = indexTip.y - prevIndexY.current;
-                    const scrollAmount = dy * window.innerHeight * 1.8; // Scroll sensitivity multiplier
+                    const scrollAmount = dy * window.innerHeight * 2.2; // Slightly higher sensitivity for smoother scroll
                     
                     window.scrollBy({
                       top: scrollAmount,
