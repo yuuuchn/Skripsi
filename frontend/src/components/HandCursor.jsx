@@ -373,11 +373,6 @@ export default function HandCursor() {
     ctx.lineTo(w, h * 0.15);
     ctx.stroke();
     
-    ctx.fillStyle = isActiveTop ? '#10b981' : '#a5b4fc';
-    ctx.font = 'bold 8px system-ui, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('▲ SCROLL UP (TELUNJUK)', w / 2, h * 0.10);
-    
     // Bottom Zone (Scroll Down - 25%)
     ctx.fillStyle = isActiveBottom ? 'rgba(16, 185, 129, 0.28)' : 'rgba(99, 102, 241, 0.12)';
     ctx.fillRect(0, h * 0.75, w, h * 0.25);
@@ -386,9 +381,6 @@ export default function HandCursor() {
     ctx.moveTo(0, h * 0.75);
     ctx.lineTo(w, h * 0.75);
     ctx.stroke();
-    
-    ctx.fillStyle = isActiveBottom ? '#10b981' : '#a5b4fc';
-    ctx.fillText('▼ SCROLL DOWN (JEMPOL)', w / 2, h * 0.90);
   };
 
   // Helper to draw ONLY index finger and thumb landmarks/skeleton on canvas
