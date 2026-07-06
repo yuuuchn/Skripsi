@@ -589,12 +589,12 @@ export default function HandCursor() {
           ) : active ? (
             <>
               <VideoOff className="w-4.5 h-4.5" />
-              <span>Matikan Sensor 🖐️</span>
+              <span>Matikan Sensor</span>
             </>
           ) : (
             <>
               <Hand className="w-4.5 h-4.5 text-indigo-600" />
-              <span>Aktivasi Sensor 🖐️</span>
+              <span>Aktivasi Sensor</span>
             </>
           )}
         </button>
