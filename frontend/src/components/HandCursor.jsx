@@ -219,10 +219,25 @@ export default function HandCursor() {
 
       try {
         if (video.videoWidth > 0) {
-          // 1. Draw mirrored camera frame onto the canvas
+          // Calculate crop bounds for "object-fit: cover" drawing on canvas
+          const imgWidth = video.videoWidth;
+          const imgHeight = video.videoHeight;
+          let sx = 0, sy = 0, sWidth = imgWidth, sHeight = imgHeight;
+
           if (ctx && canvas) {
+            const canvasRatio = canvas.width / canvas.height;
+            const imgRatio = imgWidth / imgHeight;
+
+            if (imgRatio > canvasRatio) {
+              sWidth = imgHeight * canvasRatio;
+              sx = (imgWidth - sWidth) / 2;
+            } else {
+              sHeight = imgWidth / canvasRatio;
+              sy = (imgHeight - sHeight) / 2;
+            }
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            ctx.drawImage(video, sx, sy, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
           }
 
           const now = performance.now();
@@ -234,32 +249,51 @@ export default function HandCursor() {
             if (results.landmarks && results.landmarks.length > 0) {
               const landmarks = results.landmarks[0];
 
-              // Key landmarks (only index finger tip & thumb tip needed)
+              // Map normalized video coordinates to canvas pixel space
+              const mapToCanvas = (pt) => {
+                if (!pt) return null;
+                const px = pt.x * imgWidth;
+                const py = pt.y * imgHeight;
+                return {
+                  x: ((px - sx) / sWidth) * canvas.width,
+                  y: ((py - sy) / sHeight) * canvas.height
+                };
+              };
+
+              const mappedLandmarks = landmarks.map(mapToCanvas);
+              const indexTipMapped = mappedLandmarks[8];
+              const indexKnuckleMapped = mappedLandmarks[6];
+              const thumbTipMapped = mappedLandmarks[4];
+
+              // Keep raw coordinates for click distance and normalization
               const indexTip = landmarks[8];
-              const indexKnuckle = landmarks[6];
               const thumbTip = landmarks[4];
 
-              if (indexTip && thumbTip && indexKnuckle) {
-                 // Coordinate mapping from normalized camera [0.0 - 1.0] to viewport pixels
-                  // Using topBound (0.15) and bottomBound (0.75) for compact scroll zones
-                  const topBound = 0.15;
-                  const bottomBound = 0.75;
-                  const rangeY = bottomBound - topBound;
+              if (indexTipMapped && thumbTipMapped && indexKnuckleMapped) {
+                 // Coordinate mapping from mapped canvas coordinates to viewport percentages
+                 const rx = indexTipMapped.x / canvas.width;
+                 const ry = indexTipMapped.y / canvas.height;
+                 const thumbRy = thumbTipMapped.y / canvas.height;
 
-                 const scaleX = (1 - indexTip.x - 0.22) / 0.56;
-                 const scaleY = (indexTip.y - topBound) / rangeY;
+                 // Using topBound (0.15) and bottomBound (0.75) relative to canvas height
+                 const topBound = 0.15;
+                 const bottomBound = 0.75;
+                 const rangeY = bottomBound - topBound;
+
+                 const scaleX = (1 - rx - 0.22) / 0.56;
+                 const scaleY = (ry - topBound) / rangeY;
 
                  // --- CUSTOM SCROLL ZONES TARGETING SPECIFIC FINGERS ---
-                 // Scroll Up: Only triggered when INDEX FINGER tip (8) enters the upper zone (indexTip.y <= topBound)
-                 const isScrollUpActive = indexTip.y <= topBound;
+                 // Scroll Up: Only triggered when INDEX FINGER tip (8) enters the upper zone (ry <= topBound)
+                 const isScrollUpActive = ry <= topBound;
                  
-                 // Scroll Down: Only triggered when THUMB tip (4) enters the lower zone (thumbTip.y >= bottomBound)
-                 const isScrollDownActive = thumbTip.y >= bottomBound;
+                 // Scroll Down: Only triggered when THUMB tip (4) enters the lower zone (thumbRy >= bottomBound)
+                 const isScrollDownActive = thumbRy >= bottomBound;
 
                  // Draw skeleton landmarks & scroll zones overlay on canvas
                  if (ctx && canvas) {
                    drawScrollZones(ctx, isScrollUpActive, isScrollDownActive);
-                   drawHandSkeleton(ctx, landmarks);
+                   drawHandSkeleton(ctx, mappedLandmarks);
                  }
 
                  if (isScrollUpActive) {
@@ -384,7 +418,7 @@ export default function HandCursor() {
   };
 
   // Helper to draw ONLY index finger and thumb landmarks/skeleton on canvas
-  const drawHandSkeleton = (ctx, landmarks) => {
+  const drawHandSkeleton = (ctx, mappedLandmarks) => {
     ctx.strokeStyle = '#4f46e5';
     ctx.lineWidth = 3;
     
@@ -392,10 +426,10 @@ export default function HandCursor() {
     ctx.beginPath();
     const indexPath = [0, 5, 6, 7, 8];
     for (let i = 0; i < indexPath.length; i++) {
-      const pt = landmarks[indexPath[i]];
+      const pt = mappedLandmarks[indexPath[i]];
       if (pt) {
-        if (i === 0) ctx.moveTo(pt.x * ctx.canvas.width, pt.y * ctx.canvas.height);
-        else ctx.lineTo(pt.x * ctx.canvas.width, pt.y * ctx.canvas.height);
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
       }
     }
     ctx.stroke();
@@ -404,21 +438,21 @@ export default function HandCursor() {
     ctx.beginPath();
     const thumbPath = [0, 1, 2, 3, 4];
     for (let i = 0; i < thumbPath.length; i++) {
-      const pt = landmarks[thumbPath[i]];
+      const pt = mappedLandmarks[thumbPath[i]];
       if (pt) {
-        if (i === 0) ctx.moveTo(pt.x * ctx.canvas.width, pt.y * ctx.canvas.height);
-        else ctx.lineTo(pt.x * ctx.canvas.width, pt.y * ctx.canvas.height);
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
       }
     }
     ctx.stroke();
 
     // 3. Connect Thumb Base to Index Base (1 to 5) for palm base connection
     ctx.beginPath();
-    const pt1 = landmarks[1];
-    const pt5 = landmarks[5];
+    const pt1 = mappedLandmarks[1];
+    const pt5 = mappedLandmarks[5];
     if (pt1 && pt5) {
-      ctx.moveTo(pt1.x * ctx.canvas.width, pt1.y * ctx.canvas.height);
-      ctx.lineTo(pt5.x * ctx.canvas.width, pt5.y * ctx.canvas.height);
+      ctx.moveTo(pt1.x, pt1.y);
+      ctx.lineTo(pt5.x, pt5.y);
     }
     ctx.stroke();
 
@@ -426,12 +460,12 @@ export default function HandCursor() {
     ctx.fillStyle = '#22d3ee';
     const activeJoints = [0, 1, 2, 3, 4, 5, 6, 7, 8];
     for (const jointIdx of activeJoints) {
-      const pt = landmarks[jointIdx];
+      const pt = mappedLandmarks[jointIdx];
       if (pt) {
         ctx.beginPath();
         const radius = (jointIdx === 4 || jointIdx === 8) ? 6 : 4;
         ctx.fillStyle = (jointIdx === 4 || jointIdx === 8) ? '#f43f5e' : '#22d3ee';
-        ctx.arc(pt.x * ctx.canvas.width, pt.y * ctx.canvas.height, radius, 0, 2 * Math.PI);
+        ctx.arc(pt.x, pt.y, radius, 0, 2 * Math.PI);
         ctx.fill();
       }
     }
