@@ -476,6 +476,31 @@ export default function HandCursor() {
     const elem = document.elementFromPoint(x, y);
     if (!elem) return;
 
+    // Synthesize a soft, high-tech click/pop sound using Web Audio API
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (AudioContext) {
+        const audioCtx = new AudioContext();
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        
+        // Soft pop tone design
+        osc.frequency.setValueAtTime(780, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.04);
+        
+        gainNode.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.045);
+        
+        osc.start(audioCtx.currentTime);
+        osc.stop(audioCtx.currentTime + 0.05);
+      }
+    } catch (soundErr) {
+      console.warn("Click sound synthesis issue:", soundErr);
+    }
+
     // Visual ripple effect
     const newRipple = { id: Date.now(), x, y };
     setRipples(prev => [...prev, newRipple]);
