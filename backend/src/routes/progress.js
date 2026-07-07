@@ -53,6 +53,15 @@ router.get('/nilai', async (req, res) => {
 router.get('/admin', async (req, res) => {
   try {
     const db = await getDb();
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 20));
+    const offset = (page - 1) * limit;
+
+    const totalRow = queryOne(db,
+      `SELECT COUNT(*) as total FROM users WHERE role = 'siswa'`
+    );
+    const total = totalRow ? totalRow.total : 0;
+
     const siswaList = queryAll(db,
       `SELECT u.id, u.nama, u.username, u.kelas,
               COUNT(p.id) as materi_selesai,
@@ -61,10 +70,18 @@ router.get('/admin', async (req, res) => {
        LEFT JOIN progress p ON u.id = p.user_id AND p.selesai = 1
        WHERE u.role = 'siswa'
        GROUP BY u.id
-       ORDER BY u.nama`
+       ORDER BY u.nama
+       LIMIT ? OFFSET ?`,
+      [limit, offset]
     );
 
-    res.json(siswaList);
+    res.json({
+      siswa: siswaList,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit) || 1,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

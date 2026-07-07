@@ -1,17 +1,26 @@
 import { useState, useEffect } from 'react';
 import api from '../api/axios';
-import { GraduationCap, Users, BarChart3, AlertCircle, Award, Search, Sparkles } from 'lucide-react';
+import { GraduationCap, Users, AlertCircle, Award, Search, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function Admin() {
   const [siswaList, setSiswaList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
+  const limit = 20;
 
   useEffect(() => {
-    api.get('/progress/admin')
-      .then((res) => setSiswaList(res.data))
+    setLoading(true);
+    api.get(`/progress/admin?page=${page}&limit=${limit}`)
+      .then((res) => {
+        setSiswaList(res.data.siswa);
+        setTotal(res.data.total);
+        setTotalPages(res.data.totalPages);
+      })
       .finally(() => setLoading(false));
-  }, []);
+  }, [page]);
 
   const filteredSiswa = siswaList.filter(s => 
     s.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -30,7 +39,6 @@ export default function Admin() {
     <div className="max-w-5xl mx-auto px-4 py-8">
       {/* Header */}
       <div className="card bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-800 border-0 p-8 mb-8 text-white relative overflow-hidden shadow-xl shadow-indigo-500/10 animate-fade-in-up">
-        {/* Glow ornaments */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/4 blur-2xl animate-pulse-soft" />
         
         <div className="relative z-10 flex items-center gap-5">
@@ -44,7 +52,7 @@ export default function Admin() {
         </div>
       </div>
 
-      {siswaList.length === 0 ? (
+      {total === 0 ? (
         <div className="card p-12 text-center border-slate-200/60 max-w-lg mx-auto shadow-sm animate-fade-in-up">
           <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4 border border-slate-200">
             <AlertCircle className="w-8 h-8 text-slate-400" />
@@ -56,7 +64,6 @@ export default function Admin() {
         <div className="space-y-6">
           {/* Controls & Metrics Row */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 animate-fade-in-up animate-delay-100">
-            {/* Search Input */}
             <div className="relative max-w-sm w-full">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400" />
               <input
@@ -68,28 +75,29 @@ export default function Admin() {
               />
             </div>
             
-            {/* Summary statistics pill */}
             <div className="flex gap-3">
               <span className="tag tag-info bg-indigo-50 text-indigo-700 border-indigo-100/50 py-2 px-4 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
                 <Users className="w-4 h-4" />
-                Total Siswa: {siswaList.length} orang
+                Total Siswa: {total} orang
               </span>
-              {filteredSiswa.length !== siswaList.length && (
+              {searchQuery && filteredSiswa.length < siswaList.length && (
                 <span className="tag tag-warning bg-amber-50 text-amber-700 border-amber-100/50 py-2 px-4 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm animate-fade-in">
-                  Hasil pencarian: {filteredSiswa.length} orang
+                  Halaman ini: {filteredSiswa.length} orang
                 </span>
               )}
             </div>
           </div>
 
-          {/* Table Card (Polished Premium Table) */}
+          {/* Table Card */}
           <div className="card overflow-hidden border-slate-200/60 shadow-sm animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
             <div className="p-5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
               <h2 className="font-display font-extrabold text-base text-[var(--color-text)] flex items-center gap-2">
                 <Sparkles className="w-4.5 h-4.5 text-amber-500 fill-amber-400" />
                 Daftar Kemajuan Siswa
               </h2>
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">Data Realtime</span>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">
+                Halaman {page} / {totalPages}
+              </span>
             </div>
             
             <div className="overflow-x-auto">
@@ -113,13 +121,12 @@ export default function Admin() {
                     const averageScoreColor = pct >= 80 ? 'text-emerald-600' : pct >= 60 ? 'text-amber-600' : 'text-rose-600';
                     const averageScoreBg = pct >= 80 ? 'bg-emerald-50' : pct >= 60 ? 'bg-amber-50' : 'bg-rose-50';
 
-                    // visual mini progress dots
-                    const totalMateriCount = 6; // matching database length
+                    const totalMateriCount = 6;
                     const selesaiCount = s.materi_selesai || 0;
 
                     return (
                       <tr key={s.id} className="hover:bg-slate-50/50 transition-colors">
-                        <td className="px-6 py-4.5 text-sm font-semibold text-slate-400">{idx + 1}</td>
+                        <td className="px-6 py-4.5 text-sm font-semibold text-slate-400">{(page - 1) * limit + idx + 1}</td>
                         <td className="px-6 py-4.5">
                           <div className="font-bold text-sm text-[var(--color-text)]">{s.nama}</div>
                         </td>
@@ -169,6 +176,47 @@ export default function Admin() {
               </table>
             </div>
           </div>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2 animate-fade-in-up">
+              <button
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page <= 1}
+                className="btn btn-ghost py-2.5 px-3.5 rounded-xl text-xs font-bold disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter(p => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+                .map((p, idx, arr) => (
+                  <span key={p} className="flex items-center gap-1">
+                    {idx > 0 && arr[idx - 1] !== p - 1 && (
+                      <span className="text-slate-300 text-xs font-bold px-1">...</span>
+                    )}
+                    <button
+                      onClick={() => setPage(p)}
+                      className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${
+                        p === page
+                          ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/10'
+                          : 'bg-white text-slate-600 border border-slate-200 hover:border-indigo-200 hover:text-indigo-600'
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  </span>
+                ))}
+
+              <button
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                disabled={page >= totalPages}
+                className="btn btn-ghost py-2.5 px-3.5 rounded-xl text-xs font-bold disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>
