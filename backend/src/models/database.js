@@ -204,7 +204,37 @@ export function seedMateri() {
   <tr><td>Kecepatan</td><td>Tinggi</td><td>Sedang</td><td>Bervariasi</td></tr>
   <tr><td>Biaya</td><td>Murah</td><td>Mahal</td><td>Sangat Mahal</td></tr>
   <tr><td>Contoh</td><td>Lab komputer sekolah</td><td>Jaringan antar sekolah</td><td>Internet</td></tr>
-</table>`
+</table>
+
+<h3>🕸️ Topologi Jaringan Komputer</h3>
+<p>Selain luas areanya, jaringan komputer juga dibedakan berdasarkan cara komputernya disusun secara fisik. Tata letak fisik susunan kabel dan komputer ini disebut <strong>Topologi Jaringan</strong>. Berikut adalah 3 topologi yang paling sering digunakan:</p>
+
+<div class="card-jenis">
+  <h4>1. Topologi Star (Bintang)</h4>
+  <p>Semua komputer dihubungkan ke satu alat pusat bernama <strong>Switch</strong> atau <strong>Hub</strong>.</p>
+  <ul>
+    <li><strong>Kelebihan:</strong> Paling stabil. Jika satu komputer rusak atau kabelnya putus, komputer lainnya tetap bisa terhubung dan tidak terganggu.</li>
+    <li><strong>Kekurangan:</strong> Butuh banyak kabel dan jika Switch pusatnya rusak, seluruh jaringan akan mati.</li>
+  </ul>
+</div>
+
+<div class="card-jenis">
+  <h4>2. Topologi Bus</h4>
+  <p>Semua komputer dihubungkan berbaris sepanjang satu kabel utama (seperti kursi di dalam bus).</p>
+  <ul>
+    <li><strong>Kelebihan:</strong> Murah dan sangat mudah dipasang karena hanya butuh satu kabel utama.</li>
+    <li><strong>Kekurangan:</strong> Jika kabel utamanya putus di tengah, maka semua jaringan komputer akan langsung terputus total.</li>
+  </ul>
+</div>
+
+<div class="card-jenis">
+  <h4>3. Topologi Ring (Cincin)</h4>
+  <p>Komputer dihubungkan melingkar membentuk lingkaran (cincin), di mana data dikirim bergantian searah jarum jam.</p>
+  <ul>
+    <li><strong>Kelebihan:</strong> Aliran data teratur dan hemat kabel.</li>
+    <li><strong>Kekurangan:</strong> Jika salah satu komputer rusak, aliran lingkaran data akan terputus dan merusak koneksi seluruh komputer.</li>
+  </ul>
+</div>`
     },
     {
       judul: 'Media Transmisi: Kabel vs Nirkabel',
