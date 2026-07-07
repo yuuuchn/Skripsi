@@ -32,7 +32,7 @@ router.post('/submit', async (req, res) => {
 
     const db = await getDb();
     const soalList = queryAll(db,
-      'SELECT id, jawaban as kunci FROM quiz WHERE materi_id = ? ORDER BY id',
+      'SELECT id, soal, opsi_a, opsi_b, opsi_c, opsi_d, jawaban as kunci FROM quiz WHERE materi_id = ? ORDER BY id',
       [materi_id]
     );
 
@@ -41,11 +41,22 @@ router.post('/submit', async (req, res) => {
     }
 
     let benar = 0;
-    for (let i = 0; i < soalList.length; i++) {
-      if (jawaban[i] && jawaban[i].toLowerCase() === soalList[i].kunci) {
-        benar++;
-      }
-    }
+    const detail = soalList.map((s, i) => {
+      const jawabUser = (jawaban[i] || '').toLowerCase();
+      const isBenar = jawabUser === s.kunci;
+      if (isBenar) benar++;
+      return {
+        id: s.id,
+        soal: s.soal,
+        opsi_a: s.opsi_a,
+        opsi_b: s.opsi_b,
+        opsi_c: s.opsi_c,
+        opsi_d: s.opsi_d,
+        jawaban_user: jawabUser,
+        jawaban_benar: s.kunci,
+        benar: isBenar,
+      };
+    });
 
     const total = soalList.length;
     const nilai = Math.round((benar / total) * 100);
@@ -57,7 +68,7 @@ router.post('/submit', async (req, res) => {
     );
     saveDb();
 
-    res.json({ nilai, benar, total });
+    res.json({ nilai, benar, total, detail });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
-import { BookOpen, Trophy, Send, CheckCircle, XCircle, FileText, Pencil } from 'lucide-react';
+import { BookOpen, Trophy, Send, CheckCircle, XCircle, FileText, Pencil, Eye, ArrowLeft } from 'lucide-react';
 
 export default function Kuis() {
   const { materi_id } = useParams();
@@ -11,6 +11,7 @@ export default function Kuis() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [hasil, setHasil] = useState(null);
+  const [reviewMode, setReviewMode] = useState(false);
 
   useEffect(() => {
     api.get(`/quiz/${materi_id}`)
@@ -51,7 +52,7 @@ export default function Kuis() {
   }
 
   // ─── Result screen ──────────────────────────────────────
-  if (hasil) {
+  if (hasil && !reviewMode) {
     const pct = hasil.nilai;
     const stiker = pct >= 80 ? '🎉' : pct >= 60 ? '👍' : '💪';
     const pesan = pct >= 80 ? 'Luar biasa! Kamu sangat memahaminya.' : pct >= 60 ? 'Bagus! Sedikit lagi menuju sempurna.' : 'Semangat! Baca kembali materinya dan coba lagi.';
@@ -70,7 +71,6 @@ export default function Kuis() {
           <h2 className="font-display text-2xl md:text-3xl font-extrabold text-[var(--color-text)] mb-1 tracking-tight">Kuis Selesai!</h2>
           <p className="text-[var(--color-text-secondary)] text-sm font-semibold mb-8 max-w-sm mx-auto">{pesan}</p>
 
-          {/* Score circle (enhanced premium design) */}
           <div className="relative w-44 h-44 mx-auto mb-8 animate-ring-glow rounded-full p-2">
             <div className={`absolute inset-2 rounded-full ${ringBg} flex items-center justify-center border border-slate-100 shadow-inner`}>
               <div className="z-10 text-center">
@@ -106,6 +106,11 @@ export default function Kuis() {
             </span>
           </div>
 
+          <button onClick={() => setReviewMode(true)} className="btn btn-ghost font-bold py-3 rounded-xl w-full mb-3 border-indigo-200 hover:border-indigo-400 hover:text-indigo-600 gap-2">
+            <Eye className="w-4.5 h-4.5" />
+            Lihat Pembahasan
+          </button>
+
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button onClick={() => navigate(`/materi/${materi_id}`)} className="btn btn-ghost font-bold py-3 rounded-xl w-full sm:w-auto">
               <BookOpen className="w-4.5 h-4.5" />
@@ -116,6 +121,118 @@ export default function Kuis() {
               Lihat Hasil Belajar
             </button>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ─── Review screen ──────────────────────────────────────
+  if (hasil && reviewMode) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-8">
+        <div className="flex items-center justify-between mb-6">
+          <button onClick={() => setReviewMode(false)} className="btn btn-ghost font-bold rounded-xl gap-2">
+            <ArrowLeft className="w-4 h-4" />
+            Kembali
+          </button>
+          <div className="flex items-center gap-3">
+            <span className="tag tag-success text-xs font-bold py-1.5 px-3.5">
+              <CheckCircle className="w-4 h-4" />
+              Benar {hasil.benar}
+            </span>
+            <span className="tag tag-danger text-xs font-bold py-1.5 px-3.5">
+              <XCircle className="w-4 h-4" />
+              Salah {hasil.total - hasil.benar}
+            </span>
+            <span className="font-display font-black text-lg text-indigo-600">{hasil.nilai}</span>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          {hasil.detail.map((soal, idx) => {
+            const opsi = [
+              { key: 'a', label: soal.opsi_a },
+              { key: 'b', label: soal.opsi_b },
+              { key: 'c', label: soal.opsi_c },
+              { key: 'd', label: soal.opsi_d },
+            ];
+
+            return (
+              <div key={soal.id} className="card p-6 md:p-8 border-slate-200/60 shadow-sm">
+                <div className="flex items-start gap-3.5 mb-5">
+                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
+                    soal.benar ? 'bg-emerald-50 border border-emerald-200' : 'bg-rose-50 border border-rose-200'
+                  }`}>
+                    {soal.benar
+                      ? <CheckCircle className="w-5 h-5 text-emerald-600" />
+                      : <XCircle className="w-5 h-5 text-rose-500" />
+                    }
+                  </div>
+                  <p className="font-bold text-[var(--color-text)] leading-relaxed mt-0.5 text-base">{soal.soal}</p>
+                </div>
+
+                <div className="space-y-2.5">
+                  {opsi.map((opt) => {
+                    const isUserAnswer = soal.jawaban_user === opt.key;
+                    const isCorrectAnswer = soal.jawaban_benar === opt.key;
+
+                    let borderColor = 'border-slate-100';
+                    let bgColor = '';
+                    let textColor = 'text-slate-700';
+                    let badgeBg = 'bg-slate-100 text-slate-500';
+                    let showBadge = '';
+
+                    if (isCorrectAnswer) {
+                      borderColor = 'border-emerald-400';
+                      bgColor = 'bg-emerald-50/60';
+                      textColor = 'text-emerald-900';
+                      badgeBg = 'bg-emerald-100 text-emerald-700';
+                      showBadge = '✓ Jawaban Benar';
+                    } else if (isUserAnswer && !soal.benar) {
+                      borderColor = 'border-rose-300';
+                      bgColor = 'bg-rose-50/40';
+                      textColor = 'text-rose-900';
+                      badgeBg = 'bg-rose-100 text-rose-700';
+                      showBadge = '✗ Jawabanmu';
+                    }
+
+                    return (
+                      <div
+                        key={opt.key}
+                        className={`flex items-center gap-3.5 p-4 rounded-2xl border transition-all duration-200 ${borderColor} ${bgColor} ${textColor}`}
+                      >
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                          isCorrectAnswer ? 'border-emerald-600 bg-emerald-600' :
+                          isUserAnswer && !soal.benar ? 'border-rose-500 bg-rose-500' :
+                          'border-slate-300'
+                        }`}>
+                          {(isCorrectAnswer || (isUserAnswer && !soal.benar)) && (
+                            <div className="w-1.5 h-1.5 rounded-full bg-white" />
+                          )}
+                        </div>
+                        <span className={`font-mono font-bold text-xs shrink-0 py-0.5 px-2 rounded ${badgeBg}`}>
+                          {opt.key.toUpperCase()}
+                        </span>
+                        <span className="text-sm font-semibold">{opt.label}</span>
+                        {showBadge && (
+                          <span className={`ml-auto text-[10px] font-bold py-0.5 px-2 rounded-full ${badgeBg}`}>
+                            {showBadge}
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="mt-10 mb-16 text-center">
+          <button onClick={() => navigate(`/materi/${materi_id}`)} className="btn btn-ghost font-bold rounded-xl gap-2">
+            <BookOpen className="w-4.5 h-4.5" />
+            Kembali ke Materi
+          </button>
         </div>
       </div>
     );
