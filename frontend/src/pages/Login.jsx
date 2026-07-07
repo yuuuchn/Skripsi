@@ -134,12 +134,12 @@ export default function Login() {
             </div>
             <div className="w-[1px] bg-white/10" />
             <div className="text-center">
-              <div className="font-display text-2xl font-black text-white">32</div>
+              <div className="font-display text-2xl font-black text-white">60</div>
               <div className="text-white/70 text-[9px] font-bold uppercase tracking-wider mt-0.5">Soal Kuis</div>
             </div>
             <div className="w-[1px] bg-white/10" />
             <div className="text-center">
-              <div className="font-display text-2xl font-black text-white">5</div>
+              <div className="font-display text-2xl font-black text-white">9</div>
               <div className="text-white/70 text-[9px] font-bold uppercase tracking-wider mt-0.5">Ilustrasi</div>
             </div>
           </div>
