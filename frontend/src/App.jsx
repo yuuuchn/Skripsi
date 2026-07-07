@@ -90,7 +90,7 @@ function AppContent() {
       <PageLoaderProgress />
       {!user && <DotField />}
       {user && <Navbar />}
-      <HandCursor />
+      {user && <HandCursor />}
       <main className={`relative z-10 ${user ? 'pt-0' : ''}`}>
         <Routes>
           <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <PageTransition><Login /></PageTransition>} />
