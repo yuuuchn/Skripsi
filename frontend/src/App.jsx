@@ -12,6 +12,7 @@ import Kuis from './pages/Kuis';
 import Nilai from './pages/Nilai';
 import Admin from './pages/Admin';
 import PageTransition from './components/PageTransition';
+import ErrorBoundary from './components/ErrorBoundary';
 import DotField from './components/DotField';
 import HandCursor from './components/HandCursor';
 import { Globe } from 'lucide-react';
@@ -92,6 +93,7 @@ function AppContent() {
       {user && <Navbar />}
       {user && <HandCursor />}
       <main className={`relative z-10 ${user ? 'pt-0' : ''}`}>
+        <ErrorBoundary>
         <Routes>
           <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <PageTransition><Login /></PageTransition>} />
           <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <PageTransition><Register /></PageTransition>} />
@@ -103,6 +105,7 @@ function AppContent() {
           <Route path="/admin" element={<ProtectedRoute><PageTransition><Admin /></PageTransition></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/dashboard" />} />
         </Routes>
+        </ErrorBoundary>
       </main>
     </div>
   );
