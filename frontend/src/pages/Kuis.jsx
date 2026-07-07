@@ -14,6 +14,14 @@ export default function Kuis() {
   const [reviewMode, setReviewMode] = useState(false);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [materi_id]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [hasil, reviewMode]);
+
+  useEffect(() => {
     api.get(`/quiz/${materi_id}`)
       .then((res) => setSoalList(res.data))
       .catch(() => navigate('/materi'))
@@ -25,6 +33,7 @@ export default function Kuis() {
   };
 
   const handleSubmit = async () => {
+    window.scrollTo(0, 0);
     const jawabanArr = soalList.map((s) => jawaban[s.id] || '');
     if (jawabanArr.some((j) => !j)) {
       alert('Jawab semua soal dulu ya!');
