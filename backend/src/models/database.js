@@ -249,8 +249,8 @@ export function seedMateri() {
 <h4>Kabel UTP (Unshielded Twisted Pair)</h4>
 <p>Kabel yang paling sering dipakai di jaringan komputer. Warnanya biru, ujungnya pakai konektor RJ-45 (mirip colokan telepon, tapi lebih besar).</p>
 <div style="text-align: center; margin: 15px 0;">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Ethernet_cables.jpg/640px-Ethernet_cables.jpg" alt="Kabel UTP" style="max-width: 100%; height: auto; max-height: 180px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin: 0 auto; display: block;" />
-  <span style="font-size: 10px; color: #94a3b8; display: block; margin-top: 6px; font-style: italic;">Foto: Kabel UTP dengan konektor RJ-45 (Sumber: Wikimedia Commons)</span>
+  <img src="/images/utp_cable.jpg" alt="Kabel UTP" style="max-width: 100%; height: auto; max-height: 180px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin: 0 auto; display: block;" />
+  <span style="font-size: 10px; color: #94a3b8; display: block; margin-top: 6px; font-style: italic;">Foto: Kabel UTP dengan konektor RJ-45 (Sumber: Unsplash)</span>
 </div>
 <ul>
   <li>Kecepatan: hingga 1 Gbps (cukup buat streaming dan gaming)</li>
@@ -262,8 +262,8 @@ export function seedMateri() {
 <h4>Kabel Fiber Optik</h4>
 <p>Ini kabel paling canggih! Data dikirim dalam bentuk <strong>cahaya</strong>, bukan listrik. Makanya super cepat!</p>
 <div style="text-align: center; margin: 15px 0;">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Fiber_optic_patch_cord.jpg/640px-Fiber_optic_patch_cord.jpg" alt="Kabel Fiber Optik" style="max-width: 100%; height: auto; max-height: 180px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin: 0 auto; display: block;" />
-  <span style="font-size: 10px; color: #94a3b8; display: block; margin-top: 6px; font-style: italic;">Foto: Patch cord Fiber Optik kuning (Sumber: Wikimedia Commons)</span>
+  <img src="/images/fiber_optic.jpg" alt="Kabel Fiber Optik" style="max-width: 100%; height: auto; max-height: 180px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin: 0 auto; display: block;" />
+  <span style="font-size: 10px; color: #94a3b8; display: block; margin-top: 6px; font-style: italic;">Foto: Patch cord Fiber Optik kuning (Sumber: Unsplash)</span>
 </div>
 <ul>
   <li>Kecepatan: hingga 100 Gbps (100 kali lebih cepat dari UTP!)</li>
@@ -301,8 +301,8 @@ export function seedMateri() {
   <h3>1. Router</h3>
   <p>Router adalah perangkat yang menghubungkan jaringan lokal (LAN) ke internet. Router bertugas <strong>mengatur jalur data</strong> supaya sampai ke tujuan yang benar.</p>
   <div style="text-align: center; margin: 15px 0;">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Modem_router_TP-Link_TD-W8960N.JPG/640px-Modem_router_TP-Link_TD-W8960N.JPG" alt="Router" style="max-width: 100%; height: auto; max-height: 160px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin: 0 auto; display: block;" />
-    <span style="font-size: 10px; color: #94a3b8; display: block; margin-top: 6px; font-style: italic;">Foto: Modem Router Nirkabel dengan antena (Sumber: Wikimedia Commons)</span>
+    <img src="/images/router.jpg" alt="Router" style="max-width: 100%; height: auto; max-height: 160px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin: 0 auto; display: block;" />
+    <span style="font-size: 10px; color: #94a3b8; display: block; margin-top: 6px; font-style: italic;">Foto: Modem Router Nirkabel dengan antena (Sumber: Unsplash)</span>
   </div>
   <ul>
     <li>Contoh: Modem WiFi di rumah kamu</li>
@@ -315,8 +315,8 @@ export function seedMateri() {
   <h3>2. Switch / Hub</h3>
   <p>Switch adalah perangkat yang menghubungkan komputer-komputer dalam satu jaringan LAN. Bedanya, switch lebih pintar dari hub karena bisa mengirim data langsung ke komputer yang dituju.</p>
   <div style="text-align: center; margin: 15px 0;">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Cisco_Catalyst_2960_Switch.jpg/640px-Cisco_Catalyst_2960_Switch.jpg" alt="Switch" style="max-width: 100%; height: auto; max-height: 150px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin: 0 auto; display: block;" />
-    <span style="font-size: 10px; color: #94a3b8; display: block; margin-top: 6px; font-style: italic;">Foto: Switch jaringan Cisco Catalyst dengan banyak port RJ-45 (Sumber: Wikimedia Commons)</span>
+    <img src="/images/switch.jpg" alt="Switch" style="max-width: 100%; height: auto; max-height: 150px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin: 0 auto; display: block;" />
+    <span style="font-size: 10px; color: #94a3b8; display: block; margin-top: 6px; font-style: italic;">Foto: Switch jaringan server (Sumber: Unsplash)</span>
   </div>
   <ul>
     <li>Biasa dipakai di lab komputer sekolah</li>
@@ -329,8 +329,8 @@ export function seedMateri() {
   <h3>3. Modem</h3>
   <p>Modem (Modulator-Demodulator) adalah perangkat yang mengubah sinyal internet dari kabel telepon atau fiber optik menjadi sinyal yang bisa dipakai komputer.</p>
   <div style="text-align: center; margin: 15px 0;">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Arris_cable_modem.png/640px-Arris_cable_modem.png" alt="Modem" style="max-width: 100%; height: auto; max-height: 160px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin: 0 auto; display: block;" />
-    <span style="font-size: 10px; color: #94a3b8; display: block; margin-top: 6px; font-style: italic;">Foto: Kabel Modem Internet (Sumber: Wikimedia Commons)</span>
+    <img src="/images/modem.jpg" alt="Modem" style="max-width: 100%; height: auto; max-height: 160px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin: 0 auto; display: block;" />
+    <span style="font-size: 10px; color: #94a3b8; display: block; margin-top: 6px; font-style: italic;">Foto: Broadband Modem Internet (Sumber: Unsplash)</span>
   </div>
   <ul>
     <li>Biasanya jadi satu dengan router (disebut "modem router")</li>
@@ -342,8 +342,8 @@ export function seedMateri() {
   <h3>4. Access Point (AP)</h3>
   <p>Access Point adalah perangkat yang memancarkan sinyal WiFi. Biasanya dipasang di langit-langit ruangan.</p>
   <div style="text-align: center; margin: 15px 0;">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/D-Link_DAP-2590_AP.jpg/640px-D-Link_DAP-2590_AP.jpg" alt="Access Point" style="max-width: 100%; height: auto; max-height: 160px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin: 0 auto; display: block;" />
-    <span style="font-size: 10px; color: #94a3b8; display: block; margin-top: 6px; font-style: italic;">Foto: Access Point D-Link pemancar sinyal WiFi (Sumber: Wikimedia Commons)</span>
+    <img src="/images/access_point.jpg" alt="Access Point" style="max-width: 100%; height: auto; max-height: 160px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin: 0 auto; display: block;" />
+    <span style="font-size: 10px; color: #94a3b8; display: block; margin-top: 6px; font-style: italic;">Foto: Access Point pemancar WiFi di langit-langit (Sumber: Unsplash)</span>
   </div>
   <ul>
     <li>Fungsi: Menyebarkan sinyal WiFi ke area yang luas</li>
@@ -355,8 +355,8 @@ export function seedMateri() {
   <h3>5. Kabel dan Konektor RJ-45</h3>
   <p>Kabel UTP dengan konektor RJ-45 di ujungnya adalah "jalan" data pada jaringan kabel. Konektor RJ-45 bentuknya mirip colokan telepon tapi lebih besar.</p>
   <div style="text-align: center; margin: 15px 0;">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/RJ-45_plug_Registered_Jack.JPG/640px-RJ-45_plug_Registered_Jack.JPG" alt="RJ45 Connector" style="max-width: 100%; height: auto; max-height: 160px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin: 0 auto; display: block;" />
-    <span style="font-size: 10px; color: #94a3b8; display: block; margin-top: 6px; font-style: italic;">Foto: Colokan/Konektor RJ-45 transparan (Sumber: Wikimedia Commons)</span>
+    <img src="/images/rj45_connector.jpg" alt="RJ45 Connector" style="max-width: 100%; height: auto; max-height: 160px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin: 0 auto; display: block;" />
+    <span style="font-size: 10px; color: #94a3b8; display: block; margin-top: 6px; font-style: italic;">Foto: Konektor RJ-45 yang dicolokkan ke kabel LAN (Sumber: Unsplash)</span>
   </div>
 </div>
 
