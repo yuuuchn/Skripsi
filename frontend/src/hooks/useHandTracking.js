@@ -78,7 +78,7 @@ function drawHandSkeleton(ctx, mappedLandmarks) {
   }
 }
 
-const mapToCanvas = (pt, imgWidth, imgHeight, sx, sWidth, sHeight, canvas) => {
+const mapToCanvas = (pt, imgWidth, imgHeight, sx, sy, sWidth, sHeight, canvas) => {
   if (!pt) return null;
   return {
     x: ((pt.x * imgWidth - sx) / sWidth) * canvas.width,
@@ -242,7 +242,7 @@ export default function useHandTracking(videoRef, canvasRef) {
               const landmarks = results.landmarks[0];
 
               const mappedLandmarks = landmarks.map(pt =>
-                mapToCanvas(pt, imgWidth, imgHeight, sx, sWidth, sHeight, canvas)
+                mapToCanvas(pt, imgWidth, imgHeight, sx, sy, sWidth, sHeight, canvas)
               );
               const indexTipMapped = mappedLandmarks[8];
               const thumbTipMapped = mappedLandmarks[4];
