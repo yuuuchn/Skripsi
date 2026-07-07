@@ -413,3 +413,11 @@ html {
 .animate-gradient-border {
   animation: gradientBorder 6s ease infinite;
 }
+
+@keyframes hand-ripple-effect {
+  0% { transform: translate(-50%, -50%) scale(0.2); opacity: 1; border-color: #6366f1; }
+  100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; border-color: #f43f5e; }
+}
+.animate-hand-ripple {
+  animation: hand-ripple-effect 0.5s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
