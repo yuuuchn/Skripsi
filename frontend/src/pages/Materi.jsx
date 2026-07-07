@@ -32,13 +32,32 @@ const materiColors = [
   { from: '#8b5cf6', to: '#a78bfa' },
 ];
 
+function MateriSkeleton() {
+  return (
+    <div className="max-w-5xl mx-auto px-4 py-8 animate-pulse">
+      <div className="mb-8">
+        <div className="h-4 w-32 bg-slate-100 rounded mb-3" />
+        <div className="h-8 w-64 bg-slate-100 rounded" />
+      </div>
+      <div className="grid md:grid-cols-2 gap-6">
+        {[1, 2, 3, 4, 5, 6].map((i) => (
+          <div key={i} className="rounded-2xl bg-slate-100 h-44" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function Materi() {
   const [materiList, setMateriList] = useState([]);
+  const [loading, setLoading] = useState(true);
   const headerRef = useRef(null);
   const gridRef = useRef(null);
 
   useEffect(() => {
-    api.get('/materi').then((res) => setMateriList(res.data));
+    api.get('/materi').then((res) => {
+      setMateriList(res.data);
+    }).finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
@@ -77,6 +96,8 @@ export default function Materi() {
       ScrollTrigger.getAll().forEach(t => t.kill());
     };
   }, [materiList]);
+
+  if (loading) return <MateriSkeleton />;
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">

@@ -34,18 +34,43 @@ const materiColors = [
   { from: '#8b5cf6', to: '#a78bfa', shadow: 'rgba(139, 92, 246, 0.15)' },
 ];
 
+function DashboardSkeleton() {
+  return (
+    <div className="max-w-6xl mx-auto px-4 py-8 animate-pulse">
+      <div className="rounded-2xl bg-slate-100 h-44 mb-8" />
+      <div className="grid md:grid-cols-3 gap-6 mb-8">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="rounded-2xl bg-slate-100 h-28" />
+        ))}
+      </div>
+      <div className="rounded-2xl bg-slate-100 h-28 mb-10" />
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[1, 2, 3, 4, 5, 6].map((i) => (
+          <div key={i} className="rounded-2xl bg-slate-100 h-52" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function Dashboard() {
   const { user } = useAuth();
   const [progress, setProgress] = useState(null);
   const [materiList, setMateriList] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const statsContainerRef = useRef(null);
   const progressCardRef = useRef(null);
   const materiContainerRef = useRef(null);
 
   useEffect(() => {
-    api.get('/materi').then((res) => setMateriList(res.data));
-    api.get('/progress').then((res) => setProgress(res.data));
+    Promise.all([
+      api.get('/materi'),
+      api.get('/progress'),
+    ]).then(([materiRes, progressRes]) => {
+      setMateriList(materiRes.data);
+      setProgress(progressRes.data);
+    }).finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
@@ -134,6 +159,8 @@ export default function Dashboard() {
       ScrollTrigger.getAll().forEach(t => t.kill());
     };
   }, [materiList, progress]);
+
+  if (loading) return <DashboardSkeleton />;
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
