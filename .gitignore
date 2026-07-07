@@ -13,7 +13,7 @@
 .env.production.local
 
 # Database SQLite local file (so it doesn't overwrite online databases, though we can seed it)
-# **/database.sqlite
+**/database.sqlite
 
 # System files
 .DS_Store
