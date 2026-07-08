@@ -57,79 +57,7 @@ export default function DetailMateri() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  useEffect(() => {
-    if (loading || !materi) return;
 
-    const ctx = gsap.context(() => {
-      // 1. Header (immediate fade-in slide down)
-      gsap.fromTo('.materi-header-section',
-        { opacity: 0, y: -25 },
-        { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }
-      );
-
-      // 2. Illustration Card (ScrollTrigger reveal)
-      const illustrationCard = containerRef.current?.querySelector('.materi-illustration-card');
-      if (illustrationCard) {
-        gsap.fromTo(illustrationCard,
-          { opacity: 0, y: 35, scale: 0.98 },
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 0.65,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: illustrationCard,
-              start: 'top 88%',
-              toggleActions: 'play none none none'
-            }
-          }
-        );
-      }
-
-      // 3. Prose/Content Card (ScrollTrigger reveal)
-      const proseCard = containerRef.current?.querySelector('.materi-prose-card');
-      if (proseCard) {
-        gsap.fromTo(proseCard,
-          { opacity: 0, y: 40 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.7,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: proseCard,
-              start: 'top 88%',
-              toggleActions: 'play none none none'
-            }
-          }
-        );
-      }
-
-      // 4. Footer navigation (ScrollTrigger reveal)
-      const navFooter = containerRef.current?.querySelector('.materi-nav-footer');
-      if (navFooter) {
-        gsap.fromTo(navFooter,
-          { opacity: 0, y: 20 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.55,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: navFooter,
-              start: 'top 95%',
-              toggleActions: 'play none none none'
-            }
-          }
-        );
-      }
-    }, containerRef);
-
-    return () => {
-      ctx.revert();
-    };
-  }, [loading, materi]);
 
   if (loading) {
     return (
@@ -157,8 +85,7 @@ export default function DetailMateri() {
 
   return (
     <div ref={containerRef} className="max-w-4xl mx-auto px-4 py-8">
-      {/* Header and Breadcrumb Section */}
-      <div className="materi-header-section opacity-0">
+      <div className="animate-fade-in-down">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-1.5 text-xs font-bold text-[var(--color-text-secondary)] uppercase tracking-wider mb-5">
           <Link to="/materi" className="hover:text-[var(--color-brand-deep)] flex items-center gap-1.5 transition-colors">
@@ -172,7 +99,7 @@ export default function DetailMateri() {
         {/* Header */}
         <div className={`rounded-2xl bg-gradient-to-r ${gradientClass} p-8 md:p-10 mb-8 text-white relative overflow-hidden shadow-lg`}>
           {/* Decorative elements */}
-          <div className="absolute top-0 right-0 w-52 h-52 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/4 blur-2xl animate-pulse-soft" />
+          <div className="absolute top-0 right-0 w-52 h-52 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08)_0%,transparent_70%)] rounded-full -translate-y-1/2 translate-x-1/4 animate-pulse-soft" />
           
           <div className="relative z-10 flex items-center gap-4.5">
             <div className="w-16 h-16 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-md flex items-center justify-center shadow-sm shrink-0">
@@ -189,13 +116,12 @@ export default function DetailMateri() {
         </div>
       </div>
 
-      {/* Illustrations with enhanced premium layout wrapper */}
-      <div className="space-y-6 mb-8 materi-illustration-card opacity-0">
+      <div className="space-y-6 mb-8 animate-fade-in-up stagger-1">
         {materi.id === 1 && (
           <div className="card p-6 md:p-8 text-center border-slate-200/60 bg-slate-50/20">
             <h3 className="font-display font-extrabold text-base text-[var(--color-text)] mb-1">Visualisasi Jaringan Komputer</h3>
             <p className="text-xs text-[var(--color-text-secondary)] font-medium mb-6">Membantu memahami bagaimana komputer saling terhubung satu sama lain</p>
-            <div className="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm max-w-lg mx-auto">
+            <div className="p-4 bg-white dark:bg-slate-900/60 rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm max-w-lg mx-auto">
               <IlustrasiJaringan />
             </div>
             <p className="text-xs text-[var(--color-text-secondary)] mt-4 font-semibold">Komputer klien terhubung secara terpusat melalui Switch/Hub ke jaringan internet</p>
@@ -206,7 +132,7 @@ export default function DetailMateri() {
           <div className="card p-6 md:p-8 text-center border-slate-200/60 bg-slate-50/20">
             <h3 className="font-display font-extrabold text-base text-[var(--color-text)] mb-1">Garis Waktu Sejarah Internet</h3>
             <p className="text-xs text-[var(--color-text-secondary)] font-medium mb-6">Perjalanan evolusi internet dari tahun 1969 hingga era modern nirkabel</p>
-            <div className="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm max-w-2xl mx-auto overflow-x-auto">
+            <div className="p-4 bg-white dark:bg-slate-900/60 rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm max-w-2xl mx-auto overflow-x-auto">
               <IlustrasiSejarahInternet />
             </div>
           </div>
@@ -224,9 +150,9 @@ export default function DetailMateri() {
                   { title: 'MAN (Metropolitan Area Network)', Component: IlustrasiMAN, desc: 'Menghubungkan jaringan komputer antar lokasi di satu kota.' },
                   { title: 'WAN (Wide Area Network)', Component: IlustrasiWAN, desc: 'Menghubungkan jaringan komputer skala negara bahkan benua.' },
                 ].map(({ title, Component, desc }) => (
-                  <div key={title} className="p-5 bg-white rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between">
+                  <div key={title} className="p-5 bg-white dark:bg-slate-900/60 rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm flex flex-col justify-between">
                     <div>
-                      <h4 className="font-display font-bold text-xs text-indigo-950 mb-4 text-center">{title}</h4>
+                      <h4 className="font-display font-bold text-xs text-indigo-950 dark:text-indigo-200 mb-4 text-center">{title}</h4>
                       <div className="my-2"><Component /></div>
                     </div>
                     <p className="text-[11px] text-[var(--color-text-secondary)] mt-4 font-medium text-center leading-relaxed">{desc}</p>
@@ -238,7 +164,7 @@ export default function DetailMateri() {
             <div className="card p-6 md:p-8 text-center border-slate-200/60 bg-slate-50/20">
               <h3 className="font-display font-extrabold text-base text-[var(--color-text)] mb-1">Jenis Topologi Jaringan</h3>
               <p className="text-xs text-[var(--color-text-secondary)] font-medium mb-6">Bentuk fisik tata letak pemasangan komputer dalam jaringan</p>
-              <div className="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm max-w-lg mx-auto">
+              <div className="p-4 bg-white dark:bg-slate-900/60 rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm max-w-lg mx-auto">
                 <IlustrasiTopologi />
               </div>
             </div>
@@ -249,7 +175,7 @@ export default function DetailMateri() {
           <div className="card p-6 md:p-8 text-center border-slate-200/60 bg-slate-50/20">
             <h3 className="font-display font-extrabold text-base text-[var(--color-text)] mb-1">Media Transmisi Jaringan</h3>
             <p className="text-xs text-[var(--color-text-secondary)] font-medium mb-6">Saluran fisik untuk mengirimkan data/informasi dalam jaringan</p>
-            <div className="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm max-w-2xl mx-auto">
+            <div className="p-4 bg-white dark:bg-slate-900/60 rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm max-w-2xl mx-auto">
               <IlustrasiMediaKabel />
             </div>
           </div>
@@ -259,7 +185,7 @@ export default function DetailMateri() {
           <div className="card p-6 md:p-8 text-center border-slate-200/60 bg-slate-50/20">
             <h3 className="font-display font-extrabold text-base text-[var(--color-text)] mb-1">Perangkat Keras Jaringan Komputer</h3>
             <p className="text-xs text-[var(--color-text-secondary)] font-medium mb-6">Peralatan fisik pendukung operasional sistem jaringan</p>
-            <div className="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm max-w-2xl mx-auto">
+            <div className="p-4 bg-white dark:bg-slate-900/60 rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm max-w-2xl mx-auto">
               <PerangkatJaringan />
             </div>
           </div>
@@ -269,20 +195,18 @@ export default function DetailMateri() {
           <div className="card p-6 md:p-8 text-center border-slate-200/60 bg-slate-50/20">
             <h3 className="font-display font-extrabold text-base text-[var(--color-text)] mb-1">Perbandingan Dampak Jaringan Komputer</h3>
             <p className="text-xs text-[var(--color-text-secondary)] font-medium mb-6">Memahami sisi positif (manfaat) dan sisi negatif (bahaya) internet bagi siswa</p>
-            <div className="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm max-w-2xl mx-auto overflow-x-auto">
+            <div className="p-4 bg-white dark:bg-slate-900/60 rounded-2xl border border-slate-100 dark:border-slate-800/80 shadow-sm max-w-2xl mx-auto overflow-x-auto">
               <IlustrasiDampakJaringan />
             </div>
           </div>
         )}
       </div>
 
-      {/* Content Card with optimized reading typography */}
-      <div className="card p-6 md:p-10 mb-8 border-slate-200/60 shadow-sm materi-prose-card opacity-0">
+      <div className="card p-6 md:p-10 mb-8 border-slate-200/60 shadow-sm animate-fade-in-up stagger-2">
         <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: materi.konten }} />
       </div>
 
-      {/* Navigation Footer */}
-      <div className="flex justify-between items-center mb-12 materi-nav-footer opacity-0">
+      <div className="flex justify-between items-center mb-12 animate-fade-in-up stagger-3">
         {materi.urutan > 1 ? (
           <Link to={`/materi/${materi.urutan - 1}`} className="btn btn-ghost font-bold rounded-xl gap-2 active:scale-95 transition-all">
             <ArrowLeft className="w-4 h-4" />

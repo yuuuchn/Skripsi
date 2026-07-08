@@ -1,6 +1,6 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Globe, Home, BookOpen, Trophy, GraduationCap, LogOut, Menu, X } from 'lucide-react';
+import { Globe, Home, BookOpen, Trophy, GraduationCap, LogOut, Menu, X, Sun, Moon } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 const navItems = [
@@ -15,6 +15,24 @@ export default function Navbar() {
   const location = useLocation();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [dark, setDark] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('theme') === 'dark' ||
+        (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (dark) {
+      root.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      root.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [dark]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -52,7 +70,7 @@ export default function Navbar() {
             </div>
             <div>
               <span className="font-display font-bold text-[var(--color-text)] text-sm tracking-tight">BelajarJaringan</span>
-              <span className="ml-1.5 text-[9px] font-mono font-bold text-[var(--color-brand-deep)] bg-indigo-50 border border-indigo-100/80 px-1.5 py-0.5 rounded-md">SMP</span>
+              <span className="ml-1.5 text-[9px] font-mono font-bold text-[var(--color-brand-deep)] bg-indigo-50 dark:bg-indigo-900/50 border border-indigo-100/80 dark:border-indigo-800/50 px-1.5 py-0.5 rounded-md">SMP</span>
             </div>
           </Link>
 
@@ -67,8 +85,8 @@ export default function Navbar() {
                   to={item.to}
                   className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-250 ${
                     active
-                      ? 'bg-indigo-50/80 text-[var(--color-brand-deep)] border border-indigo-100/50 shadow-sm'
-                      : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hover:bg-slate-100/50'
+                      ? 'bg-indigo-50/80 dark:bg-indigo-900/40 text-[var(--color-brand-deep)] border border-indigo-100/50 dark:border-indigo-800/50 shadow-sm'
+                      : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hover:bg-slate-100/50 dark:hover:bg-slate-700/50'
                   }`}
                 >
                   <Icon className={`w-4 h-4 transition-transform duration-300 ${active ? 'scale-110' : ''}`} />
@@ -82,8 +100,8 @@ export default function Navbar() {
                 to="/admin"
                 className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-250 ${
                   location.pathname === '/admin'
-                    ? 'bg-indigo-50/80 text-[var(--color-brand-deep)] border border-indigo-100/50 shadow-sm'
-                    : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hover:bg-slate-100/50'
+                    ? 'bg-indigo-50/80 dark:bg-indigo-900/40 text-[var(--color-brand-deep)] border border-indigo-100/50 dark:border-indigo-800/50 shadow-sm'
+                    : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hover:bg-slate-100/50 dark:hover:bg-slate-700/50'
                 }`}
               >
                 <GraduationCap className={`w-4 h-4 transition-transform duration-300 ${location.pathname === '/admin' ? 'scale-110' : ''}`} />
@@ -94,6 +112,13 @@ export default function Navbar() {
 
           {/* Right side / Profile */}
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => setDark(!dark)}
+              className="p-2 rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-brand)] hover:bg-[var(--color-brand-soft)] transition-all duration-200"
+              title={dark ? 'Mode Terang' : 'Mode Gelap'}
+            >
+              {dark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
             <div className="flex items-center gap-3 pl-4 border-l border-[var(--color-border)]">
               <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center text-white text-xs font-bold shadow-md shadow-indigo-500/10">
                 {user?.nama?.charAt(0).toUpperCase()}
@@ -117,14 +142,14 @@ export default function Navbar() {
       {/* Mobile Floating Menu Button (Top-Right Floating Circle Action Button) */}
       <button 
         onClick={() => setOpen(!open)} 
-        className="md:hidden fixed top-4 right-4 w-11 h-11 rounded-xl bg-white/90 backdrop-blur-md border border-slate-200/60 shadow-lg shadow-indigo-500/5 flex items-center justify-center active:scale-95 transition-all z-50 text-[var(--color-text)]"
+        className="md:hidden fixed top-4 right-4 w-11 h-11 rounded-xl bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border border-slate-200/60 dark:border-slate-700/60 shadow-lg shadow-indigo-500/5 flex items-center justify-center active:scale-95 transition-all z-50 text-[var(--color-text)]"
       >
         {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
       </button>
 
       {/* Floating Mobile Dropdown Menu Card */}
       {open && (
-        <div className="md:hidden fixed top-16 right-4 w-52 bg-white/95 backdrop-blur-xl rounded-2xl border border-slate-200/60 shadow-xl p-3.5 z-50 animate-scale-in">
+        <div className="md:hidden fixed top-16 right-4 w-52 bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl rounded-2xl border border-slate-200/60 dark:border-slate-700/60 shadow-xl p-3.5 z-50 animate-scale-in">
           <div className="space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -136,8 +161,8 @@ export default function Navbar() {
                   onClick={() => setOpen(false)}
                   className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
                     active
-                      ? 'bg-indigo-50/80 text-[var(--color-brand-deep)] border border-indigo-100/50 shadow-sm'
-                      : 'text-[var(--color-text-secondary)] hover:bg-slate-50 hover:text-[var(--color-text)]'
+                      ? 'bg-indigo-50/80 dark:bg-indigo-900/40 text-[var(--color-brand-deep)] border border-indigo-100/50 dark:border-indigo-800/50 shadow-sm'
+                      : 'text-[var(--color-text-secondary)] hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-[var(--color-text)]'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -151,15 +176,22 @@ export default function Navbar() {
                 onClick={() => setOpen(false)} 
                 className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
                   location.pathname === '/admin'
-                    ? 'bg-indigo-50/80 text-[var(--color-brand-deep)] border border-indigo-100/50 shadow-sm'
-                    : 'text-[var(--color-text-secondary)] hover:bg-slate-50 hover:text-[var(--color-text)]'
+                    ? 'bg-indigo-50/80 dark:bg-indigo-900/40 text-[var(--color-brand-deep)] border border-indigo-100/50 dark:border-indigo-800/50 shadow-sm'
+                    : 'text-[var(--color-text-secondary)] hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-[var(--color-text)]'
                 }`}
               >
                 <GraduationCap className="w-4 h-4" />
                 Panel Guru
               </Link>
             )}
-            <div className="border-t border-slate-100 my-1.5" />
+            <div className="border-t border-slate-100 dark:border-slate-700 my-1.5" />
+            <button
+              onClick={() => setDark(!dark)}
+              className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-[var(--color-text-secondary)] hover:text-[var(--color-brand)] hover:bg-[var(--color-brand-soft)] w-full transition-colors"
+            >
+              {dark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              {dark ? 'Mode Terang' : 'Mode Gelap'}
+            </button>
             <button 
               onClick={handleLogout} 
               className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-[var(--color-rose)] hover:bg-[var(--color-rose-soft)] w-full transition-colors"
@@ -173,7 +205,7 @@ export default function Navbar() {
 
       {/* 2. LEFT FLOATING SIDEBAR (Fades in when scrolled, desktop only) */}
       <nav 
-        className={`hidden md:flex flex-col items-center gap-5 py-5 px-0 fixed left-5 top-1/2 -translate-y-1/2 w-16 h-auto rounded-3xl shadow-xl shadow-indigo-500/5 border border-slate-200/80 bg-white/90 backdrop-blur-xl z-50 transition-all duration-300 ${
+        className={`hidden md:flex flex-col items-center gap-5 py-5 px-0 fixed left-5 top-1/2 -translate-y-1/2 w-16 h-auto rounded-3xl shadow-xl shadow-indigo-500/5 border border-slate-200/80 dark:border-slate-700/80 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl z-50 transition-all duration-300 ${
           scrolled ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
       >
@@ -185,7 +217,7 @@ export default function Navbar() {
         </Link>
 
         {/* Divider */}
-        <div className="w-7 h-[1px] bg-slate-100" />
+        <div className="w-7 h-[1px] bg-slate-100 dark:bg-slate-700" />
 
         {/* Sidebar nav links */}
         <div className="flex flex-col gap-3.5 w-full items-center">
@@ -198,12 +230,12 @@ export default function Navbar() {
                   to={item.to}
                   className={`flex items-center justify-center rounded-xl transition-all duration-250 w-10 h-10 ${
                     active
-                      ? 'bg-indigo-50/80 text-[var(--color-brand-deep)] border border-indigo-100/50 shadow-sm'
-                      : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hover:bg-slate-100/50'
+                      ? 'bg-indigo-50/80 dark:bg-indigo-900/40 text-[var(--color-brand-deep)] border border-indigo-100/50 dark:border-indigo-800/50 shadow-sm'
+                      : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hover:bg-slate-100/50 dark:hover:bg-slate-700/50'
                   }`}
                 >
                   <Icon className={`w-5 h-5 transition-transform duration-300 ${active ? 'scale-110' : ''}`} />
-                  <div className="hidden md:block absolute left-14 top-1/2 -translate-y-1/2 bg-slate-900 text-white text-[10px] font-bold px-2.5 py-1.5 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-md z-50">
+                  <div className="hidden md:block absolute left-14 top-1/2 -translate-y-1/2 bg-slate-900 dark:bg-slate-700 text-white text-[10px] font-bold px-2.5 py-1.5 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-md z-50">
                     {item.label}
                   </div>
                 </Link>
@@ -217,12 +249,12 @@ export default function Navbar() {
                 to="/admin"
                 className={`flex items-center justify-center rounded-xl transition-all duration-250 w-10 h-10 ${
                   location.pathname === '/admin'
-                    ? 'bg-indigo-50/80 text-[var(--color-brand-deep)] border border-indigo-100/50'
-                    : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hover:bg-slate-100/50'
+                    ? 'bg-indigo-50/80 dark:bg-indigo-900/40 text-[var(--color-brand-deep)] border border-indigo-100/50 dark:border-indigo-800/50'
+                    : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hover:bg-slate-100/50 dark:hover:bg-slate-700/50'
                 }`}
               >
                 <GraduationCap className={`w-5 h-5 transition-transform duration-300 ${location.pathname === '/admin' ? 'scale-110' : ''}`} />
-                <div className="hidden md:block absolute left-14 top-1/2 -translate-y-1/2 bg-slate-900 text-white text-[10px] font-bold px-2.5 py-1.5 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-md z-50">
+                <div className="hidden md:block absolute left-14 top-1/2 -translate-y-1/2 bg-slate-900 dark:bg-slate-700 text-white text-[10px] font-bold px-2.5 py-1.5 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-md z-50">
                   Panel Guru
                 </div>
               </Link>
@@ -231,16 +263,23 @@ export default function Navbar() {
         </div>
 
         {/* Divider */}
-        <div className="w-7 h-[1px] bg-slate-100" />
+        <div className="w-7 h-[1px] bg-slate-100 dark:bg-slate-700" />
 
         {/* Profile / Logout section in Sidebar */}
         <div className="flex flex-col w-full gap-3.5 items-center">
+          <button
+            onClick={() => setDark(!dark)}
+            className="p-2 rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-brand)] hover:bg-[var(--color-brand-soft)] transition-all duration-200"
+            title={dark ? 'Mode Terang' : 'Mode Gelap'}
+          >
+            {dark ? <Sun className="w-4.5 h-4.5" /> : <Moon className="w-4.5 h-4.5" />}
+          </button>
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center text-white text-xs font-bold shadow-md shadow-indigo-500/10" title={user?.nama}>
             {user?.nama?.charAt(0).toUpperCase()}
           </div>
-          <button 
-            onClick={handleLogout} 
-            className="p-2 rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-rose)] hover:bg-[var(--color-rose-soft)] transition-all duration-200" 
+          <button
+            onClick={handleLogout}
+            className="p-2 rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-rose)] hover:bg-[var(--color-rose-soft)] transition-all duration-200"
             title="Keluar"
           >
             <LogOut className="w-4.5 h-4.5" />

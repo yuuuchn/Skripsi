@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ─────────────────────────────────────────
    Design System: Tokens (Tailwind v4 theme variables)
    ───────────────────────────────────────── */
@@ -26,6 +28,16 @@
   --font-body: 'Inter', 'Segoe UI', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
+
+.dark {
+  --color-bg: #0b1120;
+  --color-card: #1a2235;
+  --color-text: #eef2f6;
+  --color-text-secondary: #8896ae;
+  --color-border: #2a3448;
+  --color-brand-soft: #1e2347;
+}
+
 body {
   font-family: var(--font-body);
   background-color: var(--color-bg);
@@ -35,6 +47,13 @@ body {
     radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.03) 0px, transparent 50%),
     radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.03) 0px, transparent 50%);
   background-attachment: fixed;
+}
+
+.dark body,
+body.dark {
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.05) 0px, transparent 50%);
 }
 
 /* Prevent layout scaling/overflow issues by constraining all visual media */
@@ -75,6 +94,11 @@ img, svg {
   border-bottom: 1px solid rgba(255, 255, 255, 0.5);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
 }
+.dark .glass-navbar {
+  background: rgba(15, 23, 42, 0.85);
+  border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
 
 .glass-card {
   background: rgba(255, 255, 255, 0.7);
@@ -82,6 +106,10 @@ img, svg {
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.6);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.03);
+}
+.dark .glass-card {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(51, 65, 85, 0.6);
 }
 
 /* ─────────────────────────────────────────
@@ -94,13 +122,24 @@ img, svg {
   box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01), 0 2px 4px -1px rgba(0,0,0,0.01);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+.dark .card {
+  border-color: rgba(42, 52, 72, 0.8);
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2), 0 2px 4px -1px rgba(0,0,0,0.1);
+}
 .card:hover {
   box-shadow: 0 12px 30px -10px rgba(99,102,241,0.08), 0 4px 12px -5px rgba(99,102,241,0.03);
   border-color: rgba(199, 210, 254, 0.7);
   transform: translateY(-2px);
 }
+.dark .card:hover {
+  box-shadow: 0 12px 30px -10px rgba(99,102,241,0.15), 0 4px 12px -5px rgba(99,102,241,0.08);
+  border-color: rgba(99, 102, 241, 0.25);
+}
 .card-elevated {
   box-shadow: 0 10px 15px -3px rgba(0,0,0,0.02), 0 4px 6px -2px rgba(0,0,0,0.01);
+}
+.dark .card-elevated {
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2), 0 4px 6px -2px rgba(0,0,0,0.1);
 }
 .card-elevated:hover {
   box-shadow: 0 25px 45px -12px rgba(99,102,241,0.14), 0 10px 15px -8px rgba(99,102,241,0.06);
@@ -142,11 +181,21 @@ img, svg {
   color: #475569;
   border: 1.5px solid #e2e8f0;
 }
+.dark .btn-ghost {
+  background: rgba(30, 41, 59, 0.8);
+  color: #8896ae;
+  border-color: #334155;
+}
 .btn-ghost:hover {
   border-color: #6366f1;
   color: #6366f1;
   background: #f0f3ff;
   transform: translateY(-1px);
+}
+.dark .btn-ghost:hover {
+  background: #1e2347;
+  color: #818cf8;
+  border-color: #6366f1;
 }
 
 /* ─────────────────────────────────────────
@@ -174,6 +223,10 @@ img, svg {
   from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
 }
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -197,6 +250,9 @@ img, svg {
 
 .animate-fade-in-up {
   animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.animate-fade-in-down {
+  animation: fadeInDown 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 .animate-fade-in {
   animation: fadeIn 0.4s ease-out both;
@@ -230,6 +286,15 @@ img, svg {
   line-height: 1.8;
   font-size: 1rem;
 }
+.prose > *:first-child {
+  margin-top: 0 !important;
+}
+.prose img {
+  background-color: #ffffff;
+}
+.dark .prose {
+  color: #cbd5e1;
+}
 .prose h2 {
   font-family: var(--font-display);
   color: #4f46e5;
@@ -250,6 +315,7 @@ img, svg {
   margin-bottom: 0.75rem;
   letter-spacing: -0.01em;
 }
+.dark .prose h3 { color: #e2e8f0; }
 .prose h4 {
   font-weight: 700;
   color: #1e293b;
@@ -257,6 +323,7 @@ img, svg {
   margin-bottom: 0.5rem;
   font-size: 1.05rem;
 }
+.dark .prose h4 { color: #cbd5e1; }
 .prose p {
   margin-bottom: 1rem;
 }
@@ -270,6 +337,7 @@ img, svg {
   position: relative;
   color: #475569;
 }
+.dark .prose ul li { color: #94a3b8; }
 .prose ul li::before {
   content: '';
   position: absolute;
@@ -293,10 +361,12 @@ img, svg {
   box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01);
   transition: all 0.2s;
 }
+.dark .prose .card-jenis { background: rgba(30, 41, 59, 0.6); }
 .prose .card-jenis:hover {
   background: #f0f3ff;
   transform: translateX(3px);
 }
+.dark .prose .card-jenis:hover { background: rgba(30, 41, 59, 0.9); }
 .prose table {
   width: 100%;
   border-collapse: separate;
@@ -306,6 +376,7 @@ img, svg {
   border: 1px solid #e2e8f0;
   display: table;
 }
+.dark .prose table { border-color: #2a3448; }
 @media (max-width: 767px) {
   .prose table {
     display: block;
@@ -329,10 +400,12 @@ img, svg {
   border-bottom: 1px solid #f1f5f9;
   font-size: 0.875rem;
 }
+.dark .prose td { border-color: #2a3448; }
 .prose tr:last-child td {
   border-bottom: none;
 }
 .prose tr:nth-child(even) { background: #fafbfc; }
+.dark .prose tr:nth-child(even) { background: rgba(26, 34, 53, 0.5); }
 
 /* ─────────────────────────────────────────
    Tags and Badges
@@ -349,9 +422,13 @@ img, svg {
   transition: all 0.2s;
 }
 .tag-success { background: #d1fae5; color: #065f46; border: 1px solid rgba(16, 185, 129, 0.1); }
+.dark .tag-success { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border-color: rgba(16, 185, 129, 0.2); }
 .tag-warning { background: #fef3c7; color: #92400e; border: 1px solid rgba(245, 158, 11, 0.1); }
+.dark .tag-warning { background: rgba(245, 158, 11, 0.15); color: #fcd34d; border-color: rgba(245, 158, 11, 0.2); }
 .tag-info { background: #e0e7ff; color: #3730a3; border: 1px solid rgba(99, 102, 241, 0.1); }
+.dark .tag-info { background: rgba(99, 102, 241, 0.15); color: #a5b4fc; border-color: rgba(99, 102, 241, 0.2); }
 .tag-danger { background: #ffe4e6; color: #991b1b; border: 1px solid rgba(244, 63, 94, 0.1); }
+.dark .tag-danger { background: rgba(244, 63, 94, 0.15); color: #fda4af; border-color: rgba(244, 63, 94, 0.2); }
 
 /* ─────────────────────────────────────────
    Scrollbar & Utilities
@@ -377,6 +454,9 @@ html {
 }
 ::-webkit-scrollbar-thumb:hover { 
   background: linear-gradient(180deg, #4f46e5 0%, #9333ea 100%); 
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #4f46e5 0%, #7c3aed 100%);
 }
 
 /* ─────────────────────────────────────────

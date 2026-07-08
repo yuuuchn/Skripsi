@@ -47,7 +47,7 @@ export default function PerangkatJaringan() {
       <line x1="397" y1="90" x2="397" y2="120" stroke="#94a3b8" strokeWidth="1" />
 
       <path d="M80,155 Q250,190 420,155" fill="none" stroke="#10b981" strokeWidth="1.5" strokeDasharray="5,3" />
-      <text x="250" y="190" textAnchor="middle" fill="#64748b" fontSize="8">Semua perangkat ini bekerja sama supaya kamu bisa internetan!</text>
+      <text x="250" y="190" textAnchor="middle" className="fill-slate-600 dark:fill-slate-300" fontSize="8">Semua perangkat ini bekerja sama supaya kamu bisa internetan!</text>
     </svg>
   );
 }

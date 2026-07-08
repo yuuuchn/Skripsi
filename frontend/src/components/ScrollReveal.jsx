@@ -57,25 +57,27 @@ export default function ScrollReveal({
 
     // Word reveal animation
     const wordElements = el.querySelectorAll('.word');
-    gsap.fromTo(
-      wordElements,
-      { opacity: baseOpacity, willChange: 'opacity' },
-      {
-        ease: 'none',
-        opacity: 1,
-        stagger: 0.05,
-        scrollTrigger: {
-          trigger: el,
-          scroller,
-          start: 'top bottom-=20%',
-          end: wordAnimationEnd,
-          scrub: true,
-        },
-      }
-    );
+    if (baseOpacity < 1) {
+      gsap.fromTo(
+        wordElements,
+        { opacity: baseOpacity, willChange: 'opacity' },
+        {
+          ease: 'none',
+          opacity: 1,
+          stagger: 0.05,
+          scrollTrigger: {
+            trigger: el,
+            scroller,
+            start: 'top bottom-=20%',
+            end: wordAnimationEnd,
+            scrub: true,
+          },
+        }
+      );
+    }
 
-    // Blur animation (if enabled)
-    if (enableBlur) {
+    // Blur animation (if enabled and strength is greater than 0)
+    if (enableBlur && blurStrength > 0) {
       gsap.fromTo(
         wordElements,
         { filter: `blur(${blurStrength}px)` },

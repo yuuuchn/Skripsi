@@ -38,51 +38,47 @@ function drawScrollZones(ctx, isActiveTop, isActiveBottom) {
   ctx.stroke();
 }
 
-function drawHandSkeleton(ctx, mappedLandmarks) {
-  ctx.strokeStyle = '#4f46e5';
-  ctx.lineWidth = 3;
+function drawTrackingDots(ctx, mappedLandmarks, isPinching) {
+  const thumb = mappedLandmarks[4];
+  const index = mappedLandmarks[8];
+  if (!thumb || !index) return;
 
-  const drawPath = (indices) => {
-    ctx.beginPath();
-    for (let i = 0; i < indices.length; i++) {
-      const pt = mappedLandmarks[indices[i]];
-      if (!pt) continue;
-      if (i === 0) ctx.moveTo(pt.x, pt.y);
-      else ctx.lineTo(pt.x, pt.y);
-    }
-    ctx.stroke();
-  };
+  // Draw a subtle connecting dashed line between thumb and index finger
+  ctx.strokeStyle = isPinching ? 'rgba(244, 63, 94, 0.6)' : 'rgba(34, 211, 238, 0.4)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([4, 3]);
+  ctx.beginPath();
+  ctx.moveTo(thumb.x, thumb.y);
+  ctx.lineTo(index.x, index.y);
+  ctx.stroke();
+  ctx.setLineDash([]); // Reset dash
 
-  drawPath([0, 5, 6, 7, 8]);
-  drawPath([0, 1, 2, 3, 4]);
+  // Draw index finger tip dot
+  ctx.beginPath();
+  ctx.arc(index.x, index.y, 5, 0, 2 * Math.PI);
+  ctx.fillStyle = isPinching ? '#f43f5e' : '#22d3ee';
+  ctx.fill();
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 1;
+  ctx.stroke();
 
-  const pt1 = mappedLandmarks[1];
-  const pt5 = mappedLandmarks[5];
-  if (pt1 && pt5) {
-    ctx.beginPath();
-    ctx.moveTo(pt1.x, pt1.y);
-    ctx.lineTo(pt5.x, pt5.y);
-    ctx.stroke();
-  }
-
-  ctx.fillStyle = '#22d3ee';
-  const activeJoints = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-  for (const jointIdx of activeJoints) {
-    const pt = mappedLandmarks[jointIdx];
-    if (!pt) continue;
-    ctx.beginPath();
-    const radius = (jointIdx === 4 || jointIdx === 8) ? 6 : 4;
-    ctx.fillStyle = (jointIdx === 4 || jointIdx === 8) ? '#f43f5e' : '#22d3ee';
-    ctx.arc(pt.x, pt.y, radius, 0, 2 * Math.PI);
-    ctx.fill();
-  }
+  // Draw thumb tip dot
+  ctx.beginPath();
+  ctx.arc(thumb.x, thumb.y, 5, 0, 2 * Math.PI);
+  ctx.fillStyle = isPinching ? '#f43f5e' : '#22d3ee';
+  ctx.fill();
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 1;
+  ctx.stroke();
 }
 
 const mapToCanvas = (pt, imgWidth, imgHeight, sx, sy, sWidth, sHeight, canvas) => {
   if (!pt) return null;
+  const canvasWidth = canvas ? canvas.width : CANVAS_W;
+  const canvasHeight = canvas ? canvas.height : CANVAS_H;
   return {
-    x: ((pt.x * imgWidth - sx) / sWidth) * canvas.width,
-    y: ((pt.y * imgHeight - sy) / sHeight) * canvas.height,
+    x: ((pt.x * imgWidth - sx) / sWidth) * canvasWidth,
+    y: ((pt.y * imgHeight - sy) / sHeight) * canvasHeight,
   };
 };
 
@@ -163,7 +159,7 @@ export default function useHandTracking(videoRef, canvasRef) {
       }
 
       const dpr = window.devicePixelRatio || 1;
-      if (canvasRef.current) {
+      if (canvasRef && canvasRef.current) {
         canvasRef.current.width = CANVAS_W * dpr;
         canvasRef.current.height = CANVAS_H * dpr;
       }
@@ -200,12 +196,12 @@ export default function useHandTracking(videoRef, canvasRef) {
   };
 
   useEffect(() => {
-    if (!active || !videoRef.current || !canvasRef.current || !landmarkerRef.current) return;
+    if (!active || !videoRef.current || !landmarkerRef.current) return;
 
     const video = videoRef.current;
-    const canvas = canvasRef.current;
+    const canvas = canvasRef && canvasRef.current ? canvasRef.current : null;
     const landmarker = landmarkerRef.current;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas ? canvas.getContext('2d') : null;
 
     let lastVideoTime = -1;
 
@@ -230,8 +226,8 @@ export default function useHandTracking(videoRef, canvasRef) {
               sy = (imgHeight - sHeight) / 2;
             }
 
+            // Only clear the canvas (leave it transparent)
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(video, sx, sy, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
           }
 
           if (video.currentTime !== lastVideoTime) {
@@ -251,17 +247,18 @@ export default function useHandTracking(videoRef, canvasRef) {
               const thumbTip = landmarks[4];
 
               if (indexTipMapped && thumbTipMapped) {
-                const rx = indexTipMapped.x / canvas.width;
-                const ry = indexTipMapped.y / canvas.height;
-                const thumbRy = thumbTipMapped.y / canvas.height;
+                const canvasWidth = canvas ? canvas.width : CANVAS_W;
+                const canvasHeight = canvas ? canvas.height : CANVAS_H;
+                const rx = indexTipMapped.x / canvasWidth;
+                const ry = indexTipMapped.y / canvasHeight;
+                const thumbRy = thumbTipMapped.y / canvasHeight;
 
                 const isScrollUpActive = ry <= TOP_BOUND;
                 const isScrollDownActive = thumbRy >= BOTTOM_BOUND;
 
-                if (ctx && canvas) {
-                  drawScrollZones(ctx, isScrollUpActive, isScrollDownActive);
-                  drawHandSkeleton(ctx, mappedLandmarks);
-                }
+                 if (ctx && canvas) {
+                   drawTrackingDots(ctx, mappedLandmarks, pinchingRef.current);
+                 }
 
                 if (isScrollUpActive) {
                   targetScrollVelocity = SCROLL_UP_VELOCITY;

@@ -50,7 +50,7 @@ export function IlustrasiLAN() {
       <line x1="300" y1="115" x2="130" y2="144" stroke="#94a3b8" strokeWidth="1.5" />
 
       <rect x="90" y="140" width="80" height="10" rx="5" fill="#e2e8f0" />
-      <text x="130" y="148" textAnchor="middle" fill="#475569" fontSize="8">1 Gedung / Sekolah</text>
+      <text x="130" y="148" textAnchor="middle" className="fill-slate-600 dark:fill-slate-300" fontSize="8">1 Gedung / Sekolah</text>
     </svg>
   );
 }
@@ -77,7 +77,7 @@ export function IlustrasiMAN() {
       <line x1="245" y1="97" x2="300" y2="97" stroke="#94a3b8" strokeWidth="2" strokeDasharray="5,3" />
 
       <rect x="130" y="140" width="140" height="16" rx="8" fill="#e2e8f0" />
-      <text x="200" y="152" textAnchor="middle" fill="#475569" fontSize="8">Area 1 Kota (10-50 km)</text>
+      <text x="200" y="152" textAnchor="middle" className="fill-slate-600 dark:fill-slate-300" fontSize="8">Area 1 Kota (10-50 km)</text>
     </svg>
   );
 }
@@ -114,7 +114,7 @@ export function IlustrasiWAN() {
 
 export function IlustrasiMediaKabel() {
   return (
-    <svg viewBox="0 0 400 140" className="w-full">
+    <svg viewBox="0 0 400 78" className="w-full">
       <text x="60" y="25" textAnchor="middle" fill="#3b82f6" fontSize="12" fontWeight="bold">Kabel UTP</text>
       <rect x="10" y="32" width="100" height="16" rx="3" fill="#3b82f6" opacity="0.3" />
       <rect x="10" y="36" width="100" height="2" rx="1" fill="#3b82f6" />
@@ -179,43 +179,43 @@ export function IlustrasiSejarahInternet() {
   return (
     <svg viewBox="0 0 500 160" className="w-full max-w-lg mx-auto">
       {/* Timeline main line */}
-      <line x1="40" y1="80" x2="460" y2="80" stroke="#cbd5e1" strokeWidth="4" />
-      <polygon points="460,75 470,80 460,85" fill="#94a3b8" />
+      <line x1="40" y1="80" x2="460" y2="80" className="stroke-slate-300 dark:stroke-slate-700" strokeWidth="4" />
+      <polygon points="460,75 470,80 460,85" className="fill-slate-400 dark:fill-slate-600" />
       
       {/* 1969 */}
       <circle cx="60" cy="80" r="8" fill="#4f46e5" />
       <circle cx="60" cy="80" r="4" fill="white" />
-      <text x="60" y="55" textAnchor="middle" fill="#1e293b" fontSize="10" fontWeight="extrabold">1969</text>
-      <text x="60" y="105" textAnchor="middle" fill="#475569" fontSize="9" fontWeight="bold">ARPANET</text>
-      <text x="60" y="118" textAnchor="middle" fill="#64748b" fontSize="8">(4 Komputer)</text>
+      <text x="60" y="55" textAnchor="middle" className="fill-slate-900 dark:fill-slate-100" fontSize="10" fontWeight="extrabold">1969</text>
+      <text x="60" y="105" textAnchor="middle" className="fill-slate-600 dark:fill-slate-400" fontSize="9" fontWeight="bold">ARPANET</text>
+      <text x="60" y="118" textAnchor="middle" className="fill-slate-400 dark:fill-slate-500" fontSize="8">(4 Komputer)</text>
 
       {/* 1983 */}
       <circle cx="150" cy="80" r="8" fill="#06b6d4" />
       <circle cx="150" cy="80" r="4" fill="white" />
-      <text x="150" y="55" textAnchor="middle" fill="#1e293b" fontSize="10" fontWeight="extrabold">1983</text>
-      <text x="150" y="105" textAnchor="middle" fill="#475569" fontSize="9" fontWeight="bold">TCP/IP</text>
-      <text x="150" y="118" textAnchor="middle" fill="#64748b" fontSize="8">(Protokol Standar)</text>
+      <text x="150" y="55" textAnchor="middle" className="fill-slate-900 dark:fill-slate-100" fontSize="10" fontWeight="extrabold">1983</text>
+      <text x="150" y="105" textAnchor="middle" className="fill-slate-600 dark:fill-slate-400" fontSize="9" fontWeight="bold">TCP/IP</text>
+      <text x="150" y="118" textAnchor="middle" className="fill-slate-400 dark:fill-slate-500" fontSize="8">(Protokol Standar)</text>
 
       {/* 1990 */}
       <circle cx="240" cy="80" r="8" fill="#8b5cf6" />
       <circle cx="240" cy="80" r="4" fill="white" />
-      <text x="240" y="55" textAnchor="middle" fill="#1e293b" fontSize="10" fontWeight="extrabold">1990</text>
-      <text x="240" y="105" textAnchor="middle" fill="#475569" fontSize="9" fontWeight="bold">WWW Lahir</text>
-      <text x="240" y="118" textAnchor="middle" fill="#64748b" fontSize="8">(Halaman Web)</text>
+      <text x="240" y="55" textAnchor="middle" className="fill-slate-900 dark:fill-slate-100" fontSize="10" fontWeight="extrabold">1990</text>
+      <text x="240" y="105" textAnchor="middle" className="fill-slate-600 dark:fill-slate-400" fontSize="9" fontWeight="bold">WWW Lahir</text>
+      <text x="240" y="118" textAnchor="middle" className="fill-slate-400 dark:fill-slate-500" fontSize="8">(Halaman Web)</text>
 
       {/* 2000s */}
       <circle cx="330" cy="80" r="8" fill="#10b981" />
       <circle cx="330" cy="80" r="4" fill="white" />
-      <text x="330" y="55" textAnchor="middle" fill="#1e293b" fontSize="10" fontWeight="extrabold">2000-an</text>
-      <text x="330" y="105" textAnchor="middle" fill="#475569" fontSize="9" fontWeight="bold">Era WiFi</text>
-      <text x="330" y="118" textAnchor="middle" fill="#64748b" fontSize="8">(Internet Tanpa Kabel)</text>
+      <text x="330" y="55" textAnchor="middle" className="fill-slate-900 dark:fill-slate-100" fontSize="10" fontWeight="extrabold">2000-an</text>
+      <text x="330" y="105" textAnchor="middle" className="fill-slate-600 dark:fill-slate-400" fontSize="9" fontWeight="bold">Era WiFi</text>
+      <text x="330" y="118" textAnchor="middle" className="fill-slate-400 dark:fill-slate-500" fontSize="8">(Internet Tanpa Kabel)</text>
 
       {/* Sekarang */}
       <circle cx="420" cy="80" r="8" fill="#f59e0b" />
       <circle cx="420" cy="80" r="4" fill="white" />
-      <text x="420" y="55" textAnchor="middle" fill="#1e293b" fontSize="10" fontWeight="extrabold">Sekarang</text>
-      <text x="420" y="105" textAnchor="middle" fill="#475569" fontSize="9" fontWeight="bold">4G/5G Seluler</text>
-      <text x="420" y="118" textAnchor="middle" fill="#64748b" fontSize="8">(Super Cepat & Mobile)</text>
+      <text x="420" y="55" textAnchor="middle" className="fill-slate-900 dark:fill-slate-100" fontSize="10" fontWeight="extrabold">Sekarang</text>
+      <text x="420" y="105" textAnchor="middle" className="fill-slate-600 dark:fill-slate-400" fontSize="9" fontWeight="bold">4G/5G Seluler</text>
+      <text x="420" y="118" textAnchor="middle" className="fill-slate-400 dark:fill-slate-500" fontSize="8">(Super Cepat & Mobile)</text>
     </svg>
   );
 }
@@ -229,25 +229,25 @@ export function IlustrasiDampakJaringan() {
       <text x="135" y="38" textAnchor="middle" fill="white" fontSize="10.5" fontWeight="extrabold">Dampak Positif (Manfaat)</text>
       
       <circle cx="30" cy="70" r="3" fill="#10b981" />
-      <text x="42" y="73" fill="#1e293b" fontSize="9">
+      <text x="42" y="73" className="fill-slate-900 dark:fill-slate-100" fontSize="9">
         <tspan fontWeight="bold">Pendidikan: </tspan>
-        <tspan fill="#475569">Belajar online dan cari materi</tspan>
+        <tspan className="fill-slate-600 dark:fill-slate-300">Belajar online dan cari materi</tspan>
       </text>
 
       <circle cx="30" cy="100" r="3" fill="#10b981" />
-      <text x="42" y="103" fill="#1e293b" fontSize="9">
+      <text x="42" y="103" className="fill-slate-900 dark:fill-slate-100" fontSize="9">
         <tspan fontWeight="bold">Komunikasi: </tspan>
-        <tspan fill="#475569">Chat dan video call lancar</tspan>
+        <tspan className="fill-slate-600 dark:fill-slate-300">Chat dan video call lancar</tspan>
       </text>
 
       <circle cx="30" cy="130" r="3" fill="#10b981" />
-      <text x="42" y="133" fill="#1e293b" fontSize="9">
+      <text x="42" y="133" className="fill-slate-900 dark:fill-slate-100" fontSize="9">
         <tspan fontWeight="bold">Kemudahan: </tspan>
-        <tspan fill="#475569">Belanja dan pesan makanan</tspan>
+        <tspan className="fill-slate-600 dark:fill-slate-300">Belanja dan pesan makanan</tspan>
       </text>
 
       {/* Timbangan/VS divider */}
-      <line x1="280" y1="30" x2="280" y2="140" stroke="#cbd5e1" strokeWidth="2" strokeDasharray="4,4" />
+      <line x1="280" y1="30" x2="280" y2="140" className="stroke-slate-300 dark:stroke-slate-700" strokeWidth="2" strokeDasharray="4,4" />
       <circle cx="280" cy="85" r="14" fill="#64748b" />
       <text x="280" y="89" textAnchor="middle" fill="white" fontSize="9" fontWeight="black">VS</text>
 
@@ -257,21 +257,21 @@ export function IlustrasiDampakJaringan() {
       <text x="425" y="38" textAnchor="middle" fill="white" fontSize="10.5" fontWeight="extrabold">Dampak Negatif (Bahaya)</text>
 
           <circle cx="320" cy="70" r="3" fill="#ef4444" />
-          <text x="332" y="73" fill="#1e293b" fontSize="9">
+          <text x="332" y="73" className="fill-slate-900 dark:fill-slate-100" fontSize="9">
             <tspan fontWeight="bold">Kriminalitas: </tspan>
-            <tspan fill="#475569">Penipuan online dan hacking</tspan>
+            <tspan className="fill-slate-600 dark:fill-slate-300">Penipuan online dan hacking</tspan>
           </text>
 
           <circle cx="320" cy="100" r="3" fill="#ef4444" />
-          <text x="332" y="103" fill="#1e293b" fontSize="9">
+          <text x="332" y="103" className="fill-slate-900 dark:fill-slate-100" fontSize="9">
             <tspan fontWeight="bold">Psikologis: </tspan>
-            <tspan fill="#475569">Kecanduan HP / game online</tspan>
+            <tspan className="fill-slate-600 dark:fill-slate-300">Kecanduan HP / game online</tspan>
           </text>
 
           <circle cx="320" cy="130" r="3" fill="#ef4444" />
-          <text x="332" y="133" fill="#1e293b" fontSize="9">
+          <text x="332" y="133" className="fill-slate-900 dark:fill-slate-100" fontSize="9">
             <tspan fontWeight="bold">Sosial: </tspan>
-            <tspan fill="#475569">Penyebaran hoax dan bullying</tspan>
+            <tspan className="fill-slate-600 dark:fill-slate-300">Penyebaran hoax dan bullying</tspan>
           </text>
     </svg>
   );

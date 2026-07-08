@@ -67,13 +67,13 @@ export default function Kuis() {
     const pesan = pct >= 80 ? 'Luar biasa! Kamu sangat memahaminya.' : pct >= 60 ? 'Bagus! Sedikit lagi menuju sempurna.' : 'Semangat! Baca kembali materinya dan coba lagi.';
     const tagColor = pct >= 80 ? 'tag-success' : pct >= 60 ? 'tag-warning' : 'tag-danger';
     const strokeColor = pct >= 80 ? '#10b981' : pct >= 60 ? '#f59e0b' : '#f43f5e';
-    const ringBg = pct >= 80 ? 'bg-emerald-50' : pct >= 60 ? 'bg-amber-50' : 'bg-rose-50';
-    const scoreColor = pct >= 80 ? 'text-emerald-600' : pct >= 60 ? 'text-amber-600' : 'text-rose-600';
+    const ringBg = pct >= 80 ? 'bg-emerald-50 dark:bg-emerald-950/20' : pct >= 60 ? 'bg-amber-50 dark:bg-amber-950/20' : 'bg-rose-50 dark:bg-rose-950/20';
+    const scoreColor = pct >= 80 ? 'text-emerald-600 dark:text-emerald-400' : pct >= 60 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-450';
     const circumference = 2 * Math.PI * 40;
 
     return (
       <div className="max-w-lg mx-auto px-4 py-12">
-        <div className="card p-8 md:p-10 text-center animate-fade-in-up border-slate-200/60 shadow-lg relative overflow-hidden">
+        <div className="card p-8 md:p-10 text-center animate-fade-in-up border-slate-200/60 dark:border-slate-700/60 shadow-lg relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-2 gradient-brand" />
           
           <div className="text-7xl mb-4 animate-float">{stiker}</div>
@@ -81,14 +81,14 @@ export default function Kuis() {
           <p className="text-[var(--color-text-secondary)] text-sm font-semibold mb-8 max-w-sm mx-auto">{pesan}</p>
 
           <div className="relative w-44 h-44 mx-auto mb-8 animate-ring-glow rounded-full p-2">
-            <div className={`absolute inset-2 rounded-full ${ringBg} flex items-center justify-center border border-slate-100 shadow-inner`}>
+            <div className={`absolute inset-2 rounded-full ${ringBg} flex items-center justify-center border border-slate-100 dark:border-slate-800 shadow-inner`}>
               <div className="z-10 text-center">
                 <div className={`stat-value text-5xl font-black ${scoreColor}`}>{pct}</div>
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Nilai Kuis</div>
+                <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1">Nilai Kuis</div>
               </div>
             </div>
             <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90 relative z-0">
-              <circle cx="50" cy="50" r="40" fill="none" stroke="#f1f5f9" strokeWidth="7" />
+              <circle cx="50" cy="50" r="40" fill="none" stroke="#f1f5f9" className="stroke-slate-100 dark:stroke-slate-800" strokeWidth="7" />
               <circle
                 cx="50" cy="50" r="40" fill="none"
                 stroke={strokeColor} strokeWidth="7.5"
@@ -105,12 +105,12 @@ export default function Kuis() {
               <CheckCircle className="w-4 h-4" />
               Benar: {hasil.benar}
             </span>
-            <span className="tag tag-danger text-xs font-bold py-1.5 px-3.5 bg-rose-50 text-rose-700 border-rose-100">
+            <span className="tag tag-danger text-xs font-bold py-1.5 px-3.5 bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-450 border-rose-100 dark:border-rose-900/50">
               <XCircle className="w-4 h-4" />
               Salah: {hasil.total - hasil.benar}
             </span>
-            <span className="tag tag-info text-xs font-bold py-1.5 px-3.5 bg-slate-100 text-slate-700 border-slate-200">
-              <FileText className="w-4 h-4 text-slate-500" />
+            <span className="tag tag-info text-xs font-bold py-1.5 px-3.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700">
+              <FileText className="w-4 h-4 text-slate-500 dark:text-slate-400" />
               Total Soal: {hasil.total}
             </span>
           </div>
@@ -153,7 +153,7 @@ export default function Kuis() {
               <XCircle className="w-4 h-4" />
               Salah {hasil.total - hasil.benar}
             </span>
-            <span className="font-display font-black text-lg text-indigo-600">{hasil.nilai}</span>
+            <span className="font-display font-black text-lg text-indigo-600 dark:text-indigo-400">{hasil.nilai}</span>
           </div>
         </div>
 
@@ -167,14 +167,16 @@ export default function Kuis() {
             ];
 
             return (
-              <div key={soal.id} className="card p-6 md:p-8 border-slate-200/60 shadow-sm">
+              <div key={soal.id} className="card p-6 md:p-8 border-slate-200/60 dark:border-slate-700/60 shadow-sm">
                 <div className="flex items-start gap-3.5 mb-5">
                   <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
-                    soal.benar ? 'bg-emerald-50 border border-emerald-200' : 'bg-rose-50 border border-rose-200'
+                    soal.benar 
+                      ? 'bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50' 
+                      : 'bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/50'
                   }`}>
                     {soal.benar
-                      ? <CheckCircle className="w-5 h-5 text-emerald-600" />
-                      : <XCircle className="w-5 h-5 text-rose-500" />
+                      ? <CheckCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                      : <XCircle className="w-5 h-5 text-rose-500 dark:text-rose-450" />
                     }
                   </div>
                   <p className="font-bold text-[var(--color-text)] leading-relaxed mt-0.5 text-base">{soal.soal}</p>
@@ -185,23 +187,23 @@ export default function Kuis() {
                     const isUserAnswer = soal.jawaban_user === opt.key;
                     const isCorrectAnswer = soal.jawaban_benar === opt.key;
 
-                    let borderColor = 'border-slate-100';
+                    let borderColor = 'border-slate-100 dark:border-slate-800';
                     let bgColor = '';
-                    let textColor = 'text-slate-700';
-                    let badgeBg = 'bg-slate-100 text-slate-500';
+                    let textColor = 'text-slate-700 dark:text-slate-300';
+                    let badgeBg = 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400';
                     let showBadge = '';
 
                     if (isCorrectAnswer) {
-                      borderColor = 'border-emerald-400';
-                      bgColor = 'bg-emerald-50/60';
-                      textColor = 'text-emerald-900';
-                      badgeBg = 'bg-emerald-100 text-emerald-700';
+                      borderColor = 'border-emerald-400 dark:border-emerald-800/80';
+                      bgColor = 'bg-emerald-50/60 dark:bg-emerald-950/30';
+                      textColor = 'text-emerald-900 dark:text-emerald-400';
+                      badgeBg = 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400';
                       showBadge = '✓ Jawaban Benar';
                     } else if (isUserAnswer && !soal.benar) {
-                      borderColor = 'border-rose-300';
-                      bgColor = 'bg-rose-50/40';
-                      textColor = 'text-rose-900';
-                      badgeBg = 'bg-rose-100 text-rose-700';
+                      borderColor = 'border-rose-300 dark:border-rose-900/50';
+                      bgColor = 'bg-rose-50/40 dark:bg-rose-950/20';
+                      textColor = 'text-rose-900 dark:text-rose-400';
+                      badgeBg = 'bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-450';
                       showBadge = '✗ Jawabanmu';
                     }
 
@@ -211,9 +213,9 @@ export default function Kuis() {
                         className={`flex items-center gap-3.5 p-4 rounded-2xl border transition-all duration-200 ${borderColor} ${bgColor} ${textColor}`}
                       >
                         <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                          isCorrectAnswer ? 'border-emerald-600 bg-emerald-600' :
+                          isCorrectAnswer ? 'border-emerald-600 dark:border-emerald-500 bg-emerald-600 dark:bg-emerald-500' :
                           isUserAnswer && !soal.benar ? 'border-rose-500 bg-rose-500' :
-                          'border-slate-300'
+                          'border-slate-300 dark:border-slate-600'
                         }`}>
                           {(isCorrectAnswer || (isUserAnswer && !soal.benar)) && (
                             <div className="w-1.5 h-1.5 rounded-full bg-white" />
@@ -224,7 +226,7 @@ export default function Kuis() {
                         </span>
                         <span className="text-sm font-semibold">{opt.label}</span>
                         {showBadge && (
-                          <span className={`ml-auto text-[10px] font-bold py-0.5 px-2 rounded-full ${badgeBg}`}>
+                          <span className={`ml-auto text-[10px] font-bold py-0.5 px-2.5 rounded-full whitespace-nowrap shrink-0 ${badgeBg}`}>
                             {showBadge}
                           </span>
                         )}
@@ -271,12 +273,12 @@ export default function Kuis() {
       </div>
 
       {/* Progress bar */}
-      <div className="card p-5 mb-6 border-slate-200/60 animate-fade-in-up" style={{ animationDelay: '0.08s' }}>
+      <div className="card p-5 mb-6 border-slate-200/60 dark:border-slate-700/60 animate-fade-in-up" style={{ animationDelay: '0.08s' }}>
         <div className="flex justify-between text-xs text-[var(--color-text-secondary)] font-bold mb-2 ml-1">
           <span>Kuis Progress</span>
           <span className="font-mono">{Math.round((jmlTerjawab / soalList.length) * 100)}%</span>
         </div>
-        <div className="bg-slate-100 rounded-full h-3 p-0.5 overflow-hidden">
+        <div className="bg-slate-100 dark:bg-slate-800 rounded-full h-3 p-0.5 overflow-hidden">
           <div
             className="h-full rounded-full transition-all duration-500 ease-out"
             style={{ width: `${(jmlTerjawab / soalList.length) * 100}%`, background: 'linear-gradient(90deg, #4f46e5, #06b6d4)' }}
@@ -288,17 +290,17 @@ export default function Kuis() {
       <div className="space-y-6">
         {soalList.map((soal, idx) => {
           const opsi = [
-            { key: 'a', label: soal.opsi_a, color: 'hover:border-indigo-200 hover:bg-indigo-50/20', activeColor: 'bg-indigo-50/60 border-indigo-500 text-indigo-950' },
-            { key: 'b', label: soal.opsi_b, color: 'hover:border-indigo-200 hover:bg-indigo-50/20', activeColor: 'bg-indigo-50/60 border-indigo-500 text-indigo-950' },
-            { key: 'c', label: soal.opsi_c, color: 'hover:border-indigo-200 hover:bg-indigo-50/20', activeColor: 'bg-indigo-50/60 border-indigo-500 text-indigo-950' },
-            { key: 'd', label: soal.opsi_d, color: 'hover:border-indigo-200 hover:bg-indigo-50/20', activeColor: 'bg-indigo-50/60 border-indigo-500 text-indigo-950' },
+            { key: 'a', label: soal.opsi_a, color: 'hover:border-indigo-200 hover:bg-indigo-50/20 dark:hover:border-indigo-800/50 dark:hover:bg-indigo-950/20', activeColor: 'bg-indigo-50/60 border-indigo-500 text-indigo-950 dark:bg-indigo-900/30 dark:border-indigo-500 dark:text-indigo-200' },
+            { key: 'b', label: soal.opsi_b, color: 'hover:border-indigo-200 hover:bg-indigo-50/20 dark:hover:border-indigo-800/50 dark:hover:bg-indigo-950/20', activeColor: 'bg-indigo-50/60 border-indigo-500 text-indigo-950 dark:bg-indigo-900/30 dark:border-indigo-500 dark:text-indigo-200' },
+            { key: 'c', label: soal.opsi_c, color: 'hover:border-indigo-200 hover:bg-indigo-50/20 dark:hover:border-indigo-800/50 dark:hover:bg-indigo-950/20', activeColor: 'bg-indigo-50/60 border-indigo-500 text-indigo-950 dark:bg-indigo-900/30 dark:border-indigo-500 dark:text-indigo-200' },
+            { key: 'd', label: soal.opsi_d, color: 'hover:border-indigo-200 hover:bg-indigo-50/20 dark:hover:border-indigo-800/50 dark:hover:bg-indigo-950/20', activeColor: 'bg-indigo-50/60 border-indigo-500 text-indigo-950 dark:bg-indigo-900/30 dark:border-indigo-500 dark:text-indigo-200' },
           ];
 
           return (
-            <div key={soal.id} className="card p-6 md:p-8 animate-fade-in-up border-slate-200/60 shadow-sm" style={{ animationDelay: `${(idx + 2) * 0.08}s` }}>
+            <div key={soal.id} className="card p-6 md:p-8 animate-fade-in-up border-slate-200/60 dark:border-slate-700/60 shadow-sm" style={{ animationDelay: `${(idx + 2) * 0.08}s` }}>
               <div className="flex items-start gap-3.5 mb-5">
-                <div className="w-8 h-8 rounded-xl bg-indigo-50 border border-indigo-100/50 flex items-center justify-center shrink-0">
-                  <span className="font-display font-extrabold text-sm text-[var(--color-brand-deep)]">{idx + 1}</span>
+                <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-100/50 dark:border-indigo-900/50 flex items-center justify-center shrink-0">
+                  <span className="font-display font-extrabold text-sm text-[var(--color-brand-deep)] dark:text-indigo-400">{idx + 1}</span>
                 </div>
                 <p className="font-bold text-[var(--color-text)] leading-relaxed mt-0.5 text-base">{soal.soal}</p>
               </div>
@@ -312,11 +314,11 @@ export default function Kuis() {
                       className={`flex items-center gap-3.5 p-4 rounded-2xl border cursor-pointer transition-all duration-200 ${
                         selected
                           ? opt.activeColor + ' shadow-sm border-2'
-                          : 'border-slate-100 ' + opt.color + ' text-slate-700'
+                          : 'border-slate-100 dark:border-slate-700/50 ' + opt.color + ' text-slate-700 dark:text-slate-300'
                       }`}
                     >
                       <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
-                        selected ? 'border-indigo-600 bg-indigo-600 scale-105' : 'border-slate-300'
+                        selected ? 'border-indigo-600 dark:border-indigo-500 bg-indigo-600 dark:bg-indigo-500 scale-105' : 'border-slate-300 dark:border-slate-650'
                       }`}>
                         {selected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
                       </div>
@@ -327,7 +329,7 @@ export default function Kuis() {
                         checked={selected}
                         onChange={() => handlePilih(soal.id, opt.key)}
                       />
-                      <span className={`font-mono font-bold text-xs shrink-0 py-0.5 px-2 rounded ${selected ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-500'}`}>
+                      <span className={`font-mono font-bold text-xs shrink-0 py-0.5 px-2 rounded ${selected ? 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'}`}>
                         {opt.key.toUpperCase()}
                       </span>
                       <span className="text-sm font-semibold">{opt.label}</span>

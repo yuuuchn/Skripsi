@@ -95,11 +95,11 @@ export default function Login() {
   };
 
   return (
-    <div className="h-screen overflow-y-auto lg:overflow-hidden flex bg-slate-50/50 relative">
+    <div className="h-screen overflow-y-auto lg:overflow-hidden flex bg-slate-50/50 dark:bg-slate-950/50 relative">
       {/* Decorative Background Blobs for Entire Page */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-indigo-100/40 blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-[600px] h-[600px] rounded-full bg-cyan-100/30 blur-3xl" />
+        <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-indigo-100/40 dark:bg-indigo-900/20 blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-[600px] h-[600px] rounded-full bg-cyan-100/30 dark:bg-cyan-900/15 blur-3xl" />
       </div>
 
       {/* Left panel — Edge-to-Edge Premium Gradient Showcase */}
@@ -148,7 +148,7 @@ export default function Login() {
 
       {/* Right panel — Aesthetic Card Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 md:p-12 relative z-10">
-        <div className="w-full max-w-md p-8 md:p-10 bg-white/80 backdrop-blur-xl rounded-3xl border border-slate-100/80 shadow-2xl shadow-slate-100/50 animate-fade-in-up">
+        <div className="w-full max-w-md p-8 md:p-10 bg-white/80 dark:bg-slate-900/85 backdrop-blur-xl rounded-3xl border border-slate-100/80 dark:border-slate-700/80 shadow-2xl shadow-slate-100/50 dark:shadow-black/20 animate-fade-in-up">
           
           {/* Mobile brand (Only visible on small screens) */}
           <div className="lg:hidden text-center mb-8">
@@ -165,7 +165,7 @@ export default function Login() {
           </div>
 
           {error && (
-            <div className="mb-6 bg-rose-50 border border-rose-200/50 text-rose-600 px-4.5 py-3 rounded-2xl text-xs font-semibold flex items-center gap-2.5 animate-pulse-soft">
+            <div className="mb-6 bg-rose-50 dark:bg-rose-950/30 border border-rose-200/50 dark:border-rose-900/50 text-rose-600 dark:text-rose-450 px-4.5 py-3 rounded-2xl text-xs font-semibold flex items-center gap-2.5 animate-pulse-soft">
               <AlertTriangle className="w-4 h-4 shrink-0 text-rose-500" />
               <span>{error}</span>
             </div>
@@ -175,11 +175,11 @@ export default function Login() {
             <div>
               <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-secondary)] mb-2 ml-1">Username</label>
               <div className="relative group">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400 group-focus-within:text-indigo-600 transition-colors" />
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400 dark:text-slate-500 group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400 transition-colors" />
                 <input
                   type="text"
                   required
-                  className="w-full pl-11 pr-4 py-3.5 bg-slate-50/50 border border-slate-200/60 rounded-xl text-sm font-medium focus:outline-none focus:bg-white focus:border-[var(--color-brand)] focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-400"
+                  className="w-full pl-11 pr-4 py-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50 rounded-xl text-sm font-medium focus:outline-none focus:bg-white dark:focus:bg-slate-800 focus:border-[var(--color-brand)] focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:text-slate-100"
                   placeholder="Masukkan username"
                   value={form.username}
                   onChange={(e) => setForm({ ...form, username: e.target.value })}
@@ -190,11 +190,11 @@ export default function Login() {
             <div>
               <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-secondary)] mb-2 ml-1">Password</label>
               <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400 group-focus-within:text-indigo-600 transition-colors" />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400 dark:text-slate-500 group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400 transition-colors" />
                 <input
                   type="password"
                   required
-                  className="w-full pl-11 pr-4 py-3.5 bg-slate-50/50 border border-slate-200/60 rounded-xl text-sm font-medium focus:outline-none focus:bg-white focus:border-[var(--color-brand)] focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-400"
+                  className="w-full pl-11 pr-4 py-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50 rounded-xl text-sm font-medium focus:outline-none focus:bg-white dark:focus:bg-slate-800 focus:border-[var(--color-brand)] focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:text-slate-100"
                   placeholder="Masukkan password"
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
