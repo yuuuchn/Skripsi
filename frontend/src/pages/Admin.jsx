@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import api from '../api/axios';
-import { GraduationCap, Users, AlertCircle, Award, Search, Sparkles, ChevronLeft, ChevronRight, Download, CheckCircle2, TrendingDown } from 'lucide-react';
+import { GraduationCap, Users, AlertCircle, Award, Search, Sparkles, ChevronLeft, ChevronRight, Download, CheckCircle2, TrendingDown, BarChart3, PieChart as PieIcon } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 
 export default function Admin() {
   const [siswaList, setSiswaList] = useState([]);
   const [stats, setStats] = useState(null);
+  const [chart, setChart] = useState(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -35,6 +37,11 @@ export default function Admin() {
       })
       .finally(() => setLoading(false));
   }, [page, debouncedSearch]);
+
+  // Data grafik dihitung atas seluruh siswa, cukup diambil sekali
+  useEffect(() => {
+    api.get('/progress/admin/chart').then((res) => setChart(res.data)).catch(() => {});
+  }, []);
 
   const handleExport = async () => {
     setExporting(true);
@@ -115,6 +122,69 @@ export default function Admin() {
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* Grafik analitik */}
+          {chart && (
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 animate-fade-in-up animate-delay-100">
+              {/* Rata-rata nilai per materi */}
+              <div className="card lg:col-span-3 p-5 border-slate-200/60 dark:border-slate-700/60 shadow-sm">
+                <h2 className="font-display font-extrabold text-sm text-[var(--color-text)] flex items-center gap-2 mb-4">
+                  <BarChart3 className="w-4.5 h-4.5 text-indigo-500" />
+                  Rata-rata Nilai per Materi
+                </h2>
+                <ResponsiveContainer width="100%" height={240}>
+                  <BarChart data={chart.per_materi.map((m, i) => ({ ...m, label: `Materi ${i + 1}` }))} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
+                    <XAxis dataKey="label" tick={{ fontSize: 11, fill: 'var(--color-text-secondary)' }} axisLine={false} tickLine={false} />
+                    <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: 'var(--color-text-secondary)' }} axisLine={false} tickLine={false} />
+                    <Tooltip
+                      cursor={{ fill: 'rgba(99,102,241,0.08)' }}
+                      contentStyle={{ background: 'var(--color-card)', border: '1px solid var(--color-border)', borderRadius: 12, fontSize: 12 }}
+                      labelFormatter={(_, p) => p?.[0]?.payload?.judul || ''}
+                      formatter={(v) => [`${v}`, 'Rata-rata']}
+                    />
+                    <Bar dataKey="rata_rata" fill="#6366f1" radius={[6, 6, 0, 0]} maxBarSize={48} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Distribusi status siswa */}
+              <div className="card lg:col-span-2 p-5 border-slate-200/60 dark:border-slate-700/60 shadow-sm">
+                <h2 className="font-display font-extrabold text-sm text-[var(--color-text)] flex items-center gap-2 mb-4">
+                  <PieIcon className="w-4.5 h-4.5 text-indigo-500" />
+                  Distribusi Capaian Siswa
+                </h2>
+                <ResponsiveContainer width="100%" height={240}>
+                  <PieChart>
+                    <Pie
+                      data={[
+                        { name: 'Sangat Baik', value: chart.distribusi.sangat_baik, color: '#10b981' },
+                        { name: 'Cukup Baik', value: chart.distribusi.cukup_baik, color: '#f59e0b' },
+                        { name: 'Butuh Bimbingan', value: chart.distribusi.butuh_bimbingan, color: '#f43f5e' },
+                        { name: 'Belum Mulai', value: chart.distribusi.belum_mulai, color: '#94a3b8' },
+                      ].filter(d => d.value > 0)}
+                      dataKey="value"
+                      nameKey="name"
+                      innerRadius={50}
+                      outerRadius={80}
+                      paddingAngle={3}
+                    >
+                      {[
+                        { name: 'Sangat Baik', value: chart.distribusi.sangat_baik, color: '#10b981' },
+                        { name: 'Cukup Baik', value: chart.distribusi.cukup_baik, color: '#f59e0b' },
+                        { name: 'Butuh Bimbingan', value: chart.distribusi.butuh_bimbingan, color: '#f43f5e' },
+                        { name: 'Belum Mulai', value: chart.distribusi.belum_mulai, color: '#94a3b8' },
+                      ].filter(d => d.value > 0).map((d, i) => (
+                        <Cell key={i} fill={d.color} stroke="var(--color-card)" strokeWidth={2} />
+                      ))}
+                    </Pie>
+                    <Tooltip contentStyle={{ background: 'var(--color-card)', border: '1px solid var(--color-border)', borderRadius: 12, fontSize: 12 }} />
+                    <Legend iconType="circle" wrapperStyle={{ fontSize: 11 }} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           )}
 

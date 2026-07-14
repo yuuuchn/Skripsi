@@ -1,6 +1,6 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Globe, Home, BookOpen, Trophy, GraduationCap, LogOut, Menu, X, Sun, Moon } from 'lucide-react';
+import { Network, Home, BookOpen, Trophy, GraduationCap, LogOut, Menu, X, Sun, Moon } from 'lucide-react';
 import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 
 const navItems = [
@@ -85,7 +85,7 @@ export default function Navbar() {
           {/* Brand */}
           <Link to="/dashboard" className="flex items-center gap-2.5 group">
             <div className="w-9 h-9 rounded-xl gradient-brand flex items-center justify-center text-white shadow-md shadow-indigo-500/10 group-hover:scale-105 group-hover:shadow-indigo-500/20 transition-all duration-300">
-              <Globe className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" />
+              <Network className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" />
             </div>
             <div>
               <span className="font-display font-bold text-[var(--color-text)] text-sm tracking-tight">BelajarJaringan</span>
@@ -248,7 +248,7 @@ export default function Navbar() {
         {/* Brand/Logo icon */}
         <Link to="/dashboard" className="flex flex-col items-center justify-center w-full group">
           <div className="w-10 h-10 rounded-xl gradient-brand flex items-center justify-center text-white shadow-md shadow-indigo-500/10 group-hover:scale-105 group-hover:shadow-indigo-500/20 transition-all duration-300">
-            <Globe className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" />
+            <Network className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" />
           </div>
         </Link>
 

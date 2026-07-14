@@ -132,6 +132,48 @@ router.get('/admin/export', adminOnly, async (req, res) => {
   }
 });
 
+router.get('/admin/chart', adminOnly, async (req, res) => {
+  try {
+    const db = await getDb();
+
+    // Rata-rata nilai per materi (semua siswa yang sudah mengerjakan)
+    const perMateri = queryAll(db,
+      `SELECT m.judul, m.urutan,
+              COALESCE(ROUND(AVG(p.nilai)), 0) as rata_rata,
+              COUNT(p.id) as jumlah_pengerjaan
+       FROM materi m
+       LEFT JOIN progress p ON m.id = p.materi_id AND p.selesai = 1
+       GROUP BY m.id
+       ORDER BY m.urutan`
+    );
+
+    // Distribusi status siswa berdasarkan rata-rata nilai
+    const dist = queryOne(db,
+      `SELECT
+         SUM(CASE WHEN s.selesai = 0 THEN 1 ELSE 0 END) as belum_mulai,
+         SUM(CASE WHEN s.selesai > 0 AND s.rata_rata < 60 THEN 1 ELSE 0 END) as butuh_bimbingan,
+         SUM(CASE WHEN s.selesai > 0 AND s.rata_rata >= 60 AND s.rata_rata < 80 THEN 1 ELSE 0 END) as cukup_baik,
+         SUM(CASE WHEN s.selesai > 0 AND s.rata_rata >= 80 THEN 1 ELSE 0 END) as sangat_baik
+       FROM (
+         SELECT u.id,
+                COUNT(p.id) as selesai,
+                COALESCE(AVG(p.nilai), 0) as rata_rata
+         FROM users u
+         LEFT JOIN progress p ON u.id = p.user_id AND p.selesai = 1
+         WHERE u.role = 'siswa'
+         GROUP BY u.id
+       ) s`
+    );
+
+    res.json({
+      per_materi: perMateri,
+      distribusi: dist || { belum_mulai: 0, butuh_bimbingan: 0, cukup_baik: 0, sangat_baik: 0 },
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.get('/leaderboard', async (req, res) => {
   try {
     const db = await getDb();
