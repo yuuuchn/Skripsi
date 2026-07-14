@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { getDb } from '../models/database.js';
 import { queryOne, queryAll } from './auth.js';
+import { adminOnly } from '../middleware/auth.js';
 
 const router = Router();
 
@@ -50,7 +51,7 @@ router.get('/nilai', async (req, res) => {
   }
 });
 
-router.get('/admin', async (req, res) => {
+router.get('/admin', adminOnly, async (req, res) => {
   try {
     const db = await getDb();
     const page = Math.max(1, parseInt(req.query.page) || 1);
