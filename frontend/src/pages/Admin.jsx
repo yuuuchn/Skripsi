@@ -54,7 +54,7 @@ export default function Admin() {
       const csv = [
         `sep=${SEP}`,
         header.join(SEP),
-        ...rows.map(r => [r.nama, r.username, r.kelas || '-', `${r.materi_selesai}/6`, r.rata_rata].map(esc).join(SEP)),
+        ...rows.map(r => [r.nama, r.username, r.kelas || '-', `${r.materi_selesai} dari 6`, r.rata_rata].map(esc).join(SEP)),
       ].join('\r\n');
       const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
