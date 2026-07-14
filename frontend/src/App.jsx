@@ -16,7 +16,6 @@ import DotField from './components/DotField';
 import HandCursor from './components/HandCursor';
 import { Globe } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 // Simulated Top Navigation Loading Progress Bar
 function PageLoaderProgress() {
@@ -32,18 +31,10 @@ function PageLoaderProgress() {
     return () => clearTimeout(timer);
   }, [location.pathname]);
 
+  if (!loading) return null;
+
   return (
-    <AnimatePresence>
-      {loading && (
-        <motion.div
-          initial={{ width: '0%', opacity: 1 }}
-          animate={{ width: '100%', opacity: 1 }}
-          exit={{ opacity: 0, transition: { duration: 0.15 } }}
-          transition={{ duration: 0.35, ease: 'easeOut' }}
-          className="fixed top-0 left-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 z-50 pointer-events-none"
-        />
-      )}
-    </AnimatePresence>
+    <div className="fixed top-0 left-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 z-50 pointer-events-none animate-loader-grow" />
   );
 }
 
@@ -61,11 +52,7 @@ function FullscreenLoader() {
         {/* Glowing rotating circle */}
         <div className="relative w-16 h-16 mb-5">
           <div className="absolute inset-0 rounded-full border-4 border-slate-200" />
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ repeat: Infinity, duration: 1.1, ease: 'linear' }}
-            className="absolute inset-0 rounded-full border-4 border-indigo-600 border-t-transparent"
-          />
+          <div className="absolute inset-0 rounded-full border-4 border-indigo-600 border-t-transparent animate-spin" />
           <div className="absolute inset-0 flex items-center justify-center text-indigo-600">
             <Globe className="w-7 h-7 animate-pulse" />
           </div>

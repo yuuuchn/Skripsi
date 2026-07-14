@@ -1,7 +1,7 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Globe, Home, BookOpen, Trophy, GraduationCap, LogOut, Menu, X, Sun, Moon } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 
 const navItems = [
   { to: '/dashboard', label: 'Beranda', icon: Home },
@@ -15,6 +15,9 @@ export default function Navbar() {
   const location = useLocation();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [confirmLogout, setConfirmLogout] = useState(false);
+  const linksRef = useRef(null);
+  const [indicator, setIndicator] = useState({ left: 0, width: 0, show: false });
   const [dark, setDark] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('theme') === 'dark' ||
@@ -51,16 +54,32 @@ export default function Navbar() {
     navigate('/login');
   };
 
+  // Slide the active-tab indicator to the currently-active desktop nav link
+  useLayoutEffect(() => {
+    const container = linksRef.current;
+    if (!container) return;
+    const activeEl = container.querySelector('[data-active="true"]');
+    if (activeEl) {
+      setIndicator({ left: activeEl.offsetLeft, width: activeEl.offsetWidth, show: true });
+    } else {
+      setIndicator((i) => ({ ...i, show: false }));
+    }
+  }, [location.pathname, user]);
+
   return (
     <>
       {/* Desktop spacer to reserve top height and prevent content jumping */}
       <div className="hidden md:block h-16" />
 
       {/* 1. TOP NAVBAR (Visible at top of desktop, hidden on mobile) */}
-      <nav 
-        className={`hidden md:flex glass-navbar z-50 fixed top-0 left-0 w-full h-16 items-center transition-all duration-300 ${
-          scrolled ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto'
-        }`}
+      <nav
+        className="hidden md:flex glass-navbar z-50 fixed top-0 left-0 w-full h-16 items-center"
+        style={{
+          transition: 'transform 0.5s ease-out, opacity 0.5s ease-out',
+          transform: scrolled ? 'translateY(-100%)' : 'translateY(0)',
+          opacity: scrolled ? 0 : 1,
+          pointerEvents: scrolled ? 'none' : 'auto',
+        }}
       >
         <div className="max-w-6xl mx-auto px-4 h-full flex items-center justify-between w-full">
           {/* Brand */}
@@ -75,7 +94,16 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop nav links */}
-          <div className="hidden md:flex items-center gap-1.5">
+          <div ref={linksRef} className="hidden md:flex items-center gap-1.5 relative">
+            {/* Sliding active indicator */}
+            <div
+              className="absolute top-0 h-full rounded-xl bg-indigo-50/80 dark:bg-indigo-900/40 border border-indigo-100/50 dark:border-indigo-800/50 shadow-sm transition-all duration-300 ease-out pointer-events-none"
+              style={{
+                left: indicator.left,
+                width: indicator.width,
+                opacity: indicator.show ? 1 : 0,
+              }}
+            />
             {navItems.map((item) => {
               const Icon = item.icon;
               const active = location.pathname === item.to || location.pathname.startsWith(item.to + '/');
@@ -83,10 +111,11 @@ export default function Navbar() {
                 <Link
                   key={item.to}
                   to={item.to}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-250 ${
+                  data-active={active}
+                  className={`relative z-10 flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors duration-250 ${
                     active
-                      ? 'bg-indigo-50/80 dark:bg-indigo-900/40 text-[var(--color-brand-deep)] border border-indigo-100/50 dark:border-indigo-800/50 shadow-sm'
-                      : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hover:bg-slate-100/50 dark:hover:bg-slate-700/50'
+                      ? 'text-[var(--color-brand-deep)]'
+                      : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text)]'
                   }`}
                 >
                   <Icon className={`w-4 h-4 transition-transform duration-300 ${active ? 'scale-110' : ''}`} />
@@ -98,10 +127,11 @@ export default function Navbar() {
             {user?.role === 'guru' && (
               <Link
                 to="/admin"
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-250 ${
+                data-active={location.pathname === '/admin'}
+                className={`relative z-10 flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors duration-250 ${
                   location.pathname === '/admin'
-                    ? 'bg-indigo-50/80 dark:bg-indigo-900/40 text-[var(--color-brand-deep)] border border-indigo-100/50 dark:border-indigo-800/50 shadow-sm'
-                    : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hover:bg-slate-100/50 dark:hover:bg-slate-700/50'
+                    ? 'text-[var(--color-brand-deep)]'
+                    : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text)]'
                 }`}
               >
                 <GraduationCap className={`w-4 h-4 transition-transform duration-300 ${location.pathname === '/admin' ? 'scale-110' : ''}`} />
@@ -127,9 +157,9 @@ export default function Navbar() {
                 <div className="font-bold text-[var(--color-text)]">{user?.nama?.split(' ')[0]}</div>
                 <div className="text-[var(--color-text-secondary)] font-medium">{user?.role === 'guru' ? 'Guru' : 'Siswa'}</div>
               </div>
-              <button 
-                onClick={handleLogout} 
-                className="p-2 rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-rose)] hover:bg-[var(--color-rose-soft)] transition-all duration-200" 
+              <button
+                onClick={() => setConfirmLogout(true)}
+                className="p-2 rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-rose)] hover:bg-[var(--color-rose-soft)] transition-all duration-200"
                 title="Keluar"
               >
                 <LogOut className="w-4 h-4" />
@@ -192,8 +222,8 @@ export default function Navbar() {
               {dark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
               {dark ? 'Mode Terang' : 'Mode Gelap'}
             </button>
-            <button 
-              onClick={handleLogout} 
+            <button
+              onClick={() => { setOpen(false); setConfirmLogout(true); }}
               className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-[var(--color-rose)] hover:bg-[var(--color-rose-soft)] w-full transition-colors"
             >
               <LogOut className="w-4 h-4" />
@@ -204,10 +234,16 @@ export default function Navbar() {
       )}
 
       {/* 2. LEFT FLOATING SIDEBAR (Fades in when scrolled, desktop only) */}
-      <nav 
-        className={`hidden md:flex flex-col items-center gap-5 py-5 px-0 fixed left-5 top-1/2 -translate-y-1/2 w-16 h-auto rounded-3xl shadow-xl shadow-indigo-500/5 border border-slate-200/80 dark:border-slate-700/80 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl z-50 transition-all duration-300 ${
-          scrolled ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-        }`}
+      <nav
+        className="hidden md:flex flex-col items-center gap-5 py-5 px-0 fixed left-5 top-1/2 w-16 h-auto rounded-3xl shadow-xl shadow-indigo-500/5 border border-slate-200/80 dark:border-slate-700/80 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl z-50"
+        style={{
+          transition: 'transform 0.5s ease-out, opacity 0.5s ease-out',
+          transform: scrolled
+            ? 'translateY(-50%) translateX(0)'
+            : 'translateY(-50%) translateX(-130%)',
+          opacity: scrolled ? 1 : 0,
+          pointerEvents: scrolled ? 'auto' : 'none',
+        }}
       >
         {/* Brand/Logo icon */}
         <Link to="/dashboard" className="flex flex-col items-center justify-center w-full group">
@@ -278,7 +314,7 @@ export default function Navbar() {
             {user?.nama?.charAt(0).toUpperCase()}
           </div>
           <button
-            onClick={handleLogout}
+            onClick={() => setConfirmLogout(true)}
             className="p-2 rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-rose)] hover:bg-[var(--color-rose-soft)] transition-all duration-200"
             title="Keluar"
           >
@@ -286,6 +322,41 @@ export default function Navbar() {
           </button>
         </div>
       </nav>
+
+      {/* Logout confirmation dialog */}
+      {confirmLogout && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 dark:bg-black/50 backdrop-blur-sm p-4 animate-fade-in"
+          onClick={() => setConfirmLogout(false)}
+        >
+          <div
+            className="w-full max-w-xs bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-2xl p-6 text-center animate-scale-in"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-12 h-12 mx-auto rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-100 dark:border-rose-900/50 flex items-center justify-center mb-4">
+              <LogOut className="w-5.5 h-5.5 text-[var(--color-rose)]" />
+            </div>
+            <h3 className="font-display font-black text-base text-[var(--color-text)]">Keluar dari akun?</h3>
+            <p className="text-xs text-[var(--color-text-secondary)] mt-1.5 leading-relaxed">
+              Kamu harus login kembali untuk melanjutkan belajar.
+            </p>
+            <div className="flex gap-2.5 mt-5">
+              <button
+                onClick={() => setConfirmLogout(false)}
+                className="flex-1 px-4 py-2.5 rounded-xl text-xs font-bold text-[var(--color-text-secondary)] bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors active:scale-95"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleLogout}
+                className="flex-1 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 transition-colors active:scale-95 shadow-md shadow-rose-600/20"
+              >
+                Ya, Keluar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

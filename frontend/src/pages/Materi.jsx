@@ -5,6 +5,7 @@ import { BookOpen, CheckCircle, ArrowRight, Clock, Star, ChevronRight, Laptop, H
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import ScrollReveal from '../components/ScrollReveal';
+import useTilt from '../hooks/useTilt';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -53,6 +54,7 @@ export default function Materi() {
   const [loading, setLoading] = useState(true);
   const headerRef = useRef(null);
   const gridRef = useRef(null);
+  const tilt = useTilt();
 
   useEffect(() => {
     api.get('/materi').then((res) => {
@@ -135,6 +137,8 @@ export default function Materi() {
             <Link
               key={m.id}
               to={`/materi/${m.id}`}
+              onMouseMove={tilt.onMouseMove}
+              onMouseLeave={tilt.onMouseLeave}
               className="card card-elevated overflow-hidden group flex flex-col justify-between border-slate-200/60 dark:border-slate-700/50 materi-card opacity-0"
             >
               <div>

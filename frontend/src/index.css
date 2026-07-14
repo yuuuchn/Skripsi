@@ -506,3 +506,11 @@ html {
 .animate-hand-ripple {
   animation: hand-ripple-effect 0.5s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
 }
+
+@keyframes loaderGrow {
+  from { width: 0%; }
+  to { width: 90%; }
+}
+.animate-loader-grow {
+  animation: loaderGrow 0.35s ease-out forwards;
+}

@@ -5,6 +5,7 @@ import api from '../api/axios';
 import { BookOpen, CheckCircle, BarChart3, ArrowRight, Star, Trophy, Zap, Clock, Laptop, History, Globe, Cable, Router, ShieldCheck, HelpCircle } from 'lucide-react';
 import BorderGlow from '../components/BorderGlow';
 import ScrollReveal from '../components/ScrollReveal';
+import useTilt from '../hooks/useTilt';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -62,6 +63,7 @@ export default function Dashboard() {
   const statsContainerRef = useRef(null);
   const progressCardRef = useRef(null);
   const materiContainerRef = useRef(null);
+  const tilt = useTilt();
 
   useEffect(() => {
     Promise.all([
@@ -270,6 +272,8 @@ export default function Dashboard() {
               <Link
                 key={m.id}
                 to={`/materi/${m.id}`}
+                onMouseMove={tilt.onMouseMove}
+                onMouseLeave={tilt.onMouseLeave}
                 className="card card-elevated overflow-hidden group flex flex-col justify-between border-slate-200/60 dark:border-slate-700/50 materi-card opacity-0"
               >
                 <div>
