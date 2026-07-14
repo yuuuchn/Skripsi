@@ -73,7 +73,7 @@ export default function HandCursor() {
 
         {/* Panduan gestur */}
         {showHelp && (
-          <div className="w-72 bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border border-slate-200/80 dark:border-slate-700/80 rounded-2xl shadow-xl p-4 animate-scale-in">
+          <div className="w-[calc(100vw-3rem)] max-w-xs bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border border-slate-200/80 dark:border-slate-700/80 rounded-2xl shadow-xl p-4 animate-scale-in">
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-display font-black text-sm text-[var(--color-text)] flex items-center gap-2">
                 <Hand className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
