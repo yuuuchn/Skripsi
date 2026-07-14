@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
-import { BookOpen, Trophy, Send, CheckCircle, XCircle, FileText, Pencil, Eye, ArrowLeft } from 'lucide-react';
+import { BookOpen, Trophy, Send, CheckCircle, XCircle, FileText, Pencil, Eye, ArrowLeft, AlertTriangle } from 'lucide-react';
 
 export default function Kuis() {
   const { materi_id } = useParams();
@@ -12,6 +12,7 @@ export default function Kuis() {
   const [submitting, setSubmitting] = useState(false);
   const [hasil, setHasil] = useState(null);
   const [reviewMode, setReviewMode] = useState(false);
+  const [pesanError, setPesanError] = useState('');
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -29,6 +30,7 @@ export default function Kuis() {
   }, [materi_id, navigate]);
 
   const handlePilih = (soalId, pilihan) => {
+    setPesanError('');
     setJawaban((prev) => ({ ...prev, [soalId]: pilihan }));
   };
 
@@ -36,15 +38,16 @@ export default function Kuis() {
     window.scrollTo(0, 0);
     const jawabanArr = soalList.map((s) => jawaban[s.id] || '');
     if (jawabanArr.some((j) => !j)) {
-      alert('Jawab semua soal dulu ya!');
+      setPesanError('Jawab semua soal dulu ya sebelum mengumpulkan!');
       return;
     }
+    setPesanError('');
     setSubmitting(true);
     try {
       const res = await api.post('/quiz/submit', { materi_id: parseInt(materi_id), jawaban: jawabanArr });
       setHasil(res.data);
     } catch (err) {
-      alert('Gagal mengirim jawaban');
+      setPesanError('Gagal mengirim jawaban. Periksa koneksi lalu coba lagi.');
     } finally {
       setSubmitting(false);
     }
@@ -344,6 +347,12 @@ export default function Kuis() {
 
       {/* Submit */}
       <div className="mt-10 mb-16 text-center animate-fade-in-up" style={{ animationDelay: `${(soalList.length + 3) * 0.08}s` }}>
+        {pesanError && (
+          <div className="mb-5 max-w-md mx-auto bg-rose-50 dark:bg-rose-950/30 border border-rose-200/50 dark:border-rose-900/50 text-rose-600 dark:text-rose-450 px-4.5 py-3 rounded-2xl text-xs font-semibold flex items-center justify-center gap-2.5 animate-pulse-soft">
+            <AlertTriangle className="w-4 h-4 shrink-0 text-rose-500" />
+            <span>{pesanError}</span>
+          </div>
+        )}
         <button
           onClick={handleSubmit}
           disabled={submitting || jmlTerjawab < soalList.length}
