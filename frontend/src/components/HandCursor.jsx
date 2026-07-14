@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Hand, VideoOff, Loader2, AlertCircle } from 'lucide-react';
+import { Hand, VideoOff, Loader2, AlertCircle, HelpCircle, X, MousePointerClick, MoveVertical } from 'lucide-react';
 import useHandTracking from '../hooks/useHandTracking';
 import usePipWindow from '../hooks/usePipWindow';
 import useClickSound from '../hooks/useClickSound';
@@ -9,6 +9,7 @@ export default function HandCursor() {
   const canvasRef = useRef(null);
   const playClick = useClickSound();
   const [isMinimized, setIsMinimized] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
   const { position, handleMouseDown, handleTouchStart } = usePipWindow();
   const {
     active, loading, error,
@@ -17,6 +18,14 @@ export default function HandCursor() {
   } = useHandTracking(videoRef, canvasRef);
 
   onPinch(playClick);
+
+  const handleSensorToggle = async () => {
+    if (!active && localStorage.getItem('handHelpSeen') !== '1') {
+      setShowHelp(true);
+      localStorage.setItem('handHelpSeen', '1');
+    }
+    await handleToggle();
+  };
 
   return (
     <>
@@ -62,32 +71,88 @@ export default function HandCursor() {
           </div>
         )}
 
-        <button
-          onClick={handleToggle}
-          disabled={loading}
-          className={`flex items-center gap-2 px-4.5 py-3 rounded-2xl font-bold text-xs shadow-lg active:scale-95 transition-all duration-300 ${
-            active 
-              ? 'bg-rose-600 hover:bg-rose-700 text-white shadow-rose-600/10' 
-              : 'bg-white/90 dark:bg-slate-800/90 backdrop-blur-md hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 border border-slate-200/80 dark:border-slate-700/80 hover:border-indigo-200 dark:hover:border-indigo-500/30'
-          }`}
-        >
-          {loading ? (
-            <>
-              <Loader2 className="w-4 h-4 animate-spin" />
-              <span>Memuat AI Model...</span>
-            </>
-          ) : active ? (
-            <>
-              <VideoOff className="w-4.5 h-4.5" />
-              <span>Matikan Sensor</span>
-            </>
-          ) : (
-            <>
-              <Hand className="w-4.5 h-4.5" />
-              <span>Aktivasi Sensor</span>
-            </>
+        {/* Panduan gestur */}
+        {showHelp && (
+          <div className="w-72 bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border border-slate-200/80 dark:border-slate-700/80 rounded-2xl shadow-xl p-4 animate-scale-in">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-display font-black text-sm text-[var(--color-text)] flex items-center gap-2">
+                <Hand className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                Cara Pakai Sensor Tangan
+              </h3>
+              <button onClick={() => setShowHelp(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors" title="Tutup">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-100 dark:border-rose-900/50 flex items-center justify-center shrink-0">
+                  <MousePointerClick className="w-4 h-4 text-rose-500" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-[var(--color-text)]">Cubit untuk klik</div>
+                  <div className="text-[11px] text-[var(--color-text-secondary)] leading-snug">Satukan ujung jempol dan telunjuk seperti mencubit.</div>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-900/50 flex items-center justify-center shrink-0">
+                  <MoveVertical className="w-4 h-4 text-emerald-500" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-[var(--color-text)]">Angkat / turunkan tangan untuk scroll</div>
+                  <div className="text-[11px] text-[var(--color-text-secondary)] leading-snug">Gerakkan tangan ke area atas untuk scroll naik, ke bawah untuk scroll turun.</div>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-xl bg-cyan-50 dark:bg-cyan-950/40 border border-cyan-100 dark:border-cyan-900/50 flex items-center justify-center shrink-0">
+                  <Hand className="w-4 h-4 text-cyan-500" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-[var(--color-text)]">Gerakkan telunjuk untuk mengarahkan</div>
+                  <div className="text-[11px] text-[var(--color-text-secondary)] leading-snug">Titik kursor akan mengikuti ujung telunjukmu.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="flex items-center gap-2.5">
+          {!showHelp && (
+            <button
+              onClick={() => setShowHelp(true)}
+              className="w-11 h-11 rounded-2xl bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 text-slate-500 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 shadow-lg active:scale-95 transition-all flex items-center justify-center"
+              title="Cara pakai sensor tangan"
+            >
+              <HelpCircle className="w-5 h-5" />
+            </button>
           )}
-        </button>
+
+          <button
+            onClick={handleSensorToggle}
+            disabled={loading}
+            className={`flex items-center gap-2 px-4.5 py-3 rounded-2xl font-bold text-xs shadow-lg active:scale-95 transition-all duration-300 ${
+              active
+                ? 'bg-rose-600 hover:bg-rose-700 text-white shadow-rose-600/10'
+                : 'bg-white/90 dark:bg-slate-800/90 backdrop-blur-md hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 border border-slate-200/80 dark:border-slate-700/80 hover:border-indigo-200 dark:hover:border-indigo-500/30'
+            }`}
+          >
+            {loading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Memuat AI Model...</span>
+              </>
+            ) : active ? (
+              <>
+                <VideoOff className="w-4.5 h-4.5" />
+                <span>Matikan Sensor</span>
+              </>
+            ) : (
+              <>
+                <Hand className="w-4.5 h-4.5" />
+                <span>Aktivasi Sensor</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* 4. Mini PIP-style Camera Feed Window */}
