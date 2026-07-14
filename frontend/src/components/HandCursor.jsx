@@ -166,7 +166,7 @@ export default function HandCursor() {
           onTouchStart={handleTouchStart}
           onDoubleClick={() => setIsMinimized(!isMinimized)}
           title="Klik 2x untuk menyembunyikan/menampilkan kamera"
-          className="drag-header flex items-center justify-between w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-900 border-b border-slate-100 dark:border-indigo-500/20 select-none cursor-grab active:cursor-grabbing hover:bg-slate-100 dark:hover:bg-slate-850 transition-colors"
+          className="drag-header flex items-center justify-between w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-900 border-b border-slate-100 dark:border-indigo-500/20 select-none cursor-grab active:cursor-grabbing hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
         >
           {/* Decorative Window Controls */}
           <div className="flex gap-1.5 pointer-events-none">

@@ -1,33 +1,67 @@
 import { useState, useEffect } from 'react';
 import api from '../api/axios';
-import { GraduationCap, Users, AlertCircle, Award, Search, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
+import { GraduationCap, Users, AlertCircle, Award, Search, Sparkles, ChevronLeft, ChevronRight, Download, CheckCircle2, TrendingDown } from 'lucide-react';
 
 export default function Admin() {
   const [siswaList, setSiswaList] = useState([]);
+  const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [exporting, setExporting] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const limit = 20;
 
+  // Debounce search input, reset to page 1 on new query
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setDebouncedSearch(searchQuery.trim());
+      setPage(1);
+    }, 350);
+    return () => clearTimeout(t);
+  }, [searchQuery]);
+
   useEffect(() => {
     setLoading(true);
-    api.get(`/progress/admin?page=${page}&limit=${limit}`)
+    const q = debouncedSearch ? `&search=${encodeURIComponent(debouncedSearch)}` : '';
+    api.get(`/progress/admin?page=${page}&limit=${limit}${q}`)
       .then((res) => {
         setSiswaList(res.data.siswa);
         setTotal(res.data.total);
         setTotalPages(res.data.totalPages);
+        setStats(res.data.stats);
       })
       .finally(() => setLoading(false));
-  }, [page]);
+  }, [page, debouncedSearch]);
 
-  const filteredSiswa = siswaList.filter(s => 
-    s.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    s.username.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      const res = await api.get('/progress/admin/export');
+      const rows = res.data;
+      const header = ['Nama', 'Username', 'Kelas', 'Materi Selesai', 'Rata-rata Nilai'];
+      const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+      const SEP = ';'; // Excel locale ID pakai titik koma sebagai pemisah kolom
+      const csv = [
+        `sep=${SEP}`,
+        header.join(SEP),
+        ...rows.map(r => [r.nama, r.username, r.kelas || '-', `${r.materi_selesai}/6`, r.rata_rata].map(esc).join(SEP)),
+      ].join('\r\n');
+      const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `data-siswa-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setExporting(false);
+    }
+  };
 
-  if (loading) {
+  if (loading && siswaList.length === 0 && !debouncedSearch) {
     return (
       <div className="flex justify-center items-center min-h-[60vh]">
         <div className="w-9 h-9 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
@@ -52,7 +86,7 @@ export default function Admin() {
         </div>
       </div>
 
-      {total === 0 ? (
+      {total === 0 && !debouncedSearch ? (
         <div className="card p-12 text-center border-slate-200/60 dark:border-slate-700/60 max-w-lg mx-auto shadow-sm animate-fade-in-up">
           <div className="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-4 border border-slate-200 dark:border-slate-700">
             <AlertCircle className="w-8 h-8 text-slate-400 dark:text-slate-500" />
@@ -62,6 +96,28 @@ export default function Admin() {
         </div>
       ) : (
         <div className="space-y-6">
+          {/* Ringkasan kelas */}
+          {stats && (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-in-up">
+              {[
+                { icon: Users, label: 'Total Siswa', value: stats.total_siswa, color: 'text-indigo-600 dark:text-indigo-400', bg: 'bg-indigo-50 border-indigo-100/50 dark:bg-indigo-900/30 dark:border-indigo-800/40' },
+                { icon: Award, label: 'Rata-rata Kelas', value: stats.rata_kelas, color: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-50 border-amber-100/50 dark:bg-amber-900/30 dark:border-amber-800/40' },
+                { icon: CheckCircle2, label: 'Tuntas Semua', value: stats.tuntas, color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-50 border-emerald-100/50 dark:bg-emerald-900/30 dark:border-emerald-800/40' },
+                { icon: TrendingDown, label: 'Butuh Bimbingan', value: stats.butuh_bimbingan, color: 'text-rose-600 dark:text-rose-400', bg: 'bg-rose-50 border-rose-100/50 dark:bg-rose-900/30 dark:border-rose-800/40' },
+              ].map((s, i) => (
+                <div key={i} className="card p-4 flex items-center gap-3.5 border-slate-200/60 dark:border-slate-700/60 shadow-sm">
+                  <div className={`w-11 h-11 rounded-2xl ${s.bg} border flex items-center justify-center shrink-0`}>
+                    <s.icon className={`w-5.5 h-5.5 ${s.color}`} />
+                  </div>
+                  <div>
+                    <div className={`stat-value text-2xl font-black ${s.color} leading-none`}>{s.value}</div>
+                    <div className="text-[10px] font-bold text-[var(--color-text-secondary)] uppercase tracking-wider mt-1">{s.label}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
           {/* Controls & Metrics Row */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 animate-fade-in-up animate-delay-100">
             <div className="relative max-w-sm w-full">
@@ -74,18 +130,15 @@ export default function Admin() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            
-            <div className="flex gap-3">
-              <span className="tag tag-info bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 border-indigo-100/50 dark:border-indigo-800/50 py-2 px-4 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
-                <Users className="w-4 h-4" />
-                Total Siswa: {total} orang
-              </span>
-              {searchQuery && filteredSiswa.length < siswaList.length && (
-                <span className="tag tag-warning bg-amber-50 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 border-amber-100/50 dark:border-amber-800/50 py-2 px-4 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm animate-fade-in">
-                  Halaman ini: {filteredSiswa.length} orang
-                </span>
-              )}
-            </div>
+
+            <button
+              onClick={handleExport}
+              disabled={exporting}
+              className="btn btn-ghost py-2.5 px-4 rounded-xl text-xs font-bold gap-2 border-slate-200 dark:border-slate-700 hover:border-indigo-300 hover:text-indigo-600 disabled:opacity-50 shrink-0"
+            >
+              <Download className="w-4 h-4" />
+              {exporting ? 'Mengunduh...' : 'Unduh CSV'}
+            </button>
           </div>
 
           {/* Table Card */}
@@ -114,7 +167,7 @@ export default function Admin() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100/80 dark:divide-slate-700/80">
-                  {filteredSiswa.map((s, idx) => {
+                  {siswaList.map((s, idx) => {
                     const pct = s.rata_rata;
                     const tagClass = pct >= 80 ? 'tag-success' : pct >= 60 ? 'tag-warning' : 'tag-danger';
                     const label = pct >= 80 ? 'Sangat Baik' : pct >= 60 ? 'Cukup Baik' : 'Butuh Bimbingan';
@@ -132,7 +185,7 @@ export default function Admin() {
                         </td>
                         <td className="px-6 py-4.5 text-xs text-slate-500 dark:text-slate-400 font-mono font-bold bg-slate-50 dark:bg-slate-800 border border-slate-100/50 dark:border-slate-700/50 rounded-lg px-2 py-1 inline-block mt-2.5">{s.username}</td>
                         <td className="px-6 py-4.5">
-                          <span className="tag tag-info text-[10px] font-bold py-1 px-2.5 bg-slate-100 dark:bg-slate-700 text-slate-650 dark:text-slate-300 border-slate-200/80 dark:border-slate-600/80">
+                          <span className="tag tag-info text-[10px] font-bold py-1 px-2.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200/80 dark:border-slate-600/80">
                             {s.kelas || '-'}
                           </span>
                         </td>
@@ -165,10 +218,10 @@ export default function Admin() {
                       </tr>
                     );
                   })}
-                  {filteredSiswa.length === 0 && (
+                  {siswaList.length === 0 && (
                     <tr>
                       <td colSpan={7} className="px-6 py-12 text-center text-sm font-semibold text-slate-400 dark:text-slate-500">
-                        Tidak ada siswa yang cocok dengan kriteria pencarian.
+                        {debouncedSearch ? `Tidak ada siswa yang cocok dengan "${debouncedSearch}".` : 'Belum ada data siswa.'}
                       </td>
                     </tr>
                   )}

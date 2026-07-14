@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { User, Lock, Building2, ArrowRight, AlertTriangle, Globe } from 'lucide-react';
+import { User, Lock, Building2, ArrowRight, AlertTriangle, Globe, Eye, EyeOff, BookOpen, ListChecks, Hand } from 'lucide-react';
 
 // Premium Aesthetic Registration SVG
 function IlustrasiRegisterHero() {
@@ -65,8 +65,16 @@ export default function Register() {
   const [form, setForm] = useState({ nama: '', username: '', password: '', kelas: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [capsOn, setCapsOn] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
+
+  // Kekuatan password: +1 tiap syarat (panjang, huruf, angka/simbol)
+  const pw = form.password;
+  const strength = pw.length >= 6 ? [pw.length >= 8, /[a-zA-Z]/.test(pw), /[\d\W]/.test(pw)].filter(Boolean).length : (pw ? 1 : 0);
+  const strengthLabel = ['', 'Lemah', 'Sedang', 'Kuat'][strength] || 'Kuat';
+  const strengthColor = ['', 'bg-rose-500', 'bg-amber-500', 'bg-emerald-500'][strength] || 'bg-emerald-500';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -91,26 +99,60 @@ export default function Register() {
       </div>
 
       {/* Left panel — Edge-to-Edge Premium Gradient Showcase */}
-      <div className="hidden lg:flex lg:w-1/2 gradient-brand items-center justify-center p-16 relative overflow-hidden shadow-2xl">
-        <div className="absolute inset-0">
+      <div className="hidden lg:flex lg:w-1/2 gradient-brand items-center justify-center p-10 xl:p-14 relative overflow-hidden shadow-2xl">
+        <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-20 left-20 w-96 h-96 rounded-full bg-white/10 blur-3xl animate-pulse-soft" />
           <div className="absolute bottom-20 right-20 w-96 h-96 rounded-full bg-indigo-300/20 blur-3xl animate-pulse-soft delay-1000" />
-          
+
           {/* Fine Tech Grid Overlay */}
           <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] bg-[size:24px_24px]" />
         </div>
 
-        <div className="relative z-10 text-center max-w-md">
+        <div className="relative z-10 text-center max-w-lg my-auto">
           {/* Frosted glass frame for illustration */}
-          <div className="p-6 bg-white/5 border border-white/15 rounded-3xl shadow-2xl backdrop-blur-md mb-8">
+          <div className="px-6 py-3 bg-white/5 border border-white/15 rounded-3xl shadow-2xl backdrop-blur-md mb-6 max-w-xs mx-auto">
             <IlustrasiRegisterHero />
           </div>
-          <h2 className="font-display text-4xl font-extrabold text-white mb-4 tracking-tight leading-tight">
+          <h2 className="font-display text-3xl xl:text-4xl font-extrabold text-white mb-3 tracking-tight leading-tight">
             Mulai Belajar Jaringan
           </h2>
-          <p className="text-white/85 text-sm leading-relaxed font-medium">
-            Daftar untuk mengakses semua materi pembelajaran, menjawab kuis interaktif, dan melacak kemajuan belajarmu secara langsung!
+          <p className="text-white/85 text-sm leading-relaxed font-medium mb-7 max-w-md mx-auto">
+            Daftar untuk mengakses semua materi, menjawab kuis interaktif, dan melacak kemajuan belajarmu secara langsung.
           </p>
+
+          {/* Feature highlights — horizontal grid */}
+          <div className="grid grid-cols-3 gap-3 mb-6">
+            {[
+              { icon: BookOpen, text: 'Materi Bergambar' },
+              { icon: ListChecks, text: 'Kuis Interaktif' },
+              { icon: Hand, text: 'Sensor Tangan AI' },
+            ].map((f, i) => (
+              <div key={i} className="flex flex-col items-center gap-2 bg-white/10 backdrop-blur-md rounded-2xl px-3 py-4 border border-white/10">
+                <div className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center shrink-0">
+                  <f.icon className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-white/90 text-[11px] font-semibold leading-tight">{f.text}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Frosted Glass Stats Dock */}
+          <div className="flex justify-center gap-8 bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/15 shadow-xl">
+            <div className="text-center">
+              <div className="font-display text-2xl font-black text-white">6</div>
+              <div className="text-white/70 text-[9px] font-bold uppercase tracking-wider mt-0.5">Materi</div>
+            </div>
+            <div className="w-[1px] bg-white/10" />
+            <div className="text-center">
+              <div className="font-display text-2xl font-black text-white">60</div>
+              <div className="text-white/70 text-[9px] font-bold uppercase tracking-wider mt-0.5">Soal Kuis</div>
+            </div>
+            <div className="w-[1px] bg-white/10" />
+            <div className="text-center">
+              <div className="font-display text-2xl font-black text-white">9</div>
+              <div className="text-white/70 text-[9px] font-bold uppercase tracking-wider mt-0.5">Ilustrasi</div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -133,7 +175,7 @@ export default function Register() {
           </div>
 
           {error && (
-            <div className="mb-6 bg-rose-50 dark:bg-rose-950/30 border border-rose-200/50 dark:border-rose-900/50 text-rose-600 dark:text-rose-450 px-4.5 py-3 rounded-2xl text-xs font-semibold flex items-center gap-2.5 animate-pulse-soft">
+            <div className="mb-6 bg-rose-50 dark:bg-rose-950/30 border border-rose-200/50 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 px-4.5 py-3 rounded-2xl text-xs font-semibold flex items-center gap-2.5 animate-pulse-soft">
               <AlertTriangle className="w-4 h-4 shrink-0 text-rose-500" />
               <span>{error}</span>
             </div>
@@ -147,6 +189,7 @@ export default function Register() {
                 <input
                   type="text"
                   required
+                  autoFocus
                   className="w-full pl-11 pr-4 py-3 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50 rounded-xl text-sm font-medium focus:outline-none focus:bg-white dark:focus:bg-slate-800 focus:border-[var(--color-brand)] focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:text-slate-100"
                   placeholder="Masukkan nama lengkap Anda"
                   value={form.nama}
@@ -175,15 +218,39 @@ export default function Register() {
               <div className="relative group">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400 dark:text-slate-500 group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400 transition-colors" />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   required
                   minLength={6}
-                  className="w-full pl-11 pr-4 py-3 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50 rounded-xl text-sm font-medium focus:outline-none focus:bg-white dark:focus:bg-slate-800 focus:border-[var(--color-brand)] focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:text-slate-100"
+                  className="w-full pl-11 pr-11 py-3 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50 rounded-xl text-sm font-medium focus:outline-none focus:bg-white dark:focus:bg-slate-800 focus:border-[var(--color-brand)] focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:text-slate-100"
                   placeholder="Minimal 6 karakter"
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
+                  onKeyUp={(e) => setCapsOn(e.getModifierState && e.getModifierState('CapsLock'))}
+                  onBlur={() => setCapsOn(false)}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                  title={showPassword ? 'Sembunyikan password' : 'Lihat password'}
+                >
+                  {showPassword ? <EyeOff className="w-4.5 h-4.5" /> : <Eye className="w-4.5 h-4.5" />}
+                </button>
               </div>
+              {capsOn && (
+                <p className="mt-1.5 ml-1 text-[11px] font-semibold text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
+                  <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                  Caps Lock sedang aktif
+                </p>
+              )}
+              {pw && (
+                <div className="mt-2 ml-1 flex items-center gap-2">
+                  <div className="flex-1 h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                    <div className={`h-full rounded-full transition-all duration-300 ${strengthColor}`} style={{ width: `${(strength / 3) * 100}%` }} />
+                  </div>
+                  <span className="text-[10px] font-bold text-[var(--color-text-secondary)] w-12 text-right">{strengthLabel}</span>
+                </div>
+              )}
             </div>
 
             <div>

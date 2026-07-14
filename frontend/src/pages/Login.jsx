@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Globe, User, Lock, ArrowRight, AlertTriangle } from 'lucide-react';
+import { Globe, User, Lock, ArrowRight, AlertTriangle, Eye, EyeOff, BookOpen, ListChecks, Hand } from 'lucide-react';
 
 // Premium Aesthetic Global Network SVG
 function IlustrasiLoginHero() {
@@ -77,6 +77,8 @@ export default function Login() {
   const [form, setForm] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [capsOn, setCapsOn] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -103,31 +105,47 @@ export default function Login() {
       </div>
 
       {/* Left panel — Edge-to-Edge Premium Gradient Showcase */}
-      <div className="hidden lg:flex lg:w-1/2 gradient-brand items-center justify-center p-16 relative overflow-hidden shadow-2xl">
+      <div className="hidden lg:flex lg:w-1/2 gradient-brand items-center justify-center p-10 xl:p-14 relative overflow-hidden shadow-2xl">
         {/* Decorative gradients in card */}
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-20 left-20 w-96 h-96 rounded-full bg-white/10 blur-3xl animate-pulse-soft" />
           <div className="absolute bottom-20 right-20 w-96 h-96 rounded-full bg-indigo-300/20 blur-3xl animate-pulse-soft delay-1000" />
-          
+
           {/* Fine Tech Grid Overlay */}
           <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] bg-[size:24px_24px]" />
         </div>
 
-        <div className="relative z-10 max-w-md text-center">
+        <div className="relative z-10 max-w-lg text-center my-auto">
           {/* Frosted glass frame for illustration */}
-          <div className="p-6 bg-white/5 border border-white/15 rounded-3xl shadow-2xl backdrop-blur-md mb-8">
+          <div className="px-6 py-3 bg-white/5 border border-white/15 rounded-3xl shadow-2xl backdrop-blur-md mb-6 max-w-xs mx-auto">
             <IlustrasiLoginHero />
           </div>
-          
-          <h2 className="font-display text-4xl font-extrabold text-white tracking-tight leading-tight mb-4">
+
+          <h2 className="font-display text-3xl xl:text-4xl font-extrabold text-white tracking-tight leading-tight mb-3">
             Belajar Jaringan Komputer
           </h2>
-          <p className="text-white/85 text-sm leading-relaxed font-medium mb-8">
-            Media pembelajaran interaktif untuk siswa SMP. Pelajari konsep jaringan komputer dengan cara yang seru, mudah dipahami, dan menyenangkan!
+          <p className="text-white/85 text-sm leading-relaxed font-medium mb-7 max-w-md mx-auto">
+            Media pembelajaran interaktif untuk siswa SMP. Belajar jaringan komputer dengan cara yang seru dan mudah dipahami.
           </p>
-          
+
+          {/* Feature highlights — horizontal grid */}
+          <div className="grid grid-cols-3 gap-3 mb-6">
+            {[
+              { icon: BookOpen, text: 'Materi Bergambar' },
+              { icon: ListChecks, text: 'Kuis Interaktif' },
+              { icon: Hand, text: 'Sensor Tangan AI' },
+            ].map((f, i) => (
+              <div key={i} className="flex flex-col items-center gap-2 bg-white/10 backdrop-blur-md rounded-2xl px-3 py-4 border border-white/10">
+                <div className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center shrink-0">
+                  <f.icon className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-white/90 text-[11px] font-semibold leading-tight">{f.text}</span>
+              </div>
+            ))}
+          </div>
+
           {/* Frosted Glass Stats Dock */}
-          <div className="flex justify-center gap-8 bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/15 shadow-xl">
+          <div className="flex justify-center gap-8 bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/15 shadow-xl">
             <div className="text-center">
               <div className="font-display text-2xl font-black text-white">6</div>
               <div className="text-white/70 text-[9px] font-bold uppercase tracking-wider mt-0.5">Materi</div>
@@ -165,7 +183,7 @@ export default function Login() {
           </div>
 
           {error && (
-            <div className="mb-6 bg-rose-50 dark:bg-rose-950/30 border border-rose-200/50 dark:border-rose-900/50 text-rose-600 dark:text-rose-450 px-4.5 py-3 rounded-2xl text-xs font-semibold flex items-center gap-2.5 animate-pulse-soft">
+            <div className="mb-6 bg-rose-50 dark:bg-rose-950/30 border border-rose-200/50 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 px-4.5 py-3 rounded-2xl text-xs font-semibold flex items-center gap-2.5 animate-pulse-soft">
               <AlertTriangle className="w-4 h-4 shrink-0 text-rose-500" />
               <span>{error}</span>
             </div>
@@ -179,6 +197,7 @@ export default function Login() {
                 <input
                   type="text"
                   required
+                  autoFocus
                   className="w-full pl-11 pr-4 py-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50 rounded-xl text-sm font-medium focus:outline-none focus:bg-white dark:focus:bg-slate-800 focus:border-[var(--color-brand)] focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:text-slate-100"
                   placeholder="Masukkan username"
                   value={form.username}
@@ -192,14 +211,30 @@ export default function Login() {
               <div className="relative group">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400 dark:text-slate-500 group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400 transition-colors" />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   required
-                  className="w-full pl-11 pr-4 py-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50 rounded-xl text-sm font-medium focus:outline-none focus:bg-white dark:focus:bg-slate-800 focus:border-[var(--color-brand)] focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:text-slate-100"
+                  className="w-full pl-11 pr-11 py-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50 rounded-xl text-sm font-medium focus:outline-none focus:bg-white dark:focus:bg-slate-800 focus:border-[var(--color-brand)] focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:text-slate-100"
                   placeholder="Masukkan password"
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
+                  onKeyUp={(e) => setCapsOn(e.getModifierState && e.getModifierState('CapsLock'))}
+                  onBlur={() => setCapsOn(false)}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                  title={showPassword ? 'Sembunyikan password' : 'Lihat password'}
+                >
+                  {showPassword ? <EyeOff className="w-4.5 h-4.5" /> : <Eye className="w-4.5 h-4.5" />}
+                </button>
               </div>
+              {capsOn && (
+                <p className="mt-1.5 ml-1 text-[11px] font-semibold text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
+                  <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                  Caps Lock sedang aktif
+                </p>
+              )}
             </div>
 
             <button

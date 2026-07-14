@@ -279,7 +279,7 @@ export default function Nilai() {
                           <Icon className={`w-6 h-6 ${ach.unlocked ? ach.color : 'text-slate-400 dark:text-slate-500'}`} />
                         </div>
                         {!ach.unlocked && (
-                          <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-slate-350 border-2 border-white dark:border-slate-800 flex items-center justify-center text-white">
+                          <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-slate-400 border-2 border-white dark:border-slate-800 flex items-center justify-center text-white">
                             <Lock className="w-2.5 h-2.5 text-slate-500 dark:text-slate-400" />
                           </div>
                         )}
@@ -356,7 +356,7 @@ export default function Nilai() {
             </div>
           ) : leaderboard.length === 0 ? (
             <div className="py-16 text-center">
-              <AlertCircle className="w-12 h-12 text-slate-350 mx-auto mb-3" />
+              <AlertCircle className="w-12 h-12 text-slate-400 mx-auto mb-3" />
               <p className="text-slate-400 dark:text-slate-500 text-sm font-medium">Belum ada peringkat terkumpul.</p>
             </div>
           ) : (

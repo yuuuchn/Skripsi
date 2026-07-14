@@ -71,7 +71,7 @@ export default function Kuis() {
     const tagColor = pct >= 80 ? 'tag-success' : pct >= 60 ? 'tag-warning' : 'tag-danger';
     const strokeColor = pct >= 80 ? '#10b981' : pct >= 60 ? '#f59e0b' : '#f43f5e';
     const ringBg = pct >= 80 ? 'bg-emerald-50 dark:bg-emerald-950/20' : pct >= 60 ? 'bg-amber-50 dark:bg-amber-950/20' : 'bg-rose-50 dark:bg-rose-950/20';
-    const scoreColor = pct >= 80 ? 'text-emerald-600 dark:text-emerald-400' : pct >= 60 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-450';
+    const scoreColor = pct >= 80 ? 'text-emerald-600 dark:text-emerald-400' : pct >= 60 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400';
     const circumference = 2 * Math.PI * 40;
 
     return (
@@ -108,7 +108,7 @@ export default function Kuis() {
               <CheckCircle className="w-4 h-4" />
               Benar: {hasil.benar}
             </span>
-            <span className="tag tag-danger text-xs font-bold py-1.5 px-3.5 bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-450 border-rose-100 dark:border-rose-900/50">
+            <span className="tag tag-danger text-xs font-bold py-1.5 px-3.5 bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-400 border-rose-100 dark:border-rose-900/50">
               <XCircle className="w-4 h-4" />
               Salah: {hasil.total - hasil.benar}
             </span>
@@ -117,6 +117,13 @@ export default function Kuis() {
               Total Soal: {hasil.total}
             </span>
           </div>
+
+          {hasil.nilai_tersimpan > pct && (
+            <div className="flex items-center justify-center gap-2 mb-6 -mt-2 text-xs font-semibold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900/50 rounded-xl py-2.5 px-4">
+              <Trophy className="w-4 h-4 fill-amber-400 border-0 shrink-0" />
+              Skor terbaikmu {hasil.nilai_tersimpan} tetap tersimpan.
+            </div>
+          )}
 
           <button onClick={() => setReviewMode(true)} className="btn btn-ghost font-bold py-3 rounded-xl w-full mb-3 border-indigo-200 hover:border-indigo-400 hover:text-indigo-600 gap-2">
             <Eye className="w-4.5 h-4.5" />
@@ -179,7 +186,7 @@ export default function Kuis() {
                   }`}>
                     {soal.benar
                       ? <CheckCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                      : <XCircle className="w-5 h-5 text-rose-500 dark:text-rose-450" />
+                      : <XCircle className="w-5 h-5 text-rose-500 dark:text-rose-400" />
                     }
                   </div>
                   <p className="font-bold text-[var(--color-text)] leading-relaxed mt-0.5 text-base">{soal.soal}</p>
@@ -206,7 +213,7 @@ export default function Kuis() {
                       borderColor = 'border-rose-300 dark:border-rose-900/50';
                       bgColor = 'bg-rose-50/40 dark:bg-rose-950/20';
                       textColor = 'text-rose-900 dark:text-rose-400';
-                      badgeBg = 'bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-450';
+                      badgeBg = 'bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-400';
                       showBadge = '✗ Jawabanmu';
                     }
 
@@ -321,7 +328,7 @@ export default function Kuis() {
                       }`}
                     >
                       <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
-                        selected ? 'border-indigo-600 dark:border-indigo-500 bg-indigo-600 dark:bg-indigo-500 scale-105' : 'border-slate-300 dark:border-slate-650'
+                        selected ? 'border-indigo-600 dark:border-indigo-500 bg-indigo-600 dark:bg-indigo-500 scale-105' : 'border-slate-300 dark:border-slate-600'
                       }`}>
                         {selected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
                       </div>
@@ -348,7 +355,7 @@ export default function Kuis() {
       {/* Submit */}
       <div className="mt-10 mb-16 text-center animate-fade-in-up" style={{ animationDelay: `${(soalList.length + 3) * 0.08}s` }}>
         {pesanError && (
-          <div className="mb-5 max-w-md mx-auto bg-rose-50 dark:bg-rose-950/30 border border-rose-200/50 dark:border-rose-900/50 text-rose-600 dark:text-rose-450 px-4.5 py-3 rounded-2xl text-xs font-semibold flex items-center justify-center gap-2.5 animate-pulse-soft">
+          <div className="mb-5 max-w-md mx-auto bg-rose-50 dark:bg-rose-950/30 border border-rose-200/50 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 px-4.5 py-3 rounded-2xl text-xs font-semibold flex items-center justify-center gap-2.5 animate-pulse-soft">
             <AlertTriangle className="w-4 h-4 shrink-0 text-rose-500" />
             <span>{pesanError}</span>
           </div>

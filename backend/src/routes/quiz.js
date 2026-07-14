@@ -63,12 +63,17 @@ router.post('/submit', async (req, res) => {
 
     db.run(
       `INSERT INTO progress (user_id, materi_id, selesai, nilai) VALUES (?, ?, 1, ?)
-       ON CONFLICT(user_id, materi_id) DO UPDATE SET selesai = 1, nilai = ?`,
+       ON CONFLICT(user_id, materi_id) DO UPDATE SET selesai = 1, nilai = MAX(nilai, ?)`,
       [req.user.id, materi_id, nilai, nilai]
     );
     saveDb();
 
-    res.json({ nilai, benar, total, detail });
+    const tersimpan = queryOne(db,
+      'SELECT nilai FROM progress WHERE user_id = ? AND materi_id = ?',
+      [req.user.id, materi_id]
+    );
+
+    res.json({ nilai, nilai_tersimpan: tersimpan?.nilai ?? nilai, benar, total, detail });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

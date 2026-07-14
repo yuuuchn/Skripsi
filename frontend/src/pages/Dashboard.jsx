@@ -282,7 +282,7 @@ export default function Dashboard() {
                     style={{ background: `linear-gradient(90deg, ${color.from}, ${color.to})` }}
                   />
                   <div className="p-6">
-                    <div className="flex items-center gap-3.5 mb-4">
+                    <div className="flex items-center gap-3.5 mb-3">
                       <div className="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center shadow-sm border border-slate-100 dark:border-slate-700 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
                         {(() => {
                           const IconComp = iconMap[m.icon] || HelpCircle;
@@ -294,6 +294,9 @@ export default function Dashboard() {
                         <h3 className="font-display font-extrabold text-sm text-[var(--color-text)] leading-snug mt-0.5 group-hover:text-[var(--color-brand-deep)] transition-colors">{m.judul}</h3>
                       </div>
                     </div>
+                    <p className="text-xs text-[var(--color-text-secondary)] font-medium line-clamp-2 leading-relaxed">
+                      Pelajari konsep {m.judul.toLowerCase()} untuk siswa kelas IX secara interaktif.
+                    </p>
                   </div>
                 </div>
 
