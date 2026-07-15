@@ -21,3 +21,6 @@ Thumbs.db
 
 # Claude working folder
 claude/
+
+# Data export siswa (CSV hasil download)
+data-siswa-*.csv
