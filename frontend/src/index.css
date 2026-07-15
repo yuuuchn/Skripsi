@@ -213,8 +213,9 @@ img, svg {
 .form-input {
   width: 100%;
   padding: 0.75rem 1rem;
-  background: white;
-  border: 1.5px solid #e2e8f0;
+  background: var(--color-card);
+  color: var(--color-text);
+  border: 1.5px solid var(--color-border);
   border-radius: 0.875rem;
   font-size: 0.875rem;
   transition: all 0.25s;
@@ -223,6 +224,22 @@ img, svg {
   outline: none;
   border-color: #6366f1;
   box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+}
+select.form-input {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 2.5rem;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.9rem center;
+}
+.dark select.form-input {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238896ae' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+}
+select.form-input option {
+  background: var(--color-card);
+  color: var(--color-text);
 }
 
 /* ─────────────────────────────────────────
