@@ -1,8 +1,88 @@
 import { Router } from 'express';
 import { getDb, saveDb } from '../models/database.js';
+import { adminOnly } from '../middleware/auth.js';
 import { queryOne, queryAll } from './auth.js';
 
 const router = Router();
+
+// ---- Kelola soal oleh guru (sertakan kunci jawaban) ----
+router.get('/manage/:materi_id', adminOnly, async (req, res) => {
+  try {
+    const db = await getDb();
+    const soalList = queryAll(db,
+      'SELECT id, materi_id, soal, opsi_a, opsi_b, opsi_c, opsi_d, jawaban FROM quiz WHERE materi_id = ? ORDER BY id',
+      [req.params.materi_id]
+    );
+    res.json(soalList);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Validasi field soal; kembalikan pesan error atau null bila valid
+function validateSoal(body) {
+  const { materi_id, soal, opsi_a, opsi_b, opsi_c, opsi_d, jawaban } = body;
+  if (!materi_id) return 'Materi wajib dipilih';
+  if (!soal?.trim() || !opsi_a?.trim() || !opsi_b?.trim() || !opsi_c?.trim() || !opsi_d?.trim()) {
+    return 'Soal dan keempat opsi wajib diisi';
+  }
+  if (!['a', 'b', 'c', 'd'].includes((jawaban || '').toLowerCase())) {
+    return 'Jawaban benar harus salah satu dari a/b/c/d';
+  }
+  return null;
+}
+
+router.post('/', adminOnly, async (req, res) => {
+  try {
+    const err = validateSoal(req.body);
+    if (err) return res.status(400).json({ error: err });
+    const { materi_id, soal, opsi_a, opsi_b, opsi_c, opsi_d, jawaban } = req.body;
+    const db = await getDb();
+    const materi = queryOne(db, 'SELECT id FROM materi WHERE id = ?', [materi_id]);
+    if (!materi) return res.status(404).json({ error: 'Materi tidak ditemukan' });
+    db.run(
+      'INSERT INTO quiz (materi_id, soal, opsi_a, opsi_b, opsi_c, opsi_d, jawaban) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [materi_id, soal, opsi_a, opsi_b, opsi_c, opsi_d, jawaban.toLowerCase()]
+    );
+    const row = queryOne(db, 'SELECT * FROM quiz WHERE id = last_insert_rowid()');
+    saveDb();
+    res.status(201).json(row);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.put('/:id', adminOnly, async (req, res) => {
+  try {
+    const err = validateSoal(req.body);
+    if (err) return res.status(400).json({ error: err });
+    const { materi_id, soal, opsi_a, opsi_b, opsi_c, opsi_d, jawaban } = req.body;
+    const db = await getDb();
+    const existing = queryOne(db, 'SELECT id FROM quiz WHERE id = ?', [req.params.id]);
+    if (!existing) return res.status(404).json({ error: 'Soal tidak ditemukan' });
+    db.run(
+      'UPDATE quiz SET materi_id = ?, soal = ?, opsi_a = ?, opsi_b = ?, opsi_c = ?, opsi_d = ?, jawaban = ? WHERE id = ?',
+      [materi_id, soal, opsi_a, opsi_b, opsi_c, opsi_d, jawaban.toLowerCase(), req.params.id]
+    );
+    saveDb();
+    res.json(queryOne(db, 'SELECT * FROM quiz WHERE id = ?', [req.params.id]));
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.delete('/:id', adminOnly, async (req, res) => {
+  try {
+    const db = await getDb();
+    const existing = queryOne(db, 'SELECT id FROM quiz WHERE id = ?', [req.params.id]);
+    if (!existing) return res.status(404).json({ error: 'Soal tidak ditemukan' });
+    db.run('DELETE FROM quiz WHERE id = ?', [req.params.id]);
+    saveDb();
+    res.json({ ok: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 router.get('/:materi_id', async (req, res) => {
   try {

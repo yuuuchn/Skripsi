@@ -11,6 +11,7 @@ import Kuis from './pages/Kuis';
 import Nilai from './pages/Nilai';
 import Admin from './pages/Admin';
 import AdminMateri from './pages/AdminMateri';
+import AdminKuis from './pages/AdminKuis';
 import PageTransition from './components/PageTransition';
 import ErrorBoundary from './components/ErrorBoundary';
 import DotField from './components/DotField';
@@ -91,6 +92,7 @@ function AppContent() {
           <Route path="/nilai" element={<ProtectedRoute><PageTransition><Nilai /></PageTransition></ProtectedRoute>} />
           <Route path="/admin" element={<ProtectedRoute><PageTransition><Admin /></PageTransition></ProtectedRoute>} />
           <Route path="/admin/materi" element={<ProtectedRoute><PageTransition><AdminMateri /></PageTransition></ProtectedRoute>} />
+          <Route path="/admin/kuis" element={<ProtectedRoute><PageTransition><AdminKuis /></PageTransition></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/dashboard" />} />
         </Routes>
         </ErrorBoundary>
