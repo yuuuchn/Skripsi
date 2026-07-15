@@ -7,6 +7,24 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+      // Terapkan tema sebelum paint + matikan transisi warna saat load awal
+      // (mencegah kedip: teks putih sempat menghitam & FOUC dark mode)
+      (function () {
+        var t = localStorage.getItem('theme');
+        var dark = t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        var root = document.documentElement;
+        if (dark) root.classList.add('dark');
+        root.classList.add('no-transition');
+        window.addEventListener('load', function () {
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+              root.classList.remove('no-transition');
+            });
+          });
+        });
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
