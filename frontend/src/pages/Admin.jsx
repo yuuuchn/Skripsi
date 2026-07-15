@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../api/axios';
-import { GraduationCap, Users, AlertCircle, Award, Search, Sparkles, ChevronLeft, ChevronRight, Download, CheckCircle2, TrendingDown, BarChart3, PieChart as PieIcon } from 'lucide-react';
+import { GraduationCap, Users, AlertCircle, Award, Search, Sparkles, ChevronLeft, ChevronRight, Download, CheckCircle2, TrendingDown, BarChart3, PieChart as PieIcon, BookOpen } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 
 export default function Admin() {
@@ -86,10 +87,17 @@ export default function Admin() {
           <div className="w-14 h-14 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-md flex items-center justify-center shadow-sm shrink-0">
             <GraduationCap className="w-8 h-8 text-white" />
           </div>
-          <div>
+          <div className="flex-1">
             <h1 className="font-display text-2xl md:text-3xl font-black tracking-tight">Panel Guru</h1>
             <p className="text-white/80 text-xs md:text-sm font-semibold mt-0.5">Pantau kemajuan belajar dan hasil pencapaian kuis seluruh siswa</p>
           </div>
+          <Link
+            to="/admin/materi"
+            className="shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 backdrop-blur-md text-white text-xs md:text-sm font-bold transition-colors active:scale-95"
+          >
+            <BookOpen className="w-4 h-4" />
+            <span className="hidden sm:inline">Kelola Materi</span>
+          </Link>
         </div>
       </div>
 

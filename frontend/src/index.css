@@ -301,6 +301,16 @@ img, svg {
 .prose img {
   background-color: #ffffff;
 }
+.prose img[data-align="center"] {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.prose img[data-align="right"] {
+  display: block;
+  margin-left: auto;
+  margin-right: 0;
+}
 .dark .prose {
   color: #cbd5e1;
 }
