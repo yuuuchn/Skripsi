@@ -37,6 +37,20 @@ export default function Navbar() {
     }
   }, [dark]);
 
+  // Aktifkan transisi warna hanya saat user menekan toggle (bukan saat mount),
+  // supaya elemen yang baru dirender tidak ikut menganimasikan warnanya.
+  const firstRun = useRef(true);
+  useEffect(() => {
+    if (firstRun.current) {
+      firstRun.current = false;
+      return;
+    }
+    const root = document.documentElement;
+    root.classList.add('theme-transition');
+    const t = setTimeout(() => root.classList.remove('theme-transition'), 400);
+    return () => clearTimeout(t);
+  }, [dark]);
+
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 80) {

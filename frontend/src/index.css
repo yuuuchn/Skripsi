@@ -38,14 +38,13 @@
   --color-brand-soft: #1e2347;
 }
 
-/* Smooth light/dark theme transition */
-*, *::before, *::after {
+/* Transisi warna hanya saat ganti tema (di-trigger via .theme-transition di <html>).
+   Default tanpa transisi supaya elemen yang baru mount / pindah halaman tidak
+   ikut menganimasikan warna (mencegah teks sempat menghitam saat load). */
+.theme-transition *,
+.theme-transition *::before,
+.theme-transition *::after {
   transition: background-color 0.35s ease, border-color 0.35s ease, color 0.35s ease, fill 0.35s ease, stroke 0.35s ease, box-shadow 0.35s ease;
-}
-
-/* Matikan transisi saat load awal agar tidak ada kedip warna/tema */
-.no-transition, .no-transition *, .no-transition *::before, .no-transition *::after {
-  transition: none !important;
 }
 
 body {
@@ -130,7 +129,7 @@ img, svg {
   border-radius: 1.25rem;
   border: 1px solid rgba(226, 232, 240, 0.8);
   box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01), 0 2px 4px -1px rgba(0,0,0,0.01);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .dark .card {
   border-color: rgba(42, 52, 72, 0.8);
