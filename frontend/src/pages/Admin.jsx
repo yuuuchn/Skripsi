@@ -83,11 +83,11 @@ export default function Admin() {
       <div className="card bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-800 border-0 p-8 mb-8 text-white relative overflow-hidden shadow-xl shadow-indigo-500/10 animate-fade-in-up">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/4 blur-2xl animate-pulse-soft" />
         
-        <div className="relative z-10 flex items-center gap-5">
+        <div className="relative z-10 flex flex-wrap items-center gap-5">
           <div className="w-14 h-14 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-md flex items-center justify-center shadow-sm shrink-0">
             <GraduationCap className="w-8 h-8 text-white" />
           </div>
-          <div className="flex-1">
+          <div className="flex-1 min-w-[180px]">
             <h1 className="font-display text-2xl md:text-3xl font-black tracking-tight">Panel Guru</h1>
             <p className="text-white/80 text-xs md:text-sm font-semibold mt-0.5">Pantau kemajuan belajar dan hasil pencapaian kuis seluruh siswa</p>
           </div>
