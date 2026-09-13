@@ -89,9 +89,11 @@ export default function useHandTracking(videoRef, canvasRef) {
   const [cursorPos, setCursorPos] = useState({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
   const [isPinching, setIsPinching] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
+  const [isHoveringClickable, setIsHoveringClickable] = useState(false);
   const [ripples, setRipples] = useState([]);
 
   const cursorRef = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
+  const hoverThrottle = useRef(0);
   const landmarkerRef = useRef(null);
   const animationFrameId = useRef(null);
   const pinchingRef = useRef(false);
@@ -133,6 +135,7 @@ export default function useHandTracking(videoRef, canvasRef) {
     pinchingRef.current = false;
     scrollVelocity.current = 0;
 
+    setIsHoveringClickable(false);
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(t => t.stop());
       streamRef.current = null;
@@ -175,8 +178,8 @@ export default function useHandTracking(videoRef, canvasRef) {
           },
           runningMode: 'VIDEO',
           numHands: 1,
-          minHandDetectionConfidence: 0.38,
-          minHandPresenceConfidence: 0.38,
+          minHandDetectionConfidence: 0.35,
+          minHandPresenceConfidence: 0.35,
           minTrackingConfidence: 0.35,
         });
       }
@@ -290,6 +293,14 @@ export default function useHandTracking(videoRef, canvasRef) {
                     cursorRef.current.x = cursorRef.current.x * (1 - SMOOTHING) + targetX * SMOOTHING;
                     cursorRef.current.y = cursorRef.current.y * (1 - SMOOTHING) + targetY * SMOOTHING;
                     setCursorPos({ x: cursorRef.current.x, y: cursorRef.current.y });
+
+                    const now = performance.now();
+                    if (now - hoverThrottle.current > 75) {
+                      hoverThrottle.current = now;
+                      const targetEl = document.elementFromPoint(cursorRef.current.x, cursorRef.current.y);
+                      const isClickable = !!targetEl?.closest('button, a, input, select, textarea, [role="button"], label, .cursor-pointer');
+                      setIsHoveringClickable(isClickable);
+                    }
                   }
 
                   if (distance < CLICK_THRESHOLD) {
@@ -318,13 +329,16 @@ export default function useHandTracking(videoRef, canvasRef) {
         if (scrollVelocity.current !== 0) {
           window.scrollBy({ top: scrollVelocity.current, behavior: 'instant' });
         }
-      } catch (detectErr) {
-        setError(`AI Error: ${detectErr.message || detectErr}`);
-        stopTracking();
-        return;
-      }
 
-      animationFrameId.current = requestAnimationFrame(detect);
+        if (active) {
+          animationFrameId.current = requestAnimationFrame(detect);
+        }
+      } catch (err) {
+        console.error('Detection loop error:', err);
+        if (active) {
+          animationFrameId.current = requestAnimationFrame(detect);
+        }
+      }
     };
 
     detect();
@@ -340,7 +354,7 @@ export default function useHandTracking(videoRef, canvasRef) {
 
   return {
     active, loading, error,
-    cursorPos, isPinching, isScrolling, ripples,
+    cursorPos, isPinching, isScrolling, isHoveringClickable, ripples,
     handleToggle, onPinch,
   };
 }

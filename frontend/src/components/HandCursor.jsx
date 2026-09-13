@@ -13,7 +13,7 @@ export default function HandCursor() {
   const { position, handleMouseDown, handleTouchStart } = usePipWindow();
   const {
     active, loading, error,
-    cursorPos, isPinching, isScrolling, ripples,
+    cursorPos, isPinching, isScrolling, isHoveringClickable, ripples,
     handleToggle, onPinch,
   } = useHandTracking(videoRef, canvasRef);
 
@@ -32,23 +32,39 @@ export default function HandCursor() {
       {/* 1. Global Virtual Cursor Overlay */}
       {active && (
         <div 
-          className="fixed w-6 h-6 rounded-full border border-white shadow-xl pointer-events-none z-[99999] transition-transform duration-75 flex items-center justify-center bg-indigo-500/35"
+          className={`fixed rounded-full border shadow-xl pointer-events-none z-[99999] transition-transform duration-75 flex items-center justify-center ${
+            isPinching
+              ? 'w-6 h-6 bg-rose-500/40 border-rose-300'
+              : isScrolling
+              ? 'w-7 h-7 bg-emerald-500/40 border-emerald-300'
+              : isHoveringClickable
+              ? 'w-8 h-8 bg-indigo-500/40 border-cyan-300 ring-4 ring-cyan-400/30'
+              : 'w-6 h-6 bg-indigo-500/35 border-white'
+          }`}
           style={{ 
             left: `${cursorPos.x}px`, 
             top: `${cursorPos.y}px`, 
-            transform: `translate(-50%, -50%) scale(${isPinching ? 0.75 : isScrolling ? 1.25 : 1})`,
+            transform: `translate(-50%, -50%) scale(${isPinching ? 0.75 : isScrolling ? 1.25 : isHoveringClickable ? 1.15 : 1})`,
             boxShadow: isPinching 
-              ? '0 0 15px 4px rgba(244, 63, 94, 0.6)' 
+              ? '0 0 16px 5px rgba(244, 63, 94, 0.7)' 
               : isScrolling
-              ? '0 0 15px 4px rgba(16, 185, 129, 0.6)'
+              ? '0 0 16px 5px rgba(16, 185, 129, 0.7)'
+              : isHoveringClickable
+              ? '0 0 20px 6px rgba(6, 182, 212, 0.6)'
               : '0 0 10px 2px rgba(99, 102, 241, 0.4)'
           }}
         >
-          {/* Cyan dot for standard pointing, Rose for pinching (clicking), Emerald with icon for scrolling */}
-          <div className={`w-2.5 h-2.5 rounded-full transition-colors duration-150 flex items-center justify-center text-[6px] text-white font-extrabold ${
-            isScrolling ? 'bg-emerald-500' : isPinching ? 'bg-rose-500' : 'bg-cyan-400'
+          {/* Center indicator dot */}
+          <div className={`rounded-full transition-colors duration-150 flex items-center justify-center text-[7px] text-white font-extrabold ${
+            isScrolling
+              ? 'w-3 h-3 bg-emerald-500'
+              : isPinching
+              ? 'w-2 h-2 bg-rose-500'
+              : isHoveringClickable
+              ? 'w-3 h-3 bg-cyan-400'
+              : 'w-2.5 h-2.5 bg-cyan-400'
           }`}>
-            {isScrolling && '↕'}
+            {isScrolling ? '↕' : isHoveringClickable ? '●' : ''}
           </div>
         </div>
       )}
@@ -110,6 +126,9 @@ export default function HandCursor() {
                   <div className="text-xs font-bold text-[var(--color-text)]">Gerakkan telunjuk untuk mengarahkan</div>
                   <div className="text-[11px] text-[var(--color-text-secondary)] leading-snug">Titik kursor akan mengikuti ujung telunjukmu.</div>
                 </div>
+              </div>
+              <div className="pt-2.5 border-t border-slate-100 dark:border-slate-700/80 text-[10px] font-semibold text-slate-500 dark:text-slate-400 text-center leading-relaxed">
+                💡 Rekomendasi: Gunakan Laptop/PC dengan webcam dan pencahayaan ruangan yang cukup.
               </div>
             </div>
           </div>
