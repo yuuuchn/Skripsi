@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import MateriEditor from '../components/MateriEditor';
 import {
   BookOpen, Plus, Pencil, Trash2, ArrowUp, ArrowDown, ArrowLeft, Save, X,
@@ -15,6 +16,7 @@ const iconOptions = Object.keys(iconMap);
 
 export default function AdminMateri() {
   const { user } = useAuth();
+  const toast = useToast();
   const navigate = useNavigate();
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -45,26 +47,36 @@ export default function AdminMateri() {
 
   const save = async () => {
     if (!form.judul.trim() || !form.konten.trim()) {
-      alert('Judul dan isi materi wajib diisi');
+      toast.error('Judul dan isi materi wajib diisi');
       return;
     }
     setSaving(true);
     try {
-      if (editing.id) await api.put(`/materi/${editing.id}`, form);
-      else await api.post('/materi', form);
+      if (editing.id) {
+        await api.put(`/materi/${editing.id}`, form);
+        toast.success('Materi berhasil diperbarui');
+      } else {
+        await api.post('/materi', form);
+        toast.success('Materi baru berhasil ditambahkan');
+      }
       setEditing(null);
       load();
     } catch (e) {
-      alert(e.response?.data?.error || 'Gagal menyimpan');
+      toast.error(e.response?.data?.error || 'Gagal menyimpan materi');
     } finally {
       setSaving(false);
     }
   };
 
   const del = async (id) => {
-    await api.delete(`/materi/${id}`);
-    setConfirmDel(null);
-    load();
+    try {
+      await api.delete(`/materi/${id}`);
+      toast.success('Materi berhasil dihapus');
+      setConfirmDel(null);
+      load();
+    } catch (e) {
+      toast.error(e.response?.data?.error || 'Gagal menghapus materi');
+    }
   };
 
   const move = async (idx, dir) => {

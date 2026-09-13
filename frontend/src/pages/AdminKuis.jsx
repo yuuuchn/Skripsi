@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import {
   Plus, Pencil, Trash2, ArrowLeft, Save, X, HelpCircle, CheckCircle2, AlertTriangle,
 } from 'lucide-react';
@@ -11,6 +12,7 @@ const emptyForm = () => ({ soal: '', opsi_a: '', opsi_b: '', opsi_c: '', opsi_d:
 
 export default function AdminKuis() {
   const { user } = useAuth();
+  const toast = useToast();
   const navigate = useNavigate();
   const [materiList, setMateriList] = useState([]);
   const [materiId, setMateriId] = useState('');
@@ -47,27 +49,37 @@ export default function AdminKuis() {
 
   const save = async () => {
     if (!form.soal.trim() || OPSI.some((o) => !form[`opsi_${o}`].trim())) {
-      alert('Soal dan keempat opsi wajib diisi');
+      toast.error('Soal dan keempat opsi wajib diisi');
       return;
     }
     setSaving(true);
     try {
       const payload = { ...form, materi_id: Number(materiId) };
-      if (editing.id) await api.put(`/quiz/${editing.id}`, payload);
-      else await api.post('/quiz', payload);
+      if (editing.id) {
+        await api.put(`/quiz/${editing.id}`, payload);
+        toast.success('Soal kuis berhasil diperbarui');
+      } else {
+        await api.post('/quiz', payload);
+        toast.success('Soal kuis baru berhasil ditambahkan');
+      }
       setEditing(null);
       load();
     } catch (e) {
-      alert(e.response?.data?.error || 'Gagal menyimpan');
+      toast.error(e.response?.data?.error || 'Gagal menyimpan soal kuis');
     } finally {
       setSaving(false);
     }
   };
 
   const del = async (id) => {
-    await api.delete(`/quiz/${id}`);
-    setConfirmDel(null);
-    load();
+    try {
+      await api.delete(`/quiz/${id}`);
+      toast.success('Soal kuis berhasil dihapus');
+      setConfirmDel(null);
+      load();
+    } catch (e) {
+      toast.error(e.response?.data?.error || 'Gagal menghapus soal kuis');
+    }
   };
 
   // ---------- FORM VIEW ----------
