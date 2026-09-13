@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../api/axios';
+import { useToast } from '../context/ToastContext';
 import {
   IlustrasiJaringan,
   IlustrasiLAN,
@@ -12,7 +13,7 @@ import {
   IlustrasiDampakJaringan,
 } from '../components/NetworkIllustration';
 import PerangkatJaringan from '../components/PerangkatJaringan';
-import { ArrowLeft, ArrowRight, BookOpen, RefreshCw, Pencil, ChevronRight, HelpCircle, Laptop, History, Globe, Cable, Router, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BookOpen, RefreshCw, Pencil, ChevronRight, HelpCircle, Laptop, History, Globe, Cable, Router, ShieldCheck, Trophy } from 'lucide-react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -44,16 +45,40 @@ const materiGradients = {
 
 export default function DetailMateri() {
   const { id } = useParams();
+  const toast = useToast();
   const [materi, setMateri] = useState(null);
+  const [materiList, setMateriList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const containerRef = useRef(null);
+
+  // Track reading scroll progress
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (totalHeight > 0) {
+        const current = (window.scrollY / totalHeight) * 100;
+        setScrollProgress(Math.min(100, Math.max(0, current)));
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     setLoading(true);
     window.scrollTo(0, 0);
-    api.get(`/materi/${id}`)
-      .then((res) => setMateri(res.data))
-      .catch(() => alert('Materi tidak ditemukan'))
+    Promise.all([
+      api.get(`/materi/${id}`),
+      api.get('/materi')
+    ])
+      .then(([detailRes, listRes]) => {
+        setMateri(detailRes.data);
+        setMateriList(listRes.data || []);
+      })
+      .catch(() => {
+        toast.error('Materi tidak ditemukan');
+      })
       .finally(() => setLoading(false));
   }, [id]);
 
@@ -83,8 +108,19 @@ export default function DetailMateri() {
 
   const gradientClass = materiGradients[materi.id] || 'from-indigo-600 to-purple-600 shadow-indigo-500/10';
 
+  const currentIndex = materiList.findIndex((m) => Number(m.id) === Number(id));
+  const prevMateri = currentIndex > 0 ? materiList[currentIndex - 1] : null;
+  const nextMateri = currentIndex >= 0 && currentIndex < materiList.length - 1 ? materiList[currentIndex + 1] : null;
+
   return (
-    <div ref={containerRef} className="max-w-4xl mx-auto px-4 py-8">
+    <>
+      {/* Reading progress bar */}
+      <div
+        className="fixed top-0 left-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-400 z-50 transition-all duration-75 ease-out pointer-events-none"
+        style={{ width: `${scrollProgress}%` }}
+      />
+
+      <div ref={containerRef} className="max-w-4xl mx-auto px-4 py-8">
       <div className="animate-fade-in-down">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-1.5 text-xs font-bold text-[var(--color-text-secondary)] uppercase tracking-wider mb-5">
@@ -206,26 +242,69 @@ export default function DetailMateri() {
         <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: materi.konten }} />
       </div>
 
-      <div className="flex justify-between items-center mb-12 animate-fade-in-up stagger-3">
-        {materi.urutan > 1 ? (
-          <Link to={`/materi/${materi.urutan - 1}`} className="btn btn-ghost font-bold rounded-xl gap-2 active:scale-95 transition-all">
-            <ArrowLeft className="w-4 h-4" />
-            Sebelumnya
-          </Link>
-        ) : <div />}
+      {/* Bottom Navigation Card */}
+      <div className="card p-5 md:p-6 mb-12 border-slate-200/60 dark:border-slate-700/60 shadow-sm animate-fade-in-up stagger-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+          {prevMateri ? (
+            <Link
+              to={`/materi/${prevMateri.id}`}
+              className="btn btn-ghost font-bold rounded-xl gap-2 active:scale-95 transition-all text-xs md:text-sm flex items-center justify-center"
+              title={`Sebelumnya: ${prevMateri.judul}`}
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Sebelumnya</span>
+            </Link>
+          ) : (
+            <Link
+              to="/materi"
+              className="btn btn-ghost font-bold rounded-xl gap-2 active:scale-95 transition-all text-xs md:text-sm flex items-center justify-center"
+            >
+              <BookOpen className="w-4 h-4" />
+              <span>Daftar Materi</span>
+            </Link>
+          )}
 
-        {materi.selesai ? (
-          <Link to={`/kuis/${materi.id}`} className="btn btn-ghost hover:border-indigo-400 hover:text-indigo-600 bg-white font-bold rounded-xl gap-2 active:scale-95 transition-all">
-            <RefreshCw className="w-4 h-4 text-indigo-500" />
-            Ulangi Kuis
-          </Link>
-        ) : (
-          <Link to={`/kuis/${materi.id}`} className="btn btn-primary font-bold rounded-xl gap-2 active:scale-95 transition-all shadow-md shadow-indigo-500/10">
-            <Pencil className="w-4 h-4 text-white" />
-            Kerjakan Kuis
-          </Link>
-        )}
+          <div className="flex items-center justify-center">
+            {materi.selesai ? (
+              <Link
+                to={`/kuis/${materi.id}`}
+                className="btn btn-ghost hover:border-indigo-400 hover:text-indigo-600 bg-indigo-50/50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 font-bold rounded-xl gap-2 active:scale-95 transition-all text-xs md:text-sm shadow-sm"
+              >
+                <RefreshCw className="w-4 h-4" />
+                <span>Ulangi Kuis</span>
+              </Link>
+            ) : (
+              <Link
+                to={`/kuis/${materi.id}`}
+                className="btn btn-primary font-bold rounded-xl gap-2 active:scale-95 transition-all shadow-md shadow-indigo-500/20 text-xs md:text-sm px-6 py-3"
+              >
+                <Pencil className="w-4 h-4 text-white" />
+                <span>Kerjakan Kuis</span>
+              </Link>
+            )}
+          </div>
+
+          {nextMateri ? (
+            <Link
+              to={`/materi/${nextMateri.id}`}
+              className="btn btn-ghost hover:text-indigo-600 font-bold rounded-xl gap-2 active:scale-95 transition-all text-xs md:text-sm flex items-center justify-center"
+              title={`Selanjutnya: ${nextMateri.judul}`}
+            >
+              <span>Selanjutnya</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          ) : (
+            <Link
+              to="/nilai"
+              className="btn btn-ghost hover:text-amber-500 font-bold rounded-xl gap-2 active:scale-95 transition-all text-xs md:text-sm flex items-center justify-center"
+            >
+              <Trophy className="w-4 h-4 text-amber-500" />
+              <span>Rapor Nilai</span>
+            </Link>
+          )}
+        </div>
       </div>
     </div>
+    </>
   );
 }
