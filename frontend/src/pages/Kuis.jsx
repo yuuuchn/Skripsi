@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
+import { useToast } from '../context/ToastContext';
 import { BookOpen, Trophy, Send, CheckCircle, XCircle, FileText, Pencil, Eye, ArrowLeft, AlertTriangle } from 'lucide-react';
 
 export default function Kuis() {
   const { materi_id } = useParams();
   const navigate = useNavigate();
+  const toast = useToast();
   const [soalList, setSoalList] = useState([]);
   const [jawaban, setJawaban] = useState({});
   const [loading, setLoading] = useState(true);
@@ -13,6 +15,7 @@ export default function Kuis() {
   const [hasil, setHasil] = useState(null);
   const [reviewMode, setReviewMode] = useState(false);
   const [pesanError, setPesanError] = useState('');
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -34,22 +37,37 @@ export default function Kuis() {
     setJawaban((prev) => ({ ...prev, [soalId]: pilihan }));
   };
 
-  const handleSubmit = async () => {
-    window.scrollTo(0, 0);
+  const handleOpenConfirm = () => {
     const jawabanArr = soalList.map((s) => jawaban[s.id] || '');
     if (jawabanArr.some((j) => !j)) {
       setPesanError('Jawab semua soal dulu ya sebelum mengumpulkan!');
       return;
     }
     setPesanError('');
+    setShowConfirmModal(true);
+  };
+
+  const doSubmit = async () => {
+    setShowConfirmModal(false);
+    window.scrollTo(0, 0);
+    const jawabanArr = soalList.map((s) => jawaban[s.id] || '');
+    setPesanError('');
     setSubmitting(true);
     try {
       const res = await api.post('/quiz/submit', { materi_id: parseInt(materi_id), jawaban: jawabanArr });
       setHasil(res.data);
+      toast.success('Jawaban kuis berhasil dikumpulkan!');
     } catch (err) {
       setPesanError('Gagal mengirim jawaban. Periksa koneksi lalu coba lagi.');
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const scrollToSoal = (soalId) => {
+    const el = document.getElementById(`soal-card-${soalId}`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   };
 
@@ -282,17 +300,45 @@ export default function Kuis() {
         </div>
       </div>
 
-      {/* Progress bar */}
+      {/* Progress bar & Question Navigation Pills */}
       <div className="card p-5 mb-6 border-slate-200/60 dark:border-slate-700/60 animate-fade-in-up" style={{ animationDelay: '0.08s' }}>
         <div className="flex justify-between text-xs text-[var(--color-text-secondary)] font-bold mb-2 ml-1">
           <span>Kuis Progress</span>
           <span className="font-mono">{Math.round((jmlTerjawab / soalList.length) * 100)}%</span>
         </div>
-        <div className="bg-slate-100 dark:bg-slate-800 rounded-full h-3 p-0.5 overflow-hidden">
+        <div className="bg-slate-100 dark:bg-slate-800 rounded-full h-3 p-0.5 overflow-hidden mb-4">
           <div
             className="h-full rounded-full transition-all duration-500 ease-out"
             style={{ width: `${(jmlTerjawab / soalList.length) * 100}%`, background: 'linear-gradient(90deg, #4f46e5, #06b6d4)' }}
           />
+        </div>
+
+        {/* Question pills navigation */}
+        <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80">
+          <div className="flex items-center justify-between text-[11px] font-bold text-[var(--color-text-secondary)] uppercase tracking-wider mb-2.5">
+            <span>Nomor Soal:</span>
+            <span className="text-[10px] lowercase text-slate-400 font-normal">klik nomor untuk lompat</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {soalList.map((s, idx) => {
+              const isAnswered = !!jawaban[s.id];
+              return (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() => scrollToSoal(s.id)}
+                  className={`w-8 h-8 rounded-xl font-display text-xs font-bold transition-all duration-200 active:scale-95 flex items-center justify-center border ${
+                    isAnswered
+                      ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400 shadow-sm'
+                      : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-indigo-300 hover:text-indigo-600'
+                  }`}
+                  title={`Lompat ke soal ${idx + 1} (${isAnswered ? 'Sudah dijawab' : 'Belum dijawab'})`}
+                >
+                  {idx + 1}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
@@ -307,7 +353,7 @@ export default function Kuis() {
           ];
 
           return (
-            <div key={soal.id} className="card p-6 md:p-8 animate-fade-in-up border-slate-200/60 dark:border-slate-700/60 shadow-sm" style={{ animationDelay: `${(idx + 2) * 0.08}s` }}>
+            <div key={soal.id} id={`soal-card-${soal.id}`} className="card p-6 md:p-8 animate-fade-in-up border-slate-200/60 dark:border-slate-700/60 shadow-sm" style={{ animationDelay: `${(idx + 2) * 0.08}s` }}>
               <div className="flex items-start gap-3.5 mb-5">
                 <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-100/50 dark:border-indigo-900/50 flex items-center justify-center shrink-0">
                   <span className="font-display font-extrabold text-sm text-[var(--color-brand-deep)] dark:text-indigo-400">{idx + 1}</span>
@@ -361,7 +407,7 @@ export default function Kuis() {
           </div>
         )}
         <button
-          onClick={handleSubmit}
+          onClick={handleOpenConfirm}
           disabled={submitting || jmlTerjawab < soalList.length}
           className="btn btn-primary px-12 py-4 text-base font-bold disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none shadow-lg shadow-indigo-500/15"
         >
@@ -377,6 +423,44 @@ export default function Kuis() {
           )}
         </button>
       </div>
+
+      {/* Confirmation Modal */}
+      {showConfirmModal && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 dark:bg-black/60 backdrop-blur-sm p-4 animate-fade-in"
+          onClick={() => setShowConfirmModal(false)}
+        >
+          <div
+            className="w-full max-w-sm bg-white dark:bg-slate-800 rounded-3xl border border-slate-200/80 dark:border-slate-700/80 shadow-2xl p-6 text-center animate-scale-in"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-14 h-14 mx-auto rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-100 dark:border-indigo-900/50 flex items-center justify-center mb-4 text-indigo-600 dark:text-indigo-400 shadow-sm">
+              <Send className="w-6 h-6" />
+            </div>
+            <h3 className="font-display font-black text-lg text-[var(--color-text)]">Kumpulkan Jawaban?</h3>
+            <p className="text-xs text-[var(--color-text-secondary)] mt-1.5 leading-relaxed">
+              Kamu telah menjawab seluruh <strong>{soalList.length} soal</strong>. Setelah dikumpulkan, nilai dan pembahasan kuis akan langsung ditampilkan.
+            </p>
+            <div className="flex gap-2.5 mt-6">
+              <button
+                type="button"
+                onClick={() => setShowConfirmModal(false)}
+                className="flex-1 px-4 py-3 rounded-xl text-xs font-bold text-[var(--color-text-secondary)] bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors active:scale-95"
+              >
+                Periksa Lagi
+              </button>
+              <button
+                type="button"
+                onClick={doSubmit}
+                disabled={submitting}
+                className="flex-1 px-4 py-3 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors active:scale-95 shadow-md shadow-indigo-600/20"
+              >
+                {submitting ? 'Mengirim...' : 'Ya, Kumpulkan'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
