@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/axios';
-import { GraduationCap, Users, AlertCircle, Award, Search, Sparkles, ChevronLeft, ChevronRight, Download, CheckCircle2, TrendingDown, BarChart3, PieChart as PieIcon, BookOpen, HelpCircle } from 'lucide-react';
+import { GraduationCap, Users, AlertCircle, Award, Search, Sparkles, ChevronLeft, ChevronRight, Download, CheckCircle2, TrendingDown, BarChart3, PieChart as PieIcon, BookOpen, HelpCircle, Eye, X } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 
 export default function Admin() {
@@ -15,6 +15,10 @@ export default function Admin() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
+  const [totalMateriCount, setTotalMateriCount] = useState(6);
+  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [studentDetail, setStudentDetail] = useState(null);
+  const [loadingDetail, setLoadingDetail] = useState(false);
   const limit = 20;
 
   // Debounce search input, reset to page 1 on new query
@@ -39,10 +43,31 @@ export default function Admin() {
       .finally(() => setLoading(false));
   }, [page, debouncedSearch]);
 
-  // Data grafik dihitung atas seluruh siswa, cukup diambil sekali
+  // Data grafik dan total materi
   useEffect(() => {
     api.get('/progress/admin/chart').then((res) => setChart(res.data)).catch(() => {});
+    api.get('/materi').then((res) => {
+      if (res.data?.length) setTotalMateriCount(res.data.length);
+    }).catch(() => {});
   }, []);
+
+  const handleOpenDetail = async (student) => {
+    setSelectedStudent(student);
+    setLoadingDetail(true);
+    try {
+      const res = await api.get(`/progress/admin/student/${student.id}`);
+      setStudentDetail(res.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingDetail(false);
+    }
+  };
+
+  const handleCloseDetail = () => {
+    setSelectedStudent(null);
+    setStudentDetail(null);
+  };
 
   const handleExport = async () => {
     setExporting(true);
@@ -52,10 +77,11 @@ export default function Admin() {
       const header = ['Nama', 'Username', 'Kelas', 'Materi Selesai', 'Rata-rata Nilai'];
       const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
       const SEP = ';'; // Excel locale ID pakai titik koma sebagai pemisah kolom
+      const maxMateri = rows[0]?.total_materi || totalMateriCount;
       const csv = [
         `sep=${SEP}`,
         header.join(SEP),
-        ...rows.map(r => [r.nama, r.username, r.kelas || '-', `${r.materi_selesai} dari 6`, r.rata_rata].map(esc).join(SEP)),
+        ...rows.map(r => [r.nama, r.username, r.kelas || '-', `${r.materi_selesai} dari ${r.total_materi || maxMateri}`, r.rata_rata].map(esc).join(SEP)),
       ].join('\r\n');
       const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
@@ -251,6 +277,7 @@ export default function Admin() {
                     <th className="px-6 py-4 text-center text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Materi Selesai</th>
                     <th className="px-6 py-4 text-center text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Rata-rata Nilai</th>
                     <th className="px-6 py-4 text-center text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Status Evaluasi</th>
+                    <th className="px-6 py-4 text-center text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Aksi</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100/80 dark:divide-slate-700/80">
@@ -260,8 +287,6 @@ export default function Admin() {
                     const label = pct >= 80 ? 'Sangat Baik' : pct >= 60 ? 'Cukup Baik' : 'Butuh Bimbingan';
                     const averageScoreColor = pct >= 80 ? 'text-emerald-600 dark:text-emerald-400' : pct >= 60 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400';
                     const averageScoreBg = pct >= 80 ? 'bg-emerald-50 dark:bg-emerald-900/30' : pct >= 60 ? 'bg-amber-50 dark:bg-amber-900/30' : 'bg-rose-50 dark:bg-rose-900/30';
-
-                    const totalMateriCount = 6;
                     const selesaiCount = s.materi_selesai || 0;
 
                     return (
@@ -302,12 +327,22 @@ export default function Admin() {
                             {label}
                           </span>
                         </td>
+                        <td className="px-6 py-4.5 text-center">
+                          <button
+                            onClick={() => handleOpenDetail(s)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-600 dark:text-indigo-400 text-xs font-bold transition-all active:scale-95 border border-indigo-100 dark:border-indigo-900/50 shadow-sm"
+                            title="Lihat rincian nilai per materi"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                            <span>Rincian</span>
+                          </button>
+                        </td>
                       </tr>
                     );
                   })}
                   {siswaList.length === 0 && (
                     <tr>
-                      <td colSpan={7} className="px-6 py-12 text-center text-sm font-semibold text-slate-400 dark:text-slate-500">
+                      <td colSpan={8} className="px-6 py-12 text-center text-sm font-semibold text-slate-400 dark:text-slate-500">
                         {debouncedSearch ? `Tidak ada siswa yang cocok dengan "${debouncedSearch}".` : 'Belum ada data siswa.'}
                       </td>
                     </tr>
@@ -357,6 +392,147 @@ export default function Admin() {
               </button>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Student Detail Drill-down Modal */}
+      {selectedStudent && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 dark:bg-black/60 backdrop-blur-sm p-4 animate-fade-in"
+          onClick={handleCloseDetail}
+        >
+          <div
+            className="w-full max-w-xl bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-700/80 shadow-2xl p-6 md:p-7 animate-scale-in max-h-[88vh] flex flex-col overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-base shadow-md shadow-indigo-500/20">
+                  {selectedStudent.nama?.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <h3 className="font-display font-extrabold text-base md:text-lg text-[var(--color-text)] leading-tight">
+                    {selectedStudent.nama}
+                  </h3>
+                  <div className="flex items-center gap-2 mt-1 text-xs text-[var(--color-text-secondary)] font-medium">
+                    <span className="font-mono bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md text-slate-600 dark:text-slate-300">
+                      @{selectedStudent.username}
+                    </span>
+                    <span>•</span>
+                    <span>Kelas: <strong className="text-[var(--color-text)]">{selectedStudent.kelas || '-'}</strong></span>
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={handleCloseDetail}
+                className="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                title="Tutup"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="flex-1 overflow-y-auto py-5 space-y-5 pr-1">
+              {loadingDetail ? (
+                <div className="flex flex-col items-center justify-center py-16 gap-3">
+                  <div className="w-8 h-8 border-3 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+                  <span className="text-xs font-bold text-slate-400">Memuat rincian capaian siswa...</span>
+                </div>
+              ) : studentDetail ? (
+                <>
+                  {/* Summary Metric Cards */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <div className="card p-3.5 bg-slate-50/70 dark:bg-slate-800/40 border-slate-100 dark:border-slate-800">
+                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Rata-rata Nilai</div>
+                      <div className="font-display font-black text-2xl text-indigo-600 dark:text-indigo-400 mt-1">
+                        {studentDetail.rata_rata}
+                      </div>
+                    </div>
+                    <div className="card p-3.5 bg-slate-50/70 dark:bg-slate-800/40 border-slate-100 dark:border-slate-800">
+                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Materi Tuntas</div>
+                      <div className="font-display font-black text-2xl text-emerald-600 dark:text-emerald-400 mt-1">
+                        {studentDetail.materi_selesai} / {studentDetail.total_materi}
+                      </div>
+                    </div>
+                    <div className="card p-3.5 bg-slate-50/70 dark:bg-slate-800/40 border-slate-100 dark:border-slate-800 col-span-2 sm:col-span-1">
+                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status Evaluasi</div>
+                      <div className="font-display font-black text-sm text-[var(--color-text)] mt-2">
+                        {studentDetail.rata_rata >= 80 ? (
+                          <span className="text-emerald-600 dark:text-emerald-400">Sangat Baik</span>
+                        ) : studentDetail.rata_rata >= 60 ? (
+                          <span className="text-amber-600 dark:text-amber-400">Cukup Baik</span>
+                        ) : (
+                          <span className="text-rose-600 dark:text-rose-400">Perlu Bimbingan</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* List of Material Scores */}
+                  <div>
+                    <h4 className="font-display font-bold text-xs uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2.5">
+                      Rincian Nilai per Materi
+                    </h4>
+                    <div className="space-y-2">
+                      {studentDetail.progress.map((m) => {
+                        const isDone = m.selesai === 1;
+                        const hasScore = m.nilai !== null;
+                        const scoreColor = (m.nilai || 0) >= 80 ? 'text-emerald-600 dark:text-emerald-400' : (m.nilai || 0) >= 60 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400';
+
+                        return (
+                          <div
+                            key={m.materi_id}
+                            className="flex items-center justify-between p-3 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-800/60 hover:bg-slate-50/60 dark:hover:bg-slate-800 transition-colors"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/40 flex items-center justify-center font-mono text-xs font-bold text-indigo-600 dark:text-indigo-400 shrink-0">
+                                {m.urutan}
+                              </div>
+                              <div>
+                                <div className="font-bold text-xs text-[var(--color-text)]">
+                                  {m.judul}
+                                </div>
+                                <div className="text-[10px] text-slate-400 font-semibold mt-0.5">
+                                  {isDone ? '✓ Materi tuntas dibaca' : 'Belum membaca materi'}
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="text-right">
+                              {hasScore ? (
+                                <div className="flex items-center gap-1.5">
+                                  <span className={`font-display font-black text-base ${scoreColor}`}>
+                                    {m.nilai}
+                                  </span>
+                                  <span className="text-[10px] font-bold text-slate-400">/ 100</span>
+                                </div>
+                              ) : (
+                                <span className="text-[10px] font-semibold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-lg">
+                                  Belum Kuis
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </>
+              ) : null}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+              <button
+                onClick={handleCloseDetail}
+                className="btn btn-ghost px-5 py-2 rounded-xl text-xs font-bold"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

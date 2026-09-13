@@ -87,7 +87,7 @@ router.get('/admin', adminOnly, async (req, res) => {
       `SELECT
          COUNT(*) as total_siswa,
          COALESCE(ROUND(AVG(s.rata_rata)), 0) as rata_kelas,
-         SUM(CASE WHEN s.selesai = 6 THEN 1 ELSE 0 END) as tuntas,
+         SUM(CASE WHEN s.selesai = (SELECT COUNT(*) FROM materi) THEN 1 ELSE 0 END) as tuntas,
          SUM(CASE WHEN s.selesai > 0 AND s.rata_rata < 60 THEN 1 ELSE 0 END) as butuh_bimbingan
        FROM (
          SELECT u.id,
@@ -119,6 +119,7 @@ router.get('/admin/export', adminOnly, async (req, res) => {
     const rows = queryAll(db,
       `SELECT u.nama, u.username, u.kelas,
               COUNT(p.id) as materi_selesai,
+              (SELECT COUNT(*) FROM materi) as total_materi,
               COALESCE(ROUND(AVG(p.nilai)), 0) as rata_rata
        FROM users u
        LEFT JOIN progress p ON u.id = p.user_id AND p.selesai = 1
@@ -127,6 +128,46 @@ router.get('/admin/export', adminOnly, async (req, res) => {
        ORDER BY u.nama`
     );
     res.json(rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Detail capaian belajar per siswa untuk modal admin
+router.get('/admin/student/:id', adminOnly, async (req, res) => {
+  try {
+    const db = await getDb();
+    const student = queryOne(db,
+      'SELECT id, nama, username, kelas, created_at FROM users WHERE id = ? AND role = "siswa"',
+      [req.params.id]
+    );
+
+    if (!student) {
+      return res.status(404).json({ error: 'Siswa tidak ditemukan' });
+    }
+
+    const materiProgress = queryAll(db,
+      `SELECT m.id as materi_id, m.judul, m.urutan, m.icon,
+              COALESCE(p.selesai, 0) as selesai,
+              p.nilai
+       FROM materi m
+       LEFT JOIN progress p ON m.id = p.materi_id AND p.user_id = ?
+       ORDER BY m.urutan`,
+      [req.params.id]
+    );
+
+    const totalMateri = materiProgress.length;
+    const materiSelesai = materiProgress.filter(m => m.selesai === 1).length;
+    const scores = materiProgress.filter(m => m.nilai !== null).map(m => m.nilai);
+    const rataRata = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
+
+    res.json({
+      student,
+      progress: materiProgress,
+      total_materi: totalMateri,
+      materi_selesai: materiSelesai,
+      rata_rata: rataRata,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
