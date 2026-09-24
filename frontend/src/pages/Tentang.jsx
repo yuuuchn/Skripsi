@@ -11,14 +11,10 @@ import {
   CheckCircle2, 
   Layers, 
   Code2, 
-  Sparkles,
-  ExternalLink,
-  ChevronRight,
   ShieldCheck,
   MousePointer,
   Camera
 } from 'lucide-react';
-import ScrollReveal from '../components/ScrollReveal';
 
 export default function Tentang() {
   const [activeTab, setActiveTab] = useState('profil'); // 'profil' | 'tujuan' | 'panduan' | 'teknologi'
@@ -99,13 +95,13 @@ export default function Tentang() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2.5 px-4.5 py-2.5 rounded-2xl text-xs md:text-sm font-bold transition-all whitespace-nowrap active:scale-95 ${
+              className={`flex items-center gap-2.5 px-4.5 py-2.5 rounded-2xl text-xs md:text-sm font-bold transition-all whitespace-nowrap active:scale-95 cursor-pointer ${
                 isActive
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/25 border border-indigo-500'
-                  : 'bg-white dark:bg-slate-800 text-[var(--color-text-secondary)] hover:text-[var(--color-text)] border border-slate-200/80 dark:border-slate-700/80 hover:bg-slate-50 dark:hover:bg-slate-750'
+                  : 'bg-[var(--color-card)] text-[var(--color-text-secondary)] hover:text-[var(--color-text)] border border-[var(--color-border)] hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
             >
-              <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-indigo-500'}`} />
+              <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-indigo-500 dark:text-indigo-400'}`} />
               {tab.label}
             </button>
           );
@@ -133,19 +129,19 @@ export default function Tentang() {
                   Mahasiswa Program Studi Teknologi Pendidikan
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 text-xs font-semibold">
-                  <div className="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-100 dark:border-slate-700/60">
+                  <div className="bg-slate-50 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-100 dark:border-slate-700/60">
                     <span className="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">NIM</span>
                     <span className="text-[var(--color-text)] font-mono text-sm">06031282126048</span>
                   </div>
-                  <div className="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-100 dark:border-slate-700/60">
+                  <div className="bg-slate-50 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-100 dark:border-slate-700/60">
                     <span className="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Program Studi</span>
                     <span className="text-[var(--color-text)]">Teknologi Pendidikan</span>
                   </div>
-                  <div className="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-100 dark:border-slate-700/60">
+                  <div className="bg-slate-50 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-100 dark:border-slate-700/60">
                     <span className="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Fakultas</span>
                     <span className="text-[var(--color-text)]">Keguruan dan Ilmu Pendidikan (FKIP)</span>
                   </div>
-                  <div className="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-100 dark:border-slate-700/60">
+                  <div className="bg-slate-50 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-100 dark:border-slate-700/60">
                     <span className="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Universitas</span>
                     <span className="text-[var(--color-text)]">Universitas Sriwijaya</span>
                   </div>
@@ -168,12 +164,12 @@ export default function Tentang() {
                 </div>
               </div>
               <div className="space-y-3 text-xs">
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60">
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/60">
                   <span className="text-[10px] text-purple-600 dark:text-purple-400 font-bold uppercase tracking-wider block">Dosen Pembimbing I</span>
                   <div className="font-bold text-[var(--color-text)] mt-0.5 text-sm">Dr. Dedi Nurhadiat, M.Pd.</div>
                   <span className="text-[11px] text-[var(--color-text-secondary)]">Dosen Teknologi Pendidikan FKIP</span>
                 </div>
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60">
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/60">
                   <span className="text-[10px] text-purple-600 dark:text-purple-400 font-bold uppercase tracking-wider block">Dosen Pembimbing II</span>
                   <div className="font-bold text-[var(--color-text)] mt-0.5 text-sm">Drs. Lisnani, M.Pd.</div>
                   <span className="text-[11px] text-[var(--color-text-secondary)]">Dosen Teknologi Pendidikan FKIP</span>
@@ -193,17 +189,17 @@ export default function Tentang() {
                 </div>
               </div>
               <div className="space-y-2.5 text-xs font-medium text-[var(--color-text-secondary)]">
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60">
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/60">
                   <span className="text-[10px] text-cyan-600 dark:text-cyan-400 font-bold uppercase tracking-wider block">Sekolah Mitra</span>
                   <div className="font-bold text-[var(--color-text)] text-sm mt-0.5">SMP Negeri 01 Belitang Mulya</div>
-                  <p className="text-[11px] text-slate-500 mt-1">Kab. Ogan Komering Ulu Timur, Sumatera Selatan</p>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Kab. Ogan Komering Ulu Timur, Sumatera Selatan</p>
                 </div>
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60 flex items-center justify-between">
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/60 flex items-center justify-between">
                   <div>
                     <span className="text-[10px] text-slate-400 uppercase font-bold block">Sasaran Pengguna</span>
                     <span className="font-bold text-[var(--color-text)]">Siswa Kelas IX & Guru Informatika</span>
                   </div>
-                  <span className="px-2.5 py-1 bg-cyan-100 dark:bg-cyan-900/50 text-cyan-700 dark:text-cyan-300 font-bold rounded-lg text-[10px]">
+                  <span className="px-2.5 py-1 bg-cyan-100 dark:bg-cyan-950/60 text-cyan-700 dark:text-cyan-300 font-bold rounded-lg text-[10px] border border-cyan-200/50 dark:border-cyan-800/50">
                     Kurikulum Merdeka
                   </span>
                 </div>
@@ -217,7 +213,7 @@ export default function Tentang() {
       {activeTab === 'tujuan' && (
         <div className="space-y-6 animate-fade-in">
           {/* Capaian Pembelajaran (CP) Box */}
-          <div className="card p-6 md:p-7 border-indigo-100 dark:border-indigo-900/50 bg-gradient-to-br from-indigo-50/70 via-white to-purple-50/40 dark:from-indigo-950/30 dark:via-slate-800 dark:to-slate-800 shadow-sm">
+          <div className="card p-6 md:p-7 border-indigo-100 dark:border-indigo-900/50 bg-indigo-50/40 dark:bg-indigo-950/20 shadow-sm">
             <div className="flex items-start gap-4">
               <div className="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-indigo-600/20">
                 <Target className="w-6 h-6" />
@@ -239,7 +235,7 @@ export default function Tentang() {
           {/* List Tujuan Pembelajaran per Materi */}
           <div>
             <h3 className="font-display font-bold text-base text-[var(--color-text)] mb-3 flex items-center gap-2">
-              <BookOpen className="w-4.5 h-4.5 text-indigo-600" />
+              <BookOpen className="w-4.5 h-4.5 text-indigo-600 dark:text-indigo-400" />
               Tujuan Pembelajaran Khusus (TP)
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -284,11 +280,11 @@ export default function Tentang() {
           {/* Card Cara Belajar */}
           <div className="card p-6 border-slate-200/80 dark:border-slate-700/80 shadow-sm">
             <h3 className="font-display font-bold text-base text-[var(--color-text)] mb-4 flex items-center gap-2">
-              <BookOpen className="w-5 h-5 text-indigo-600" />
+              <BookOpen className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
               Alur Pembelajaran Siswa
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="p-4 rounded-2xl bg-indigo-50/50 dark:bg-indigo-950/30 border border-indigo-100/60 dark:border-indigo-900/40">
+              <div className="p-4 rounded-2xl bg-indigo-50/60 dark:bg-slate-800/80 border border-indigo-100/60 dark:border-indigo-900/40">
                 <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-xs mb-3">1</div>
                 <h4 className="font-bold text-xs text-[var(--color-text)] mb-1">Pelajari Materi</h4>
                 <p className="text-[11px] text-[var(--color-text-secondary)] leading-relaxed">
@@ -296,7 +292,7 @@ export default function Tentang() {
                 </p>
               </div>
 
-              <div className="p-4 rounded-2xl bg-purple-50/50 dark:bg-purple-950/30 border border-purple-100/60 dark:border-purple-900/40">
+              <div className="p-4 rounded-2xl bg-purple-50/60 dark:bg-slate-800/80 border border-purple-100/60 dark:border-purple-900/40">
                 <div className="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold text-xs mb-3">2</div>
                 <h4 className="font-bold text-xs text-[var(--color-text)] mb-1">Kerjakan Kuis Evaluasi</h4>
                 <p className="text-[11px] text-[var(--color-text-secondary)] leading-relaxed">
@@ -304,7 +300,7 @@ export default function Tentang() {
                 </p>
               </div>
 
-              <div className="p-4 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/30 border border-emerald-100/60 dark:border-emerald-900/40">
+              <div className="p-4 rounded-2xl bg-emerald-50/60 dark:bg-slate-800/80 border border-emerald-100/60 dark:border-emerald-900/40">
                 <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-xs mb-3">3</div>
                 <h4 className="font-bold text-xs text-[var(--color-text)] mb-1">Cek Nilai & Rapor</h4>
                 <p className="text-[11px] text-[var(--color-text-secondary)] leading-relaxed">
@@ -315,7 +311,7 @@ export default function Tentang() {
           </div>
 
           {/* Card Panduan Hand Sensor (Inovasi Media) */}
-          <div className="card p-6 md:p-8 border-slate-200/80 dark:border-slate-700/80 shadow-sm bg-gradient-to-br from-white via-white to-slate-50 dark:from-slate-800 dark:to-slate-800">
+          <div className="card p-6 md:p-8 border-slate-200/80 dark:border-slate-700/80 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-500 to-indigo-600 text-white flex items-center justify-center shadow-md shadow-indigo-500/20">
                 <Hand className="w-6 h-6" />
@@ -332,41 +328,41 @@ export default function Tentang() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Gestur 1 */}
-              <div className="p-4.5 rounded-2xl bg-slate-50 dark:bg-slate-750 border border-slate-200/60 dark:border-slate-700/60 flex flex-col items-center text-center">
-                <div className="w-14 h-14 rounded-2xl bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-3">
+              <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60 flex flex-col items-center text-center">
+                <div className="w-14 h-14 rounded-2xl bg-indigo-100 dark:bg-indigo-950/70 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-3 border border-indigo-200/50 dark:border-indigo-800/50">
                   <MousePointer className="w-7 h-7" />
                 </div>
-                <h4 className="font-bold text-xs text-[var(--color-text)] mb-1">1. Menggerakkan Kursor</h4>
+                <h4 className="font-bold text-xs text-[var(--color-text)] mb-1.5">1. Menggerakkan Kursor</h4>
                 <p className="text-[11px] text-[var(--color-text-secondary)] leading-relaxed">
                   Arahkan <strong>ujung jari telunjuk</strong> ke kamera laptop/webcam. Titik kursor ungu di layar akan mengikuti posisi jarimu secara realtime.
                 </p>
               </div>
 
               {/* Gestur 2 */}
-              <div className="p-4.5 rounded-2xl bg-slate-50 dark:bg-slate-750 border border-slate-200/60 dark:border-slate-700/60 flex flex-col items-center text-center">
-                <div className="w-14 h-14 rounded-2xl bg-purple-100 dark:bg-purple-900/50 text-purple-600 dark:text-purple-400 flex items-center justify-center mb-3">
+              <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60 flex flex-col items-center text-center">
+                <div className="w-14 h-14 rounded-2xl bg-purple-100 dark:bg-purple-950/70 text-purple-600 dark:text-purple-400 flex items-center justify-center mb-3 border border-purple-200/50 dark:border-purple-800/50">
                   <Hand className="w-7 h-7" />
                 </div>
-                <h4 className="font-bold text-xs text-[var(--color-text)] mb-1">2. Klik / Memilih (Pinch)</h4>
+                <h4 className="font-bold text-xs text-[var(--color-text)] mb-1.5">2. Klik / Memilih (Pinch)</h4>
                 <p className="text-[11px] text-[var(--color-text-secondary)] leading-relaxed">
                   Satukan <strong>ujung jempol dan jari telunjuk</strong> (seperti mencubit/cubit kecil). Kursor akan membesar dan mengeksekusi klik pada tombol/pilihan jawaban.
                 </p>
               </div>
 
               {/* Gestur 3 */}
-              <div className="p-4.5 rounded-2xl bg-slate-50 dark:bg-slate-750 border border-slate-200/60 dark:border-slate-700/60 flex flex-col items-center text-center">
-                <div className="w-14 h-14 rounded-2xl bg-cyan-100 dark:bg-cyan-900/50 text-cyan-600 dark:text-cyan-400 flex items-center justify-center mb-3">
+              <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60 flex flex-col items-center text-center">
+                <div className="w-14 h-14 rounded-2xl bg-cyan-100 dark:bg-cyan-950/70 text-cyan-600 dark:text-cyan-400 flex items-center justify-center mb-3 border border-cyan-200/50 dark:border-cyan-800/50">
                   <Camera className="w-7 h-7" />
                 </div>
-                <h4 className="font-bold text-xs text-[var(--color-text)] mb-1">3. Jarak & Pencahayaan</h4>
+                <h4 className="font-bold text-xs text-[var(--color-text)] mb-1.5">3. Jarak & Pencahayaan</h4>
                 <p className="text-[11px] text-[var(--color-text-secondary)] leading-relaxed">
                   Posisikan tangan berjarak <strong>40 – 70 cm</strong> dari kamera dengan pencahayaan ruangan yang cukup agar sensor mendeteksi tangan dengan akurat.
                 </p>
               </div>
             </div>
 
-            <div className="mt-5 p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200/60 dark:border-amber-900/40 text-amber-700 dark:text-amber-300 text-xs flex items-center gap-3">
-              <ShieldCheck className="w-5 h-5 shrink-0 text-amber-600" />
+            <div className="mt-6 p-4 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/60 dark:border-amber-900/50 text-amber-800 dark:text-amber-200 text-xs flex items-center gap-3">
+              <ShieldCheck className="w-5 h-5 shrink-0 text-amber-600 dark:text-amber-400" />
               <span>
                 <strong>Jaminan Privasi Siswa:</strong> Video webcam diproses sepenuhnya secara lokal di browser perangkat Anda (*on-device AI*) dan tidak pernah disimpan atau dikirim ke server mana pun.
               </span>
@@ -381,7 +377,7 @@ export default function Tentang() {
           {/* Model Pengembangan */}
           <div className="card p-6 border-slate-200/80 dark:border-slate-700/80 shadow-sm">
             <h3 className="font-display font-bold text-base text-[var(--color-text)] mb-3 flex items-center gap-2">
-              <Layers className="w-5 h-5 text-indigo-600" />
+              <Layers className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
               Model Pengembangan Instruksional: ADDIE
             </h3>
             <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed mb-4">
@@ -419,29 +415,29 @@ export default function Tentang() {
           {/* Spesifikasi Teknis */}
           <div className="card p-6 border-slate-200/80 dark:border-slate-700/80 shadow-sm">
             <h3 className="font-display font-bold text-base text-[var(--color-text)] mb-3 flex items-center gap-2">
-              <Code2 className="w-5 h-5 text-indigo-600" />
+              <Code2 className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
               Spesifikasi Perangkat Lunak & Teknologi
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
-              <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60">
+              <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/60">
                 <span className="text-[10px] text-slate-400 uppercase font-bold block">Frontend UI</span>
                 <span className="font-bold text-[var(--color-text)] block mt-0.5">React 19 & Tailwind CSS v4</span>
-                <span className="text-[10px] text-slate-500">Single Page Application (Vite)</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400">Single Page Application (Vite)</span>
               </div>
-              <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60">
+              <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/60">
                 <span className="text-[10px] text-slate-400 uppercase font-bold block">Hand Tracking AI</span>
                 <span className="font-bold text-[var(--color-text)] block mt-0.5">Google MediaPipe Vision</span>
-                <span className="text-[10px] text-slate-500">21 3D Hand Landmark Detection</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400">21 3D Hand Landmark Detection</span>
               </div>
-              <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60">
+              <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/60">
                 <span className="text-[10px] text-slate-400 uppercase font-bold block">Backend & API</span>
                 <span className="font-bold text-[var(--color-text)] block mt-0.5">Node.js + Express.js</span>
-                <span className="text-[10px] text-slate-500">REST API & JWT Authentication</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400">REST API & JWT Authentication</span>
               </div>
-              <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60">
+              <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/60">
                 <span className="text-[10px] text-slate-400 uppercase font-bold block">Basis Data</span>
                 <span className="font-bold text-[var(--color-text)] block mt-0.5">SQLite (sql.js)</span>
-                <span className="text-[10px] text-slate-500">File-based Relational Database</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400">File-based Relational Database</span>
               </div>
             </div>
           </div>
