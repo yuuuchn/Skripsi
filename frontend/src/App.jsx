@@ -13,6 +13,7 @@ import Nilai from './pages/Nilai';
 import Admin from './pages/Admin';
 import AdminMateri from './pages/AdminMateri';
 import AdminKuis from './pages/AdminKuis';
+import Tentang from './pages/Tentang';
 import PageTransition from './components/PageTransition';
 import ErrorBoundary from './components/ErrorBoundary';
 import DotField from './components/DotField';
@@ -91,6 +92,7 @@ function AppContent() {
           <Route path="/materi/:id" element={<ProtectedRoute><PageTransition><DetailMateri /></PageTransition></ProtectedRoute>} />
           <Route path="/kuis/:materi_id" element={<ProtectedRoute><PageTransition><Kuis /></PageTransition></ProtectedRoute>} />
           <Route path="/nilai" element={<ProtectedRoute><PageTransition><Nilai /></PageTransition></ProtectedRoute>} />
+          <Route path="/tentang" element={<ProtectedRoute><PageTransition><Tentang /></PageTransition></ProtectedRoute>} />
           <Route path="/admin" element={<ProtectedRoute><PageTransition><Admin /></PageTransition></ProtectedRoute>} />
           <Route path="/admin/materi" element={<ProtectedRoute><PageTransition><AdminMateri /></PageTransition></ProtectedRoute>} />
           <Route path="/admin/kuis" element={<ProtectedRoute><PageTransition><AdminKuis /></PageTransition></ProtectedRoute>} />

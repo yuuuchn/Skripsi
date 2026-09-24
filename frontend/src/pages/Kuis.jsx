@@ -461,6 +461,46 @@ export default function Kuis() {
           </div>
         </div>
       )}
+
+      {/* Floating Submit Bar — selalu terlihat di bawah viewport tanpa perlu scroll */}
+      <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-[90] flex items-center gap-3 bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border border-slate-200/80 dark:border-slate-700/80 rounded-2xl shadow-2xl px-5 py-3 animate-fade-in-up pointer-events-auto">
+        {/* Progress mini indicator */}
+        <div className="flex items-center gap-2">
+          <div className="relative w-8 h-8">
+            <svg className="w-8 h-8 -rotate-90" viewBox="0 0 32 32">
+              <circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" strokeWidth="3" className="text-slate-200 dark:text-slate-700" />
+              <circle
+                cx="16" cy="16" r="13" fill="none" strokeWidth="3"
+                stroke="url(#fab-grad)"
+                strokeDasharray={`${(jmlTerjawab / soalList.length) * 81.68} 81.68`}
+                strokeLinecap="round"
+                className="transition-all duration-500"
+              />
+              <defs>
+                <linearGradient id="fab-grad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#4f46e5" />
+                  <stop offset="100%" stopColor="#06b6d4" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <span className="absolute inset-0 flex items-center justify-center text-[9px] font-black text-[var(--color-text)]">{jmlTerjawab}</span>
+          </div>
+          <span className="text-[11px] font-bold text-[var(--color-text-secondary)] leading-tight">
+            dari<br />{soalList.length} soal
+          </span>
+        </div>
+
+        <div className="w-px h-8 bg-slate-200 dark:bg-slate-700" />
+
+        <button
+          onClick={handleOpenConfirm}
+          disabled={submitting || jmlTerjawab < soalList.length}
+          className="btn btn-primary px-5 py-2.5 text-sm font-bold disabled:opacity-40 disabled:cursor-not-allowed shadow-md shadow-indigo-500/20 gap-2 transition-all"
+        >
+          <Send className="w-4 h-4 text-white" />
+          {jmlTerjawab < soalList.length ? `${soalList.length - jmlTerjawab} soal lagi` : 'Kumpulkan'}
+        </button>
+      </div>
     </div>
   );
 }

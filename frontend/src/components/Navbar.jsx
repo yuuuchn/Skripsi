@@ -1,12 +1,13 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Network, Home, BookOpen, Trophy, GraduationCap, LogOut, Menu, X, Sun, Moon } from 'lucide-react';
+import { Network, Home, BookOpen, Trophy, Info, GraduationCap, LogOut, Menu, X, Sun, Moon } from 'lucide-react';
 import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 
 const navItems = [
   { to: '/dashboard', label: 'Beranda', icon: Home },
   { to: '/materi', label: 'Belajar', icon: BookOpen },
   { to: '/nilai', label: 'Nilai', icon: Trophy },
+  { to: '/tentang', label: 'Tentang', icon: Info },
 ];
 
 export default function Navbar() {
