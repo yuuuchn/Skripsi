@@ -24,3 +24,9 @@ claude/
 
 # Data export siswa (CSV hasil download)
 data-siswa-*.csv
+
+# Folder dokumen pengajuan & acuan skripsi (Internal)
+untuk skripsi/
+**/untuk skripsi/
+*.docx
+
