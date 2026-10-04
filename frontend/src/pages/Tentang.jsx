@@ -296,7 +296,7 @@ export default function Tentang() {
                 <div className="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold text-xs mb-3">2</div>
                 <h4 className="font-bold text-xs text-[var(--color-text)] mb-1">Kerjakan Kuis Evaluasi</h4>
                 <p className="text-[11px] text-[var(--color-text-secondary)] leading-relaxed">
-                  Selesaikan 10 butir soal kuis di setiap materi. Tombol <em>Kumpulkan</em> akan aktif otomatis saat semua soal terjawab.
+                  Selesaikan kuis evaluasi pilihan ganda di setiap materi. Tombol <em>Kumpulkan</em> akan aktif otomatis saat semua soal terjawab.
                 </p>
               </div>
 

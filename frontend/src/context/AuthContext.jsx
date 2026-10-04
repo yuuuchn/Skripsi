@@ -12,9 +12,14 @@ export function AuthProvider({ children }) {
     if (token) {
       api.get('/auth/me')
         .then((res) => setUser(res.data))
-        .catch(() => {
-          localStorage.removeItem('token');
-          setUser(null);
+        .catch((err) => {
+          // Hanya hapus sesi bila token memang ditolak server. Saat jaringan/
+          // backend mati, token dipertahankan agar siswa tidak ter-logout.
+          const status = err.response?.status;
+          if (status === 401 || status === 403) {
+            localStorage.removeItem('token');
+            setUser(null);
+          }
         })
         .finally(() => setLoading(false));
     } else {

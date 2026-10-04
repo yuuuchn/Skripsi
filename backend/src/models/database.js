@@ -773,16 +773,38 @@ export function seedQuiz() {
   saveDb();
 }
 
-export function seedAdmin() {
-  const existing = db.exec('SELECT COUNT(*) as count FROM users WHERE username = ?', ['admin']);
-  const count = existing[0]?.values[0][0] || 0;
-  if (count > 0) return;
+// Password admin lama yang dipakai versi sebelumnya — hanya untuk mendeteksi
+// akun yang masih memakai kredensial bawaan, lalu dipaksa ganti.
+const LEGACY_ADMIN_PASSWORD = 'admin123';
+const FALLBACK_ADMIN_PASSWORD = 'GuruJaringan2026!';
 
-  const hashedPassword = '$2a$10$dummy';
-  bcrypt.hash('admin123', 10).then(async (hash) => {
+export async function seedAdmin() {
+  const username = process.env.ADMIN_USERNAME || 'admin';
+  const password = process.env.ADMIN_PASSWORD || FALLBACK_ADMIN_PASSWORD;
+
+  const stmt = db.prepare('SELECT id, password FROM users WHERE username = ?');
+  stmt.bind([username]);
+  const existing = stmt.step() ? stmt.getAsObject() : null;
+  stmt.free();
+
+  const hash = await bcrypt.hash(password, 10);
+
+  if (!existing) {
     db.run('INSERT INTO users (nama, username, password, kelas, role) VALUES (?, ?, ?, ?, ?)',
-      ['Admin Guru', 'admin', hash, 'Administrator', 'guru']);
+      ['Admin Guru', username, hash, 'Administrator', 'guru']);
     saveDb();
-    console.log('Admin account created (username: admin, password: admin123)');
-  });
+    console.log(`Akun guru dibuat (username: ${username}). Kredensial diatur lewat backend/.env.`);
+    return;
+  }
+
+  // Migrasi otomatis: akun yang masih memakai password bawaan 'admin123'
+  // (atau password yang diubah lewat ADMIN_PASSWORD) diganti hash-nya.
+  const stillLegacy = await bcrypt.compare(LEGACY_ADMIN_PASSWORD, existing.password);
+  const matchesConfigured = await bcrypt.compare(password, existing.password);
+
+  if (stillLegacy || !matchesConfigured) {
+    db.run('UPDATE users SET password = ? WHERE id = ?', [hash, existing.id]);
+    saveDb();
+    console.log(`Password akun '${username}' disinkronkan dengan backend/.env.`);
+  }
 }

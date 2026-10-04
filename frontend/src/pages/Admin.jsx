@@ -15,7 +15,7 @@ export default function Admin() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
-  const [totalMateriCount, setTotalMateriCount] = useState(6);
+  const [totalMateriCount, setTotalMateriCount] = useState(0);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [studentDetail, setStudentDetail] = useState(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
@@ -303,7 +303,9 @@ export default function Admin() {
                         </td>
                         <td className="px-6 py-4.5 text-center">
                           <div className="inline-flex flex-col items-center">
-                            <span className="font-bold text-xs text-slate-700 dark:text-slate-300">{selesaiCount} / {totalMateriCount}</span>
+                            <span className="font-bold text-xs text-slate-700 dark:text-slate-300">
+                              {selesaiCount}{totalMateriCount > 0 ? ` / ${totalMateriCount}` : ''}
+                            </span>
                             <div className="flex gap-0.5 mt-1.5">
                               {[...Array(totalMateriCount)].map((_, i) => (
                                 <div 

@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import api from '../api/axios';
 import { User, Lock, Building2, ArrowRight, AlertTriangle, Globe, Eye, EyeOff, BookOpen, ListChecks, Hand } from 'lucide-react';
 
 // Premium Aesthetic Registration SVG
@@ -67,8 +68,14 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [capsOn, setCapsOn] = useState(false);
+  const [stats, setStats] = useState(null);
   const { register } = useAuth();
   const navigate = useNavigate();
+
+  // Jumlah materi & soal mengikuti data server, bukan angka statis.
+  useEffect(() => {
+    api.get('/stats').then((res) => setStats(res.data)).catch(() => {});
+  }, []);
 
   // Kekuatan password: +1 tiap syarat (panjang, huruf, angka/simbol)
   const pw = form.password;
@@ -136,23 +143,20 @@ export default function Register() {
             ))}
           </div>
 
-          {/* Frosted Glass Stats Dock */}
-          <div className="flex justify-center gap-8 bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/15 shadow-xl">
-            <div className="text-center">
-              <div className="font-display text-2xl font-black text-white">6</div>
-              <div className="text-white/70 text-[9px] font-bold uppercase tracking-wider mt-0.5">Materi</div>
+          {/* Frosted Glass Stats Dock — angka diambil dari /api/stats */}
+          {stats && stats.materi > 0 && (
+            <div className="flex justify-center gap-8 bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/15 shadow-xl">
+              <div className="text-center">
+                <div className="font-display text-2xl font-black text-white">{stats.materi}</div>
+                <div className="text-white/70 text-[9px] font-bold uppercase tracking-wider mt-0.5">Materi</div>
+              </div>
+              <div className="w-[1px] bg-white/10" />
+              <div className="text-center">
+                <div className="font-display text-2xl font-black text-white">{stats.soal}</div>
+                <div className="text-white/70 text-[9px] font-bold uppercase tracking-wider mt-0.5">Soal Kuis</div>
+              </div>
             </div>
-            <div className="w-[1px] bg-white/10" />
-            <div className="text-center">
-              <div className="font-display text-2xl font-black text-white">60</div>
-              <div className="text-white/70 text-[9px] font-bold uppercase tracking-wider mt-0.5">Soal Kuis</div>
-            </div>
-            <div className="w-[1px] bg-white/10" />
-            <div className="text-center">
-              <div className="font-display text-2xl font-black text-white">9</div>
-              <div className="text-white/70 text-[9px] font-bold uppercase tracking-wider mt-0.5">Ilustrasi</div>
-            </div>
-          </div>
+          )}
         </div>
       </div>
 

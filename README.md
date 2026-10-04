@@ -23,15 +23,28 @@ Media pembelajaran interaktif mengenai konsep dasar Jaringan Komputer untuk sisw
 ## 🔑 Akun Uji Coba Default
 Untuk pengujian sistem oleh Dosen Penguji / Guru:
 
-* **Guru (Admin)**: 
-  * Username: `admin`
-  * Password: `admin123`
+* **Guru (Admin)**:
+  * Username: `admin` (mengikuti `ADMIN_USERNAME` di `backend/.env`)
+  * Password: `GuruJaringan2026!` (mengikuti `ADMIN_PASSWORD` di `backend/.env`)
+  * ⚠️ Ganti password ini sebelum media digunakan di sekolah. Cukup ubah `ADMIN_PASSWORD` di `backend/.env`, lalu jalankan ulang backend — password akun otomatis disinkronkan.
 * **Siswa**:
   * Silakan klik tombol **Daftar sekarang** di halaman awal untuk mendaftar akun siswa baru secara mandiri.
 
 ---
 
 ## ⚡ Cara Menjalankan Proyek
+
+### 0. Siapkan Variabel Lingkungan (sekali saja)
+```bash
+cd backend
+copy .env.example .env      # Windows (Linux/macOS: cp .env.example .env)
+```
+Isi `JWT_SECRET` di `backend/.env` dengan nilai acak minimal 16 karakter:
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+> Backend akan **menolak dijalankan** bila `JWT_SECRET` kosong atau masih memakai nilai bawaan lama, sebagai pengaman agar token tidak bisa dipalsukan.
+> `ADMIN_USERNAME` & `ADMIN_PASSWORD` pada file yang sama menentukan akun guru yang dibuat otomatis saat pertama kali dijalankan.
 
 ### 1. Jalankan Backend (Port 5000)
 ```bash

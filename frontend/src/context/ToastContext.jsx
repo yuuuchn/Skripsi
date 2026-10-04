@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, useCallback } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { CheckCircle2, AlertCircle, Info, X } from 'lucide-react';
+import { onApiError } from '../api/axios';
 
 const ToastContext = createContext(null);
 
@@ -21,6 +22,9 @@ export function ToastProvider({ children }) {
     }
     return id;
   }, [removeToast]);
+
+  // Notifikasi otomatis saat backend/ngrok tidak bisa dihubungi (lihat api/axios.js).
+  useEffect(() => onApiError((message) => addToast(message, 'error', 7000)), [addToast]);
 
   const toast = {
     success: (msg, dur) => addToast(msg, 'success', dur),

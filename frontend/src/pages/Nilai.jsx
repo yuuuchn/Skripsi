@@ -25,6 +25,7 @@ gsap.registerPlugin(ScrollTrigger);
 export default function Nilai() {
   const [nilaiList, setNilaiList] = useState([]);
   const [leaderboard, setLeaderboard] = useState([]);
+  const [totalMateri, setTotalMateri] = useState(0);
   const [loading, setLoading] = useState(true);
   const [leaderboardLoading, setLeaderboardLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('personal'); // 'personal' or 'leaderboard'
@@ -34,6 +35,11 @@ export default function Nilai() {
     api.get('/progress/nilai')
       .then((res) => setNilaiList(res.data))
       .finally(() => setLoading(false));
+    // Jumlah materi diambil dari server agar lencana & label tetap benar
+    // ketika guru menambah/mengurangi materi lewat CMS.
+    api.get('/progress')
+      .then((res) => setTotalMateri(res.data?.total_materi || 0))
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -153,9 +159,9 @@ export default function Nilai() {
     },
     {
       title: 'Ahli Jaringan',
-      desc: 'Menuntaskan seluruh 6 kuis',
+      desc: totalMateri > 0 ? `Menuntaskan seluruh ${totalMateri} kuis` : 'Menuntaskan seluruh kuis',
       icon: Award,
-      unlocked: nilaiList.length === 6,
+      unlocked: totalMateri > 0 && nilaiList.length >= totalMateri,
       bg: 'bg-indigo-50 dark:bg-indigo-900/40 border-indigo-100/50 dark:border-indigo-800/40',
       color: 'text-indigo-600 dark:text-indigo-400 fill-indigo-400 border-0'
     },
@@ -395,7 +401,9 @@ export default function Nilai() {
                     <div className="flex items-center gap-6">
                       <div className="text-right hidden sm:block">
                         <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase block leading-none">Pelajaran</span>
-                        <span className="text-xs font-extrabold text-slate-700 dark:text-slate-300 mt-1 block">{item.materi_selesai} / 6</span>
+                        <span className="text-xs font-extrabold text-slate-700 dark:text-slate-300 mt-1 block">
+                          {totalMateri > 0 ? `${item.materi_selesai} / ${totalMateri}` : item.materi_selesai}
+                        </span>
                       </div>
                       <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800 px-3.5 py-1.5 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
                         <Star className="w-4 h-4 text-amber-500 fill-amber-400 border-0" />
