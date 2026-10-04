@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import api from '../api/axios';
 import { GraduationCap, Users, AlertCircle, Award, Search, Sparkles, ChevronLeft, ChevronRight, Download, CheckCircle2, TrendingDown, BarChart3, PieChart as PieIcon, BookOpen, HelpCircle, Eye, X } from 'lucide-react';
@@ -398,7 +399,7 @@ export default function Admin() {
       )}
 
       {/* Student Detail Drill-down Modal */}
-      {selectedStudent && (
+      {selectedStudent && createPortal(
         <div
           className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 dark:bg-black/60 backdrop-blur-sm p-4 animate-fade-in"
           onClick={handleCloseDetail}
@@ -535,7 +536,8 @@ export default function Admin() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

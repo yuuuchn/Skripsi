@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import { useToast } from '../context/ToastContext';
@@ -425,7 +426,7 @@ export default function Kuis() {
       </div>
 
       {/* Confirmation Modal */}
-      {showConfirmModal && (
+      {showConfirmModal && createPortal(
         <div
           className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 dark:bg-black/60 backdrop-blur-sm p-4 animate-fade-in"
           onClick={() => setShowConfirmModal(false)}
@@ -459,7 +460,8 @@ export default function Kuis() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Floating Submit Bar — selalu terlihat di bawah viewport tanpa perlu scroll */}

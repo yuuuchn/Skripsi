@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
@@ -202,7 +203,7 @@ export default function AdminKuis() {
         </div>
       )}
 
-      {confirmDel && (
+      {confirmDel && createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 dark:bg-black/50 backdrop-blur-sm p-4 animate-fade-in" onClick={() => setConfirmDel(null)}>
           <div className="w-full max-w-xs bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-2xl p-6 text-center animate-scale-in" onClick={(e) => e.stopPropagation()}>
             <div className="w-12 h-12 mx-auto rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-100 dark:border-rose-900/50 flex items-center justify-center mb-4">
@@ -221,7 +222,8 @@ export default function AdminKuis() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
