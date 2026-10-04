@@ -203,27 +203,35 @@ export default function Nilai() {
       </div>
 
       {/* Tabs Selector */}
-      <div className="flex gap-2 mb-8 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl max-w-sm">
+      <div className="relative flex mb-8 bg-slate-100 dark:bg-slate-800/90 border border-slate-200/60 dark:border-slate-700/60 p-1 rounded-2xl max-w-sm shadow-inner">
+        {/* Sliding active indicator pill */}
+        <div
+          className="absolute top-1 bottom-1 rounded-xl bg-white dark:bg-slate-700 shadow-sm border border-slate-200/60 dark:border-slate-600/60 transition-all duration-300 ease-out pointer-events-none"
+          style={{
+            left: activeTab === 'personal' ? '4px' : 'calc(50% + 2px)',
+            width: 'calc(50% - 6px)',
+          }}
+        />
         <button
           onClick={() => setActiveTab('personal')}
-          className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+          className={`relative z-10 flex-1 py-2.5 px-4 rounded-xl text-xs font-bold transition-colors duration-250 flex items-center justify-center gap-2 ${
             activeTab === 'personal'
-              ? 'bg-white dark:bg-slate-800 text-indigo-600 shadow-sm border border-slate-200/40 dark:border-slate-700/40'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-slate-800/40'
+              ? 'text-indigo-600 dark:text-indigo-400'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
-          <Award className="w-4 h-4" />
+          <Award className={`w-4 h-4 transition-transform duration-250 ${activeTab === 'personal' ? 'scale-110' : ''}`} />
           Skor & Pencapaian
         </button>
         <button
           onClick={() => setActiveTab('leaderboard')}
-          className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+          className={`relative z-10 flex-1 py-2.5 px-4 rounded-xl text-xs font-bold transition-colors duration-250 flex items-center justify-center gap-2 ${
             activeTab === 'leaderboard'
-              ? 'bg-white dark:bg-slate-800 text-indigo-600 shadow-sm border border-slate-200/40 dark:border-slate-700/40'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-slate-800/40'
+              ? 'text-indigo-600 dark:text-indigo-400'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
           }`}
         >
-          <Trophy className="w-4 h-4" />
+          <Trophy className={`w-4 h-4 transition-transform duration-250 ${activeTab === 'leaderboard' ? 'scale-110' : ''}`} />
           Peringkat Kelas
         </button>
       </div>
