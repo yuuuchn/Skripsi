@@ -301,6 +301,38 @@ export default function Kuis() {
         </div>
       </div>
 
+      {/* Sticky Bar Nomor Soal untuk Mobile (HP) - Melayang di Bagian Atas */}
+      <div className="lg:hidden sticky top-3 z-30 mb-6 animate-fade-in-up">
+        <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800/90 rounded-2xl p-2 px-3 shadow-xl shadow-slate-900/5 dark:shadow-black/20 flex items-center gap-2.5 mr-14">
+          <div className="shrink-0 text-center pr-2 border-r border-slate-200 dark:border-slate-800">
+            <div className="text-[8px] font-extrabold text-slate-400 uppercase leading-none">Soal</div>
+            <div className="text-xs font-black text-indigo-600 dark:text-indigo-400 leading-tight mt-0.5">
+              {jmlTerjawab}/{soalList.length}
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 overflow-x-auto py-0.5 flex-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            {soalList.map((s, idx) => {
+              const isAnswered = !!jawaban[s.id];
+              return (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() => scrollToSoal(s.id)}
+                  className={`w-7 h-7 shrink-0 rounded-lg text-xs font-bold flex items-center justify-center transition-all active:scale-95 border ${
+                    isAnswered
+                      ? 'bg-emerald-500 border-emerald-600 text-white font-black shadow-xs'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                  }`}
+                  title={`Soal ${idx + 1}`}
+                >
+                  {idx + 1}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
       {/* Main Grid: Soal (kiri) & Sticky Navigator (kanan) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Kolom Soal (Kiri) */}
@@ -449,38 +481,6 @@ export default function Kuis() {
             </div>
           </div>
         </aside>
-      </div>
-
-      {/* Floating Bar Kecil untuk Mobile (HP) */}
-      <div className="lg:hidden fixed bottom-4 left-3 right-16 z-40">
-        <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800/90 rounded-2xl p-2 px-3 shadow-2xl flex items-center gap-2.5">
-          <div className="shrink-0 text-center pr-2 border-r border-slate-200 dark:border-slate-800">
-            <div className="text-[8px] font-extrabold text-slate-400 uppercase leading-none">Soal</div>
-            <div className="text-xs font-black text-indigo-600 dark:text-indigo-400 leading-tight mt-0.5">
-              {jmlTerjawab}/{soalList.length}
-            </div>
-          </div>
-          <div className="flex items-center gap-1.5 overflow-x-auto py-0.5 flex-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-            {soalList.map((s, idx) => {
-              const isAnswered = !!jawaban[s.id];
-              return (
-                <button
-                  key={s.id}
-                  type="button"
-                  onClick={() => scrollToSoal(s.id)}
-                  className={`w-7 h-7 shrink-0 rounded-lg text-xs font-bold flex items-center justify-center transition-all active:scale-95 border ${
-                    isAnswered
-                      ? 'bg-emerald-500 border-emerald-600 text-white font-black shadow-xs'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
-                  }`}
-                  title={`Soal ${idx + 1}`}
-                >
-                  {idx + 1}
-                </button>
-              );
-            })}
-          </div>
-        </div>
       </div>
 
       {/* Confirmation Modal */}
