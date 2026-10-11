@@ -280,9 +280,9 @@ export default function Kuis() {
 
   // ─── Quiz screen ────────────────────────────────────────
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
+    <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Header */}
-      <div className="card bg-gradient-to-r from-indigo-600 to-purple-600 border-0 p-6 md:p-8 mb-6 text-white relative overflow-hidden shadow-lg animate-fade-in-up">
+      <div className="card bg-gradient-to-r from-indigo-600 to-purple-600 border-0 p-6 md:p-8 mb-8 text-white relative overflow-hidden shadow-lg animate-fade-in-up">
         <div className="absolute top-0 right-0 w-36 h-36 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/4 blur-xl animate-pulse-soft" />
         <div className="relative z-10 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
@@ -301,26 +301,166 @@ export default function Kuis() {
         </div>
       </div>
 
-      {/* Progress bar & Question Navigation Pills */}
-      <div className="card p-5 mb-6 border-slate-200/60 dark:border-slate-700/60 animate-fade-in-up" style={{ animationDelay: '0.08s' }}>
-        <div className="flex justify-between text-xs text-[var(--color-text-secondary)] font-bold mb-2 ml-1">
-          <span>Kuis Progress</span>
-          <span className="font-mono">{Math.round((jmlTerjawab / soalList.length) * 100)}%</span>
-        </div>
-        <div className="bg-slate-100 dark:bg-slate-800 rounded-full h-3 p-0.5 overflow-hidden mb-4">
-          <div
-            className="h-full rounded-full transition-all duration-500 ease-out"
-            style={{ width: `${(jmlTerjawab / soalList.length) * 100}%`, background: 'linear-gradient(90deg, #4f46e5, #06b6d4)' }}
-          />
+      {/* Main Grid: Soal (kiri) & Sticky Navigator (kanan) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Kolom Soal (Kiri) */}
+        <div className="lg:col-span-8 space-y-6">
+          {soalList.map((soal, idx) => {
+            const opsi = [
+              { key: 'a', label: soal.opsi_a, color: 'hover:border-indigo-200 hover:bg-indigo-50/20 dark:hover:border-indigo-800/50 dark:hover:bg-indigo-950/20', activeColor: 'bg-indigo-50/60 border-indigo-500 text-indigo-950 dark:bg-indigo-900/30 dark:border-indigo-500 dark:text-indigo-200' },
+              { key: 'b', label: soal.opsi_b, color: 'hover:border-indigo-200 hover:bg-indigo-50/20 dark:hover:border-indigo-800/50 dark:hover:bg-indigo-950/20', activeColor: 'bg-indigo-50/60 border-indigo-500 text-indigo-950 dark:bg-indigo-900/30 dark:border-indigo-500 dark:text-indigo-200' },
+              { key: 'c', label: soal.opsi_c, color: 'hover:border-indigo-200 hover:bg-indigo-50/20 dark:hover:border-indigo-800/50 dark:hover:bg-indigo-950/20', activeColor: 'bg-indigo-50/60 border-indigo-500 text-indigo-950 dark:bg-indigo-900/30 dark:border-indigo-500 dark:text-indigo-200' },
+              { key: 'd', label: soal.opsi_d, color: 'hover:border-indigo-200 hover:bg-indigo-50/20 dark:hover:border-indigo-800/50 dark:hover:bg-indigo-950/20', activeColor: 'bg-indigo-50/60 border-indigo-500 text-indigo-950 dark:bg-indigo-900/30 dark:border-indigo-500 dark:text-indigo-200' },
+            ];
+
+            return (
+              <div key={soal.id} id={`soal-card-${soal.id}`} className="card p-6 md:p-8 animate-fade-in-up border-slate-200/60 dark:border-slate-700/60 shadow-sm" style={{ animationDelay: `${(idx + 2) * 0.08}s` }}>
+                <div className="flex items-start gap-3.5 mb-5">
+                  <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-100/50 dark:border-indigo-900/50 flex items-center justify-center shrink-0">
+                    <span className="font-display font-extrabold text-sm text-[var(--color-brand-deep)] dark:text-indigo-400">{idx + 1}</span>
+                  </div>
+                  <p className="font-bold text-[var(--color-text)] leading-relaxed mt-0.5 text-base">{soal.soal}</p>
+                </div>
+
+                <div className="space-y-3">
+                  {opsi.map((opt) => {
+                    const selected = jawaban[soal.id] === opt.key;
+                    return (
+                      <label
+                        key={opt.key}
+                        className={`flex items-center gap-3.5 p-4 rounded-2xl border cursor-pointer transition-all duration-200 ${
+                          selected
+                            ? opt.activeColor + ' shadow-sm border-2'
+                            : 'border-slate-100 dark:border-slate-700/50 ' + opt.color + ' text-slate-700 dark:text-slate-300'
+                        }`}
+                      >
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
+                          selected ? 'border-indigo-600 dark:border-indigo-500 bg-indigo-600 dark:bg-indigo-500 scale-105' : 'border-slate-300 dark:border-slate-600'
+                        }`}>
+                          {selected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                        </div>
+                        <input
+                          type="radio"
+                          name={`soal-${soal.id}`}
+                          className="hidden"
+                          checked={selected}
+                          onChange={() => handlePilih(soal.id, opt.key)}
+                        />
+                        <span className={`font-mono font-bold text-xs shrink-0 py-0.5 px-2 rounded ${selected ? 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'}`}>
+                          {opt.key.toUpperCase()}
+                        </span>
+                        <span className="text-sm font-semibold">{opt.label}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+
+          {/* Submit */}
+          <div className="pt-4 pb-16 text-center animate-fade-in-up">
+            {pesanError && (
+              <div className="mb-5 max-w-md mx-auto bg-rose-50 dark:bg-rose-950/30 border border-rose-200/50 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 px-4.5 py-3 rounded-2xl text-xs font-semibold flex items-center justify-center gap-2.5 animate-pulse-soft">
+                <AlertTriangle className="w-4 h-4 shrink-0 text-rose-500" />
+                <span>{pesanError}</span>
+              </div>
+            )}
+            <button
+              onClick={handleOpenConfirm}
+              disabled={submitting || jmlTerjawab < soalList.length}
+              className="btn btn-primary px-12 py-4 text-base font-bold disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none shadow-lg shadow-indigo-500/15"
+            >
+              {submitting ? (
+                <span className="animate-pulse-soft">Mengirim jawaban...</span>
+              ) : jmlTerjawab < soalList.length ? (
+                <>Selesaikan Kuis ({jmlTerjawab}/{soalList.length})</>
+              ) : (
+                <>
+                  <Send className="w-5 h-5 text-white" />
+                  Kumpulkan Kuis Anda
+                </>
+              )}
+            </button>
+          </div>
         </div>
 
-        {/* Question pills navigation */}
-        <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80">
-          <div className="flex items-center justify-between text-[11px] font-bold text-[var(--color-text-secondary)] uppercase tracking-wider mb-2.5">
-            <span>Nomor Soal:</span>
-            <span className="text-[10px] lowercase text-slate-400 font-normal">klik nomor untuk lompat</span>
+        {/* Kolom Sidebar Sticky Kanan (Desktop Only) */}
+        <aside className="hidden lg:block lg:col-span-4 sticky top-24 space-y-4">
+          <div className="card p-5 border-slate-200/60 dark:border-slate-700/60 shadow-md">
+            <div className="flex justify-between text-xs text-[var(--color-text-secondary)] font-bold mb-2 ml-1">
+              <span>Kuis Progress</span>
+              <span className="font-mono text-indigo-600 dark:text-indigo-400 font-bold">{Math.round((jmlTerjawab / soalList.length) * 100)}%</span>
+            </div>
+            <div className="bg-slate-100 dark:bg-slate-800 rounded-full h-3 p-0.5 overflow-hidden mb-4">
+              <div
+                className="h-full rounded-full transition-all duration-500 ease-out"
+                style={{ width: `${(jmlTerjawab / soalList.length) * 100}%`, background: 'linear-gradient(90deg, #4f46e5, #06b6d4)' }}
+              />
+            </div>
+
+            <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80">
+              <div className="flex items-center justify-between text-[11px] font-bold text-[var(--color-text-secondary)] uppercase tracking-wider mb-3">
+                <span>Nomor Soal</span>
+                <span className="text-[10px] text-slate-400 font-normal lowercase">klik untuk lompat</span>
+              </div>
+              <div className="grid grid-cols-5 gap-2">
+                {soalList.map((s, idx) => {
+                  const isAnswered = !!jawaban[s.id];
+                  return (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() => scrollToSoal(s.id)}
+                      className={`h-9 rounded-xl font-display text-xs font-bold transition-all duration-200 active:scale-95 flex items-center justify-center border ${
+                        isAnswered
+                          ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400 shadow-sm font-black'
+                          : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-indigo-300 hover:text-indigo-600'
+                      }`}
+                      title={`Lompat ke soal ${idx + 1} (${isAnswered ? 'Sudah dijawab' : 'Belum dijawab'})`}
+                    >
+                      {idx + 1}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Status legenda */}
+              <div className="flex items-center justify-center gap-4 text-[11px] text-slate-500 dark:text-slate-400 mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/60">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                  <span>Terjawab ({jmlTerjawab})</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                  <span>Belum ({soalList.length - jmlTerjawab})</span>
+                </div>
+              </div>
+
+              {/* Quick Submit Button in Sidebar */}
+              <button
+                onClick={handleOpenConfirm}
+                disabled={submitting || jmlTerjawab < soalList.length}
+                className="mt-4 w-full py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-40 disabled:cursor-not-allowed shadow-md shadow-indigo-600/20"
+              >
+                <Send className="w-3.5 h-3.5" />
+                {jmlTerjawab < soalList.length ? `Selesaikan (${jmlTerjawab}/${soalList.length})` : 'Kumpulkan Kuis'}
+              </button>
+            </div>
           </div>
-          <div className="flex flex-wrap gap-2">
+        </aside>
+      </div>
+
+      {/* Floating Bar Kecil untuk Mobile (HP) */}
+      <div className="lg:hidden fixed bottom-4 left-3 right-16 z-40">
+        <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800/90 rounded-2xl p-2 px-3 shadow-2xl flex items-center gap-2.5">
+          <div className="shrink-0 text-center pr-2 border-r border-slate-200 dark:border-slate-800">
+            <div className="text-[8px] font-extrabold text-slate-400 uppercase leading-none">Soal</div>
+            <div className="text-xs font-black text-indigo-600 dark:text-indigo-400 leading-tight mt-0.5">
+              {jmlTerjawab}/{soalList.length}
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 overflow-x-auto py-0.5 flex-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {soalList.map((s, idx) => {
               const isAnswered = !!jawaban[s.id];
               return (
@@ -328,12 +468,12 @@ export default function Kuis() {
                   key={s.id}
                   type="button"
                   onClick={() => scrollToSoal(s.id)}
-                  className={`w-8 h-8 rounded-xl font-display text-xs font-bold transition-all duration-200 active:scale-95 flex items-center justify-center border ${
+                  className={`w-7 h-7 shrink-0 rounded-lg text-xs font-bold flex items-center justify-center transition-all active:scale-95 border ${
                     isAnswered
-                      ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400 shadow-sm'
-                      : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-indigo-300 hover:text-indigo-600'
+                      ? 'bg-emerald-500 border-emerald-600 text-white font-black shadow-xs'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
                   }`}
-                  title={`Lompat ke soal ${idx + 1} (${isAnswered ? 'Sudah dijawab' : 'Belum dijawab'})`}
+                  title={`Soal ${idx + 1}`}
                 >
                   {idx + 1}
                 </button>
@@ -341,88 +481,6 @@ export default function Kuis() {
             })}
           </div>
         </div>
-      </div>
-
-      {/* Questions */}
-      <div className="space-y-6">
-        {soalList.map((soal, idx) => {
-          const opsi = [
-            { key: 'a', label: soal.opsi_a, color: 'hover:border-indigo-200 hover:bg-indigo-50/20 dark:hover:border-indigo-800/50 dark:hover:bg-indigo-950/20', activeColor: 'bg-indigo-50/60 border-indigo-500 text-indigo-950 dark:bg-indigo-900/30 dark:border-indigo-500 dark:text-indigo-200' },
-            { key: 'b', label: soal.opsi_b, color: 'hover:border-indigo-200 hover:bg-indigo-50/20 dark:hover:border-indigo-800/50 dark:hover:bg-indigo-950/20', activeColor: 'bg-indigo-50/60 border-indigo-500 text-indigo-950 dark:bg-indigo-900/30 dark:border-indigo-500 dark:text-indigo-200' },
-            { key: 'c', label: soal.opsi_c, color: 'hover:border-indigo-200 hover:bg-indigo-50/20 dark:hover:border-indigo-800/50 dark:hover:bg-indigo-950/20', activeColor: 'bg-indigo-50/60 border-indigo-500 text-indigo-950 dark:bg-indigo-900/30 dark:border-indigo-500 dark:text-indigo-200' },
-            { key: 'd', label: soal.opsi_d, color: 'hover:border-indigo-200 hover:bg-indigo-50/20 dark:hover:border-indigo-800/50 dark:hover:bg-indigo-950/20', activeColor: 'bg-indigo-50/60 border-indigo-500 text-indigo-950 dark:bg-indigo-900/30 dark:border-indigo-500 dark:text-indigo-200' },
-          ];
-
-          return (
-            <div key={soal.id} id={`soal-card-${soal.id}`} className="card p-6 md:p-8 animate-fade-in-up border-slate-200/60 dark:border-slate-700/60 shadow-sm" style={{ animationDelay: `${(idx + 2) * 0.08}s` }}>
-              <div className="flex items-start gap-3.5 mb-5">
-                <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-100/50 dark:border-indigo-900/50 flex items-center justify-center shrink-0">
-                  <span className="font-display font-extrabold text-sm text-[var(--color-brand-deep)] dark:text-indigo-400">{idx + 1}</span>
-                </div>
-                <p className="font-bold text-[var(--color-text)] leading-relaxed mt-0.5 text-base">{soal.soal}</p>
-              </div>
-
-              <div className="space-y-3">
-                {opsi.map((opt) => {
-                  const selected = jawaban[soal.id] === opt.key;
-                  return (
-                    <label
-                      key={opt.key}
-                      className={`flex items-center gap-3.5 p-4 rounded-2xl border cursor-pointer transition-all duration-200 ${
-                        selected
-                          ? opt.activeColor + ' shadow-sm border-2'
-                          : 'border-slate-100 dark:border-slate-700/50 ' + opt.color + ' text-slate-700 dark:text-slate-300'
-                      }`}
-                    >
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
-                        selected ? 'border-indigo-600 dark:border-indigo-500 bg-indigo-600 dark:bg-indigo-500 scale-105' : 'border-slate-300 dark:border-slate-600'
-                      }`}>
-                        {selected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
-                      </div>
-                      <input
-                        type="radio"
-                        name={`soal-${soal.id}`}
-                        className="hidden"
-                        checked={selected}
-                        onChange={() => handlePilih(soal.id, opt.key)}
-                      />
-                      <span className={`font-mono font-bold text-xs shrink-0 py-0.5 px-2 rounded ${selected ? 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'}`}>
-                        {opt.key.toUpperCase()}
-                      </span>
-                      <span className="text-sm font-semibold">{opt.label}</span>
-                    </label>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Submit */}
-      <div className="mt-10 mb-16 text-center animate-fade-in-up" style={{ animationDelay: `${(soalList.length + 3) * 0.08}s` }}>
-        {pesanError && (
-          <div className="mb-5 max-w-md mx-auto bg-rose-50 dark:bg-rose-950/30 border border-rose-200/50 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 px-4.5 py-3 rounded-2xl text-xs font-semibold flex items-center justify-center gap-2.5 animate-pulse-soft">
-            <AlertTriangle className="w-4 h-4 shrink-0 text-rose-500" />
-            <span>{pesanError}</span>
-          </div>
-        )}
-        <button
-          onClick={handleOpenConfirm}
-          disabled={submitting || jmlTerjawab < soalList.length}
-          className="btn btn-primary px-12 py-4 text-base font-bold disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none shadow-lg shadow-indigo-500/15"
-        >
-          {submitting ? (
-            <span className="animate-pulse-soft">Mengirim jawaban...</span>
-          ) : jmlTerjawab < soalList.length ? (
-            <>Selesaikan Kuis ({jmlTerjawab}/{soalList.length})</>
-          ) : (
-            <>
-              <Send className="w-5 h-5 text-white" />
-              Kumpulkan Kuis Anda
-            </>
-          )}
-        </button>
       </div>
 
       {/* Confirmation Modal */}
