@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Hand, VideoOff, Loader2, AlertCircle, HelpCircle, X, MousePointerClick, MoveVertical } from 'lucide-react';
+import { Hand, VideoOff, Loader2, AlertCircle, HelpCircle, X, MousePointerClick, MoveVertical, ChevronRight } from 'lucide-react';
 import useHandTracking from '../hooks/useHandTracking';
 import usePipWindow from '../hooks/usePipWindow';
 import useClickSound from '../hooks/useClickSound';
@@ -10,6 +10,7 @@ export default function HandCursor() {
   const playClick = useClickSound();
   const [isMinimized, setIsMinimized] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const { position, handleMouseDown, handleTouchStart } = usePipWindow();
   const {
     active, loading, error,
@@ -134,44 +135,68 @@ export default function HandCursor() {
           </div>
         )}
 
-        <div className="flex items-center gap-2.5">
-          {!showHelp && (
-            <button
-              onClick={() => setShowHelp(true)}
-              className="w-11 h-11 rounded-2xl bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 text-slate-500 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 shadow-lg active:scale-95 transition-all flex items-center justify-center"
-              title="Cara pakai sensor tangan"
-            >
-              <HelpCircle className="w-5 h-5" />
-            </button>
-          )}
-
+        {isCollapsed ? (
           <button
-            onClick={handleSensorToggle}
-            disabled={loading}
-            className={`flex items-center gap-2 px-4.5 py-3 rounded-2xl font-bold text-xs shadow-lg active:scale-95 transition-all duration-300 ${
-              active
-                ? 'bg-rose-600 hover:bg-rose-700 text-white shadow-rose-600/10'
-                : 'bg-white/90 dark:bg-slate-800/90 backdrop-blur-md hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 border border-slate-200/80 dark:border-slate-700/80 hover:border-indigo-200 dark:hover:border-indigo-500/30'
-            }`}
+            onClick={() => setIsCollapsed(false)}
+            className="w-11 h-11 rounded-2xl bg-white/95 dark:bg-slate-800/95 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 text-indigo-600 dark:text-indigo-400 shadow-xl active:scale-95 hover:scale-105 transition-all flex items-center justify-center relative group"
+            title="Tampilkan kontrol sensor tangan"
           >
-            {loading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Memuat AI Model...</span>
-              </>
-            ) : active ? (
-              <>
-                <VideoOff className="w-4.5 h-4.5" />
-                <span>Matikan Sensor</span>
-              </>
-            ) : (
-              <>
-                <Hand className="w-4.5 h-4.5" />
-                <span>Aktivasi Sensor</span>
-              </>
+            <Hand className="w-5 h-5" />
+            {active && (
+              <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
+              </span>
             )}
           </button>
-        </div>
+        ) : (
+          <div className="flex items-center gap-2 animate-scale-in">
+            <button
+              onClick={() => { setIsCollapsed(true); setShowHelp(false); }}
+              className="w-8 h-8 rounded-xl bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200/60 dark:border-slate-700/60 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 shadow-md active:scale-95 transition-all flex items-center justify-center"
+              title="Sembunyikan menu sensor"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+
+            {!showHelp && (
+              <button
+                onClick={() => setShowHelp(true)}
+                className="w-11 h-11 rounded-2xl bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 text-slate-500 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 shadow-lg active:scale-95 transition-all flex items-center justify-center"
+                title="Cara pakai sensor tangan"
+              >
+                <HelpCircle className="w-5 h-5" />
+              </button>
+            )}
+
+            <button
+              onClick={handleSensorToggle}
+              disabled={loading}
+              className={`flex items-center gap-2 px-4.5 py-3 rounded-2xl font-bold text-xs shadow-lg active:scale-95 transition-all duration-300 ${
+                active
+                  ? 'bg-rose-600 hover:bg-rose-700 text-white shadow-rose-600/10'
+                  : 'bg-white/90 dark:bg-slate-800/90 backdrop-blur-md hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 border border-slate-200/80 dark:border-slate-700/80 hover:border-indigo-200 dark:hover:border-indigo-500/30'
+              }`}
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Memuat AI Model...</span>
+                </>
+              ) : active ? (
+                <>
+                  <VideoOff className="w-4.5 h-4.5" />
+                  <span>Matikan Sensor</span>
+                </>
+              ) : (
+                <>
+                  <Hand className="w-4.5 h-4.5" />
+                  <span>Aktivasi Sensor</span>
+                </>
+              )}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* 4. Mini PIP-style Camera Feed Window */}
