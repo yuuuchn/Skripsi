@@ -131,7 +131,7 @@ export default function Tentang() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 text-xs font-semibold">
                   <div className="bg-slate-50 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-100 dark:border-slate-700/60">
                     <span className="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">NIM</span>
-                    <span className="text-[var(--color-text)] font-mono text-sm">06031282126048</span>
+                    <span className="text-[var(--color-text)] font-mono text-sm">2222015</span>
                   </div>
                   <div className="bg-slate-50 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-100 dark:border-slate-700/60">
                     <span className="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Program Studi</span>
@@ -143,7 +143,7 @@ export default function Tentang() {
                   </div>
                   <div className="bg-slate-50 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-100 dark:border-slate-700/60">
                     <span className="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Universitas</span>
-                    <span className="text-[var(--color-text)]">Universitas Sriwijaya</span>
+                    <span className="text-[var(--color-text)]">Universitas Baturaja</span>
                   </div>
                 </div>
               </div>
@@ -166,13 +166,11 @@ export default function Tentang() {
               <div className="space-y-3 text-xs">
                 <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/60">
                   <span className="text-[10px] text-purple-600 dark:text-purple-400 font-bold uppercase tracking-wider block">Dosen Pembimbing I</span>
-                  <div className="font-bold text-[var(--color-text)] mt-0.5 text-sm">Dr. Dedi Nurhadiat, M.Pd.</div>
-                  <span className="text-[11px] text-[var(--color-text-secondary)]">Dosen Teknologi Pendidikan FKIP</span>
+                  <div className="font-bold text-[var(--color-text-secondary)] mt-0.5 text-sm">-</div>
                 </div>
                 <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/60">
                   <span className="text-[10px] text-purple-600 dark:text-purple-400 font-bold uppercase tracking-wider block">Dosen Pembimbing II</span>
-                  <div className="font-bold text-[var(--color-text)] mt-0.5 text-sm">Drs. Lisnani, M.Pd.</div>
-                  <span className="text-[11px] text-[var(--color-text-secondary)]">Dosen Teknologi Pendidikan FKIP</span>
+                  <div className="font-bold text-[var(--color-text-secondary)] mt-0.5 text-sm">-</div>
                 </div>
               </div>
             </div>
