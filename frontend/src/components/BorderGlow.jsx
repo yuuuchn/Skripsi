@@ -12,6 +12,8 @@ export default function BorderGlow({
   useEffect(() => {
     const card = cardRef.current;
     if (!card) return;
+    const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    if (!canHover) return;
 
     const handleMouseMove = (e) => {
       const rect = card.getBoundingClientRect();
@@ -21,22 +23,22 @@ export default function BorderGlow({
       card.style.setProperty('--mouse-y', `${y}px`);
     };
 
-    card.addEventListener('mousemove', handleMouseMove);
+    card.addEventListener('mousemove', handleMouseMove, { passive: true });
     return () => card.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
   return (
     <div
       ref={cardRef}
-      className={`relative p-[1.5px] rounded-[24px] overflow-hidden group ${className}`}
+      className={`relative p-[1.5px] rounded-[24px] overflow-hidden group bg-gradient-to-br from-indigo-500/35 via-purple-500/25 to-pink-500/35 md:bg-none ${className}`}
       style={{
         '--mouse-x': '0px',
         '--mouse-y': '0px'
       }}
     >
-      {/* Continuously-rotating conic gradient border (ReactBits animated intro) */}
+      {/* Continuously-rotating conic gradient border (desktop only to save mobile GPU) */}
       {animated && (
-        <div className="absolute inset-0 pointer-events-none z-0 flex items-center justify-center">
+        <div className="hidden md:flex absolute inset-0 pointer-events-none z-0 items-center justify-center">
           <div
             className="aspect-square w-[140%] animate-spin-slow"
             style={{
@@ -54,9 +56,9 @@ export default function BorderGlow({
         </div>
       )}
 
-      {/* Spotlight glowing border gradient following mouse pointer (bigger on hover) */}
+      {/* Spotlight glowing border gradient following mouse pointer (desktop hover only) */}
       <div
-        className="absolute inset-0 pointer-events-none z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        className="hidden md:block absolute inset-0 pointer-events-none z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
         style={{
           background: `radial-gradient(
             ${spotlightSize}px circle at var(--mouse-x) var(--mouse-y),

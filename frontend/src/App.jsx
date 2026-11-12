@@ -3,23 +3,25 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
-import Materi from './pages/Materi';
-import DetailMateri from './pages/DetailMateri';
-import Kuis from './pages/Kuis';
-import Nilai from './pages/Nilai';
-import Admin from './pages/Admin';
-import AdminMateri from './pages/AdminMateri';
-import AdminKuis from './pages/AdminKuis';
-import Tentang from './pages/Tentang';
 import PageTransition from './components/PageTransition';
 import ErrorBoundary from './components/ErrorBoundary';
-import DotField from './components/DotField';
-import HandCursor from './components/HandCursor';
 import { Globe } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
+
+// Lazy-loaded pages & heavy interactive components (Code Splitting)
+const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Materi = lazy(() => import('./pages/Materi'));
+const DetailMateri = lazy(() => import('./pages/DetailMateri'));
+const Kuis = lazy(() => import('./pages/Kuis'));
+const Nilai = lazy(() => import('./pages/Nilai'));
+const Admin = lazy(() => import('./pages/Admin'));
+const AdminMateri = lazy(() => import('./pages/AdminMateri'));
+const AdminKuis = lazy(() => import('./pages/AdminKuis'));
+const Tentang = lazy(() => import('./pages/Tentang'));
+const DotField = lazy(() => import('./components/DotField'));
+const HandCursor = lazy(() => import('./components/HandCursor'));
 
 // Simulated Top Navigation Loading Progress Bar
 function PageLoaderProgress() {
@@ -69,6 +71,14 @@ function FullscreenLoader() {
   );
 }
 
+function RouteFallback() {
+  return (
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="w-10 h-10 rounded-full border-3 border-slate-200 dark:border-slate-700 border-t-indigo-600 animate-spin" />
+    </div>
+  );
+}
+
 function AppContent() {
   const { user, loading } = useAuth();
 
@@ -79,25 +89,35 @@ function AppContent() {
   return (
     <div className="relative min-h-screen">
       <PageLoaderProgress />
-      {!user && <DotField />}
+      {!user && (
+        <Suspense fallback={null}>
+          <DotField />
+        </Suspense>
+      )}
       {user && <Navbar />}
-      {user && <HandCursor />}
+      {user && (
+        <Suspense fallback={null}>
+          <HandCursor />
+        </Suspense>
+      )}
       <main className={`relative z-10 ${user ? 'pt-0' : ''}`}>
         <ErrorBoundary>
-        <Routes>
-          <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <PageTransition><Login /></PageTransition>} />
-          <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <PageTransition><Register /></PageTransition>} />
-          <Route path="/dashboard" element={<ProtectedRoute><PageTransition><Dashboard /></PageTransition></ProtectedRoute>} />
-          <Route path="/materi" element={<ProtectedRoute><PageTransition><Materi /></PageTransition></ProtectedRoute>} />
-          <Route path="/materi/:id" element={<ProtectedRoute><PageTransition><DetailMateri /></PageTransition></ProtectedRoute>} />
-          <Route path="/kuis/:materi_id" element={<ProtectedRoute><PageTransition><Kuis /></PageTransition></ProtectedRoute>} />
-          <Route path="/nilai" element={<ProtectedRoute><PageTransition><Nilai /></PageTransition></ProtectedRoute>} />
-          <Route path="/tentang" element={<ProtectedRoute><PageTransition><Tentang /></PageTransition></ProtectedRoute>} />
-          <Route path="/admin" element={<ProtectedRoute><PageTransition><Admin /></PageTransition></ProtectedRoute>} />
-          <Route path="/admin/materi" element={<ProtectedRoute><PageTransition><AdminMateri /></PageTransition></ProtectedRoute>} />
-          <Route path="/admin/kuis" element={<ProtectedRoute><PageTransition><AdminKuis /></PageTransition></ProtectedRoute>} />
-          <Route path="*" element={<Navigate to="/dashboard" />} />
-        </Routes>
+          <Suspense fallback={user ? <RouteFallback /> : <FullscreenLoader />}>
+            <Routes>
+              <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <PageTransition><Login /></PageTransition>} />
+              <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <PageTransition><Register /></PageTransition>} />
+              <Route path="/dashboard" element={<ProtectedRoute><PageTransition><Dashboard /></PageTransition></ProtectedRoute>} />
+              <Route path="/materi" element={<ProtectedRoute><PageTransition><Materi /></PageTransition></ProtectedRoute>} />
+              <Route path="/materi/:id" element={<ProtectedRoute><PageTransition><DetailMateri /></PageTransition></ProtectedRoute>} />
+              <Route path="/kuis/:materi_id" element={<ProtectedRoute><PageTransition><Kuis /></PageTransition></ProtectedRoute>} />
+              <Route path="/nilai" element={<ProtectedRoute><PageTransition><Nilai /></PageTransition></ProtectedRoute>} />
+              <Route path="/tentang" element={<ProtectedRoute><PageTransition><Tentang /></PageTransition></ProtectedRoute>} />
+              <Route path="/admin" element={<ProtectedRoute><PageTransition><Admin /></PageTransition></ProtectedRoute>} />
+              <Route path="/admin/materi" element={<ProtectedRoute><PageTransition><AdminMateri /></PageTransition></ProtectedRoute>} />
+              <Route path="/admin/kuis" element={<ProtectedRoute><PageTransition><AdminKuis /></PageTransition></ProtectedRoute>} />
+              <Route path="*" element={<Navigate to="/dashboard" />} />
+            </Routes>
+          </Suspense>
         </ErrorBoundary>
       </main>
     </div>

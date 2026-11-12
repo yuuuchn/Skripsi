@@ -1,6 +1,14 @@
 // 3D tilt-follow handlers for cards. Share across mapped lists via e.currentTarget.
-// Usage: const tilt = useTilt(); <div {...tilt}>
+// Disabled on touch/mobile devices so scrolling & tapping stay smooth at 60fps.
 export default function useTilt(max = 18) {
+  const canHover =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  if (!canHover) {
+    return {};
+  }
+
   const onMouseMove = (e) => {
     const el = e.currentTarget;
     const rect = el.getBoundingClientRect();

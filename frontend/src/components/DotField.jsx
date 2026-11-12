@@ -7,16 +7,13 @@ export default function DotField() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    let animId;
+    let animId = null;
+    const isTouchDevice = window.matchMedia('(hover: none), (pointer: coarse)').matches;
     const mouse = { x: null, y: null, radius: 180 };
-    const gridGap = 36; // Slightly larger gap for a cleaner grid distribution
-
-    function resize() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
+    const gridGap = isTouchDevice ? 48 : 36;
 
     function draw() {
+      animId = null;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       const cols = Math.floor(canvas.width / gridGap) + 1;
@@ -28,9 +25,8 @@ export default function DotField() {
           const x = i * gridGap;
           const y = j * gridGap;
 
-          // Increased base radius and opacity for clear visibility on light theme
-          let dotRadius = 2.0; 
-          let opacity = 0.28; 
+          let dotRadius = 2.0;
+          let opacity = 0.28;
           let drawX = x;
           let drawY = y;
 
@@ -42,54 +38,62 @@ export default function DotField() {
 
             if (dist < mouse.radius) {
               const force = (mouse.radius - dist) / mouse.radius;
-              
-              // 1. Glow effect (increase opacity up to 0.8)
               opacity = 0.28 + force * 0.52;
-              
-              // 2. Magnify effect (increase dot radius up to 4.5px)
               dotRadius = 2.0 + force * 2.5;
-
-              // 3. 3D holographic distortion displacement
               const angle = Math.atan2(dy, dx);
               drawX = x + Math.cos(angle) * force * 10;
               drawY = y + Math.sin(angle) * force * 10;
             }
           }
 
-          // Draw the individual dot
           ctx.beginPath();
           ctx.arc(drawX, drawY, dotRadius, 0, Math.PI * 2);
-          ctx.fillStyle = '#6366f1'; // Rich Indigo
+          ctx.fillStyle = '#6366f1';
           ctx.globalAlpha = opacity;
           ctx.fill();
         }
       }
+    }
 
-      animId = requestAnimationFrame(draw);
+    function scheduleDraw() {
+      if (animId === null) {
+        animId = requestAnimationFrame(draw);
+      }
+    }
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      scheduleDraw();
     }
 
     const handleMouseMove = (e) => {
       mouse.x = e.clientX;
       mouse.y = e.clientY;
+      scheduleDraw();
     };
 
     const handleMouseLeave = () => {
       mouse.x = null;
       mouse.y = null;
+      scheduleDraw();
     };
 
     resize();
-    draw();
 
-    window.addEventListener('resize', resize);
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseleave', handleMouseLeave);
+    window.addEventListener('resize', resize, { passive: true });
+    if (!isTouchDevice) {
+      window.addEventListener('mousemove', handleMouseMove, { passive: true });
+      window.addEventListener('mouseleave', handleMouseLeave, { passive: true });
+    }
 
     return () => {
-      cancelAnimationFrame(animId);
+      if (animId !== null) cancelAnimationFrame(animId);
       window.removeEventListener('resize', resize);
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseleave', handleMouseLeave);
+      if (!isTouchDevice) {
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('mouseleave', handleMouseLeave);
+      }
     };
   }, []);
 

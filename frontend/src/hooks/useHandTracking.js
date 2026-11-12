@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { FilesetResolver, HandLandmarker } from '@mediapipe/tasks-vision';
 
 const CANVAS_W = 320;
 const CANVAS_H = 240;
@@ -168,6 +167,7 @@ export default function useHandTracking(videoRef, canvasRef) {
       }
 
       if (!landmarkerRef.current) {
+        const { FilesetResolver, HandLandmarker } = await import('@mediapipe/tasks-vision');
         const vision = await FilesetResolver.forVisionTasks(
           'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm'
         );
