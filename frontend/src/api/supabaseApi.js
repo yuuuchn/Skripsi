@@ -1,5 +1,6 @@
 import { supabase } from './supabaseClient';
 import bcrypt from 'bcryptjs';
+import { normalizeKelas, DAFTAR_KELAS } from '../utils/kelasUtils';
 
 function getCurrentUser() {
   const token = localStorage.getItem('token');
@@ -48,6 +49,9 @@ export const api = {
         const err = new Error('User tidak ditemukan');
         err.response = { status: 404 };
         throw err;
+      }
+      if (user.role === 'siswa') {
+        user.kelas = normalizeKelas(user.kelas);
       }
       return { data: user };
     }
@@ -204,7 +208,7 @@ export const api = {
         const rata_rata = validScores.length > 0 ? Math.round(total_skor / validScores.length) : 0;
         return {
           nama: u.nama,
-          kelas: u.kelas,
+          kelas: normalizeKelas(u.kelas),
           total_skor,
           materi_selesai,
           rata_rata,
@@ -248,7 +252,7 @@ export const api = {
           id: u.id,
           nama: u.nama,
           username: u.username,
-          kelas: u.kelas,
+          kelas: normalizeKelas(u.kelas),
           materi_selesai: selesai,
           rata_rata,
         };
@@ -350,6 +354,7 @@ export const api = {
         err.response = { status: 404 };
         throw err;
       }
+      student.kelas = normalizeKelas(student.kelas);
       const map = new Map((userProg || []).map((p) => [p.materi_id, p]));
 
       const progress = (materiList || []).map((m) => {
@@ -403,13 +408,122 @@ export const api = {
         return {
           nama: u.nama,
           username: u.username,
-          kelas: u.kelas,
+          kelas: normalizeKelas(u.kelas),
           materi_selesai: selesai,
           total_materi,
           rata_rata: avg,
         };
       });
       return { data: rows };
+    }
+
+    // 14. Admin teachers list (/admin/teachers)
+    if (cleanUrl === '/admin/teachers') {
+      const { data: teachers, error } = await supabase
+        .from('users')
+        .select('id, nama, username, kelas, role, created_at')
+        .eq('role', 'guru')
+        .order('id', { ascending: true });
+      if (error) throw error;
+      return { data: teachers || [] };
+    }
+
+    // 15. Chat overview & contacts (/chat/overview)
+    if (cleanUrl === '/chat/overview') {
+      if (!curUser?.id) return { data: { teachers: [], students: [], kelasList: [], unreadCount: 0, unreadByUser: {} } };
+
+      const [usersRes, unreadRes] = await Promise.all([
+        supabase.from('users').select('id, nama, username, kelas, role').order('nama', { ascending: true }),
+        supabase
+          .from('messages')
+          .select('id, sender_id')
+          .eq('receiver_id', curUser.id)
+          .eq('is_read', false),
+      ]);
+
+      const allUsers = (usersRes.data || []).map((u) => ({
+        ...u,
+        kelas: u.role === 'siswa' ? normalizeKelas(u.kelas) : u.kelas,
+      }));
+
+      const teachers = allUsers.filter((u) => u.role === 'guru' && u.id !== curUser.id);
+      const students = allUsers.filter((u) => u.role === 'siswa' && u.id !== curUser.id);
+
+      // Kumpulkan daftar kelas aktif (gabungan kelas siswa terdaftar + kelas IX standar)
+      const activeKelasSet = new Set(['IX.1', 'IX.2', 'IX.3', 'IX.4', 'IX.5']);
+      students.forEach((s) => {
+        if (s.kelas) activeKelasSet.add(s.kelas);
+      });
+      const kelasList = Array.from(activeKelasSet).sort((a, b) => {
+        const idxA = DAFTAR_KELAS.indexOf(a);
+        const idxB = DAFTAR_KELAS.indexOf(b);
+        if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+        return a.localeCompare(b);
+      });
+
+      const unreadRows = unreadRes.data || [];
+      const unreadByUser = {};
+      unreadRows.forEach((r) => {
+        unreadByUser[r.sender_id] = (unreadByUser[r.sender_id] || 0) + 1;
+      });
+
+      return {
+        data: {
+          teachers,
+          students,
+          kelasList,
+          unreadCount: unreadRows.length,
+          unreadByUser,
+        },
+      };
+    }
+
+    // 16. Chat messages (/chat/messages)
+    if (cleanUrl === '/chat/messages') {
+      if (!curUser?.id) return { data: [] };
+      const mode = params.get('mode') || 'room';
+      const room = params.get('room') || 'umum';
+      const partnerId = parseInt(params.get('partner_id') || '0', 10);
+
+      let query = supabase.from('messages').select('*').order('created_at', { ascending: true }).limit(120);
+
+      if (mode === 'dm') {
+        if (!partnerId) return { data: [] };
+        query = query.or(
+          `and(sender_id.eq.${curUser.id},receiver_id.eq.${partnerId}),and(sender_id.eq.${partnerId},receiver_id.eq.${curUser.id})`
+        );
+      } else {
+        const normalizedRoom = room === 'umum' ? 'umum' : normalizeKelas(room);
+        query = query.is('receiver_id', null).eq('kelas', normalizedRoom);
+      }
+
+      const [msgRes, usersRes] = await Promise.all([
+        query,
+        supabase.from('users').select('id, nama, username, kelas, role'),
+      ]);
+
+      if (msgRes.error) {
+        return { data: [], tableMissing: msgRes.error.code === '42P01' };
+      }
+
+      const userMap = new Map(
+        (usersRes.data || []).map((u) => [
+          u.id,
+          { ...u, kelas: u.role === 'siswa' ? normalizeKelas(u.kelas) : u.kelas },
+        ])
+      );
+
+      const enriched = (msgRes.data || []).map((m) => {
+        const sender = userMap.get(m.sender_id);
+        return {
+          ...m,
+          sender_nama: sender?.nama || 'Pengguna',
+          sender_role: sender?.role || 'siswa',
+          sender_kelas: sender?.kelas || '',
+        };
+      });
+
+      return { data: enriched };
     }
 
     throw new Error(`Endpoint GET not implemented: ${url}`);
@@ -441,7 +555,13 @@ export const api = {
       return {
         data: {
           token: `user_${user.id}`,
-          user: { id: user.id, nama: user.nama, username: user.username, kelas: user.kelas, role: user.role },
+          user: {
+            id: user.id,
+            nama: user.nama,
+            username: user.username,
+            kelas: user.role === 'siswa' ? normalizeKelas(user.kelas) : user.kelas,
+            role: user.role,
+          },
         },
       };
     }
@@ -466,9 +586,10 @@ export const api = {
         throw err;
       }
       const hashedPassword = bcrypt.hashSync(password, 10);
+      const standardizedKelas = normalizeKelas(kelas || '');
       const { data: newUser, error } = await supabase
         .from('users')
-        .insert([{ nama, username, password: hashedPassword, kelas: kelas || '', role: 'siswa' }])
+        .insert([{ nama, username, password: hashedPassword, kelas: standardizedKelas, role: 'siswa' }])
         .select()
         .single();
       if (error) throw error;
@@ -563,10 +684,91 @@ export const api = {
       return { data: created };
     }
 
+    // 6. Admin create teacher account (/admin/teachers)
+    if (url === '/admin/teachers') {
+      const { nama, username, password, jabatan } = payload;
+      if (!nama || !username || !password) {
+        const err = new Error('Nama, username, dan password guru wajib diisi');
+        err.response = { status: 400, data: { error: err.message } };
+        throw err;
+      }
+      if (password.length < 6) {
+        const err = new Error('Password minimal 6 karakter');
+        err.response = { status: 400, data: { error: err.message } };
+        throw err;
+      }
+      const { data: existing } = await supabase.from('users').select('id').eq('username', username).maybeSingle();
+      if (existing) {
+        const err = new Error('Username sudah digunakan');
+        err.response = { status: 400, data: { error: err.message } };
+        throw err;
+      }
+      const hashedPassword = bcrypt.hashSync(password, 10);
+      const { data: newTeacher, error } = await supabase
+        .from('users')
+        .insert([{ nama, username, password: hashedPassword, kelas: jabatan || 'Guru TIK', role: 'guru' }])
+        .select('id, nama, username, kelas, role, created_at')
+        .single();
+      if (error) throw error;
+      return { data: newTeacher };
+    }
+
+    // 7. Send chat message (/chat/send)
+    if (url === '/chat/send') {
+      if (!curUser?.id) {
+        const err = new Error('Harus login');
+        err.response = { status: 401 };
+        throw err;
+      }
+      const { pesan, receiver_id, kelas } = payload;
+      if (!pesan || !pesan.trim()) {
+        const err = new Error('Pesan tidak boleh kosong');
+        err.response = { status: 400 };
+        throw err;
+      }
+      const row = {
+        sender_id: curUser.id,
+        receiver_id: receiver_id ? parseInt(receiver_id, 10) : null,
+        kelas: receiver_id ? null : kelas === 'umum' ? 'umum' : normalizeKelas(kelas || 'umum'),
+        pesan: pesan.trim(),
+        is_read: false,
+      };
+      const { data: created, error } = await supabase.from('messages').insert([row]).select().single();
+      if (error) throw error;
+      return { data: created };
+    }
+
     throw new Error(`Endpoint POST not implemented: ${url}`);
   },
 
   put: async (url, payload) => {
+    const curUser = getCurrentUser();
+
+    // 0. Mark DM messages as read (/chat/read)
+    if (url === '/chat/read') {
+      if (!curUser?.id || !payload?.sender_id) return { data: { ok: true } };
+      await supabase
+        .from('messages')
+        .update({ is_read: true })
+        .eq('receiver_id', curUser.id)
+        .eq('sender_id', parseInt(payload.sender_id, 10))
+        .eq('is_read', false);
+      return { data: { ok: true } };
+    }
+
+    // 0b. Update student kelas by teacher (/admin/student/:id/kelas)
+    if (url.startsWith('/admin/student/') && url.endsWith('/kelas')) {
+      const studentId = parseInt(url.split('/')[3], 10);
+      const standardized = normalizeKelas(payload.kelas || '');
+      const { data: updated, error } = await supabase
+        .from('users')
+        .update({ kelas: standardized })
+        .eq('id', studentId)
+        .select('id, nama, username, kelas, role')
+        .single();
+      if (error) throw error;
+      return { data: updated };
+    }
     // 1. Reorder materi
     if (url === '/materi/reorder') {
       const { order } = payload;
@@ -618,6 +820,27 @@ export const api = {
     if (url.startsWith('/quiz/')) {
       const id = parseInt(url.split('/')[2], 10);
       const { error } = await supabase.from('quiz').delete().eq('id', id);
+      if (error) throw error;
+      return { data: { ok: true } };
+    }
+
+    // 3. Delete chat message (/chat/:id)
+    if (url.startsWith('/chat/')) {
+      const id = parseInt(url.split('/')[2], 10);
+      const { error } = await supabase.from('messages').delete().eq('id', id);
+      if (error) throw error;
+      return { data: { ok: true } };
+    }
+
+    // 4. Delete teacher account (/admin/teachers/:id)
+    if (url.startsWith('/admin/teachers/')) {
+      const id = parseInt(url.split('/')[3], 10);
+      if (id === 1) {
+        const err = new Error('Akun Admin Utama tidak dapat dihapus');
+        err.response = { status: 400, data: { error: err.message } };
+        throw err;
+      }
+      const { error } = await supabase.from('users').delete().eq('id', id).eq('role', 'guru');
       if (error) throw error;
       return { data: { ok: true } };
     }

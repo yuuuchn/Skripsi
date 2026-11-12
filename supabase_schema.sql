@@ -1,4 +1,5 @@
 -- 1. CREATE TABLES
+DROP TABLE IF EXISTS messages CASCADE;
 DROP TABLE IF EXISTS progress CASCADE;
 DROP TABLE IF EXISTS quiz CASCADE;
 DROP TABLE IF EXISTS materi CASCADE;
@@ -42,16 +43,30 @@ CREATE TABLE progress (
   UNIQUE(user_id, materi_id)
 );
 
+CREATE TABLE messages (
+  id BIGSERIAL PRIMARY KEY,
+  sender_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
+  receiver_id BIGINT REFERENCES users(id) ON DELETE CASCADE NULL,
+  kelas TEXT DEFAULT 'umum',
+  pesan TEXT NOT NULL,
+  is_read BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- DISABLE ROW LEVEL SECURITY (SUPAYA FRONTEND BISA AKSES TANPA BLOKIR)
 ALTER TABLE users DISABLE ROW LEVEL SECURITY;
 ALTER TABLE materi DISABLE ROW LEVEL SECURITY;
 ALTER TABLE quiz DISABLE ROW LEVEL SECURITY;
 ALTER TABLE progress DISABLE ROW LEVEL SECURITY;
+ALTER TABLE messages DISABLE ROW LEVEL SECURITY;
+
+-- AKTIFKAN REALTIME UNTUK TABEL MESSAGES
+ALTER PUBLICATION supabase_realtime ADD TABLE messages;
 
 -- 2. INSERT USERS
 INSERT INTO users (id, nama, username, password, kelas, role, created_at) VALUES (1, 'Admin Guru', 'admin', '$2a$10$PKk9FlZrxh9gIWrhpkl3luoVdTi2RmhlCIoAFKRPdXrGG84sNbIde', 'Administrator', 'guru', '2026-08-02 09:42:56');
 INSERT INTO users (id, nama, username, password, kelas, role, created_at) VALUES (2, 'Putri Nurmala', 'rkilaaaa', '$2a$10$jyWqWmNxNjH6ofi.J94MN.TYuCyx5dk/vPFOIeHMPOZ0SUsxpSbLu', 'IX.4', 'siswa', '2026-08-02 09:56:07');
-INSERT INTO users (id, nama, username, password, kelas, role, created_at) VALUES (3, 'tegar', 'Tegar', '$2a$10$5LZ9CPGFQeZ6OWrpYCSLCuHsrboyGXI44ezh1/1ag7n3WsekcVzfW', 'IX-1', 'siswa', '2026-09-13 09:32:16');
+INSERT INTO users (id, nama, username, password, kelas, role, created_at) VALUES (3, 'tegar', 'Tegar', '$2a$10$5LZ9CPGFQeZ6OWrpYCSLCuHsrboyGXI44ezh1/1ag7n3WsekcVzfW', 'IX.1', 'siswa', '2026-09-13 09:32:16');
 INSERT INTO users (id, nama, username, password, kelas, role, created_at) VALUES (4, 'Tegar', 'Test1', '$2a$10$fwj6574obu4uGGmVfNn.8uM4cUc4Rzi3XRFkJJgU/.MMWiPGB2726', '', 'siswa', '2026-10-04 20:31:24');
 
 -- 3. INSERT MATERI
@@ -440,3 +455,4 @@ INSERT INTO quiz (id, materi_id, soal, opsi_a, opsi_b, opsi_c, opsi_d, jawaban) 
 SELECT setval('users_id_seq', COALESCE((SELECT MAX(id) FROM users), 1));
 SELECT setval('materi_id_seq', COALESCE((SELECT MAX(id) FROM materi), 1));
 SELECT setval('quiz_id_seq', COALESCE((SELECT MAX(id) FROM quiz), 1));
+SELECT setval('messages_id_seq', COALESCE((SELECT MAX(id) FROM messages), 1));

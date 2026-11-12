@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
-import { User, Lock, Building2, ArrowRight, AlertTriangle, Globe, Eye, EyeOff, BookOpen, ListChecks, Hand } from 'lucide-react';
+import { KELAS_GROUPS, normalizeKelas } from '../utils/kelasUtils';
+import { User, Lock, Building2, ArrowRight, AlertTriangle, Globe, Eye, EyeOff, BookOpen, ListChecks, Hand, ChevronDown } from 'lucide-react';
 
 // Premium Aesthetic Registration SVG
 function IlustrasiRegisterHero() {
@@ -86,9 +87,13 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    if (!form.kelas) {
+      setError('Silakan pilih kelas Anda terlebih dahulu');
+      return;
+    }
     setLoading(true);
     try {
-      await register(form);
+      await register({ ...form, kelas: normalizeKelas(form.kelas) });
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.error || 'Gagal mendaftar');
@@ -258,16 +263,27 @@ export default function Register() {
             </div>
 
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-secondary)] mb-2 ml-1">Kelas <span className="text-slate-400 dark:text-slate-500 font-normal lowercase">(opsional)</span></label>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-secondary)] mb-2 ml-1">Kelas</label>
               <div className="relative group">
-                <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400 dark:text-slate-500 group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400 transition-colors" />
-                <input
-                  type="text"
-                  className="w-full pl-11 pr-4 py-3 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50 rounded-xl text-sm font-medium focus:outline-none focus:bg-white dark:focus:bg-slate-800 focus:border-[var(--color-brand)] focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:text-slate-100"
-                  placeholder="Contoh: IX-A"
+                <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400 dark:text-slate-500 group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400 transition-colors pointer-events-none" />
+                <select
+                  required
+                  className="w-full appearance-none pl-11 pr-10 py-3 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50 rounded-xl text-sm font-semibold focus:outline-none focus:bg-white dark:focus:bg-slate-800 focus:border-[var(--color-brand)] focus:ring-4 focus:ring-indigo-500/10 transition-all text-slate-700 dark:text-slate-100 cursor-pointer"
                   value={form.kelas}
                   onChange={(e) => setForm({ ...form, kelas: e.target.value })}
-                />
+                >
+                  <option value="" disabled>Pilih Kelas (Contoh: IX.1)</option>
+                  {KELAS_GROUPS.map((group) => (
+                    <optgroup key={group.label} label={group.label}>
+                      {group.options.map((kls) => (
+                        <option key={kls} value={kls}>
+                          Kelas {kls}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
               </div>
             </div>
 

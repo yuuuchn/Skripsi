@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import api from '../api/axios';
-import { GraduationCap, Users, AlertCircle, Award, Search, Sparkles, ChevronLeft, ChevronRight, Download, CheckCircle2, TrendingDown, BarChart3, PieChart as PieIcon, BookOpen, HelpCircle, Eye, X } from 'lucide-react';
+import { DAFTAR_KELAS } from '../utils/kelasUtils';
+import { useToast } from '../context/ToastContext';
+import { GraduationCap, Users, AlertCircle, Award, Search, Sparkles, ChevronLeft, ChevronRight, Download, CheckCircle2, TrendingDown, BarChart3, PieChart as PieIcon, BookOpen, HelpCircle, Eye, X, MessageSquare, UserPlus, Trash2 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 
 export default function Admin() {
@@ -20,6 +22,11 @@ export default function Admin() {
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [studentDetail, setStudentDetail] = useState(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
+  const [teacherModalOpen, setTeacherModalOpen] = useState(false);
+  const [teachers, setTeachers] = useState([]);
+  const [newTeacher, setNewTeacher] = useState({ nama: '', username: '', password: '', jabatan: 'Guru TIK' });
+  const [savingTeacher, setSavingTeacher] = useState(false);
+  const toast = useToast();
   const limit = 20;
 
   // Debounce search input, reset to page 1 on new query
@@ -70,6 +77,59 @@ export default function Admin() {
     setStudentDetail(null);
   };
 
+  const handleUpdateStudentKelas = async (studentId, newKelas) => {
+    try {
+      const res = await api.put(`/admin/student/${studentId}/kelas`, { kelas: newKelas });
+      const updatedKelas = res.data.kelas;
+      setSiswaList((prev) => prev.map((s) => (s.id === studentId ? { ...s, kelas: updatedKelas } : s)));
+      if (selectedStudent?.id === studentId) {
+        setSelectedStudent((prev) => ({ ...prev, kelas: updatedKelas }));
+      }
+      toast.success(`Kelas siswa diperbarui menjadi ${updatedKelas}`);
+    } catch {
+      toast.error('Gagal memperbarui kelas siswa');
+    }
+  };
+
+  const handleOpenTeacherModal = async () => {
+    setTeacherModalOpen(true);
+    try {
+      const res = await api.get('/admin/teachers');
+      setTeachers(res.data || []);
+    } catch {
+      // Abaikan
+    }
+  };
+
+  const handleCreateTeacher = async (e) => {
+    e.preventDefault();
+    setSavingTeacher(true);
+    try {
+      const res = await api.post('/admin/teachers', newTeacher);
+      setTeachers((prev) => [...prev, res.data]);
+      setNewTeacher({ nama: '', username: '', password: '', jabatan: 'Guru TIK' });
+      toast.success('Akun Guru berhasil ditambahkan');
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Gagal menambah akun guru');
+    } finally {
+      setSavingTeacher(false);
+    }
+  };
+
+  const handleDeleteTeacher = async (id) => {
+    try {
+      await api.delete(`/admin/teachers/${id}`);
+      setTeachers((prev) => prev.filter((t) => t.id !== id));
+      toast.success('Akun Guru dihapus');
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Gagal menghapus akun guru');
+    }
+  };
+
+  const handleChatStudent = (student) => {
+    window.dispatchEvent(new CustomEvent('open-direct-chat', { detail: student }));
+  };
+
   const handleExport = async () => {
     setExporting(true);
     try {
@@ -118,7 +178,15 @@ export default function Admin() {
             <h1 className="font-display text-2xl md:text-3xl font-black tracking-tight">Panel Guru</h1>
             <p className="text-white/80 text-xs md:text-sm font-semibold mt-0.5">Pantau kemajuan belajar dan hasil pencapaian kuis seluruh siswa</p>
           </div>
-          <div className="shrink-0 flex items-center gap-2">
+          <div className="shrink-0 flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={handleOpenTeacherModal}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 backdrop-blur-md text-white text-xs md:text-sm font-bold transition-colors active:scale-95 cursor-pointer"
+            >
+              <UserPlus className="w-4 h-4" />
+              <span className="hidden sm:inline">Kelola Guru</span>
+            </button>
             <Link
               to="/admin/materi"
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 backdrop-blur-md text-white text-xs md:text-sm font-bold transition-colors active:scale-95"
@@ -298,9 +366,19 @@ export default function Admin() {
                         </td>
                         <td className="px-6 py-4.5 text-xs text-slate-500 dark:text-slate-400 font-mono font-bold bg-slate-50 dark:bg-slate-800 border border-slate-100/50 dark:border-slate-700/50 rounded-lg px-2 py-1 inline-block mt-2.5">{s.username}</td>
                         <td className="px-6 py-4.5">
-                          <span className="tag tag-info text-[10px] font-bold py-1 px-2.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200/80 dark:border-slate-600/80">
-                            {s.kelas || '-'}
-                          </span>
+                          <select
+                            value={s.kelas || ''}
+                            onChange={(e) => handleUpdateStudentKelas(s.id, e.target.value)}
+                            className="text-[11px] font-bold py-1 px-2.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-indigo-500 cursor-pointer"
+                            title="Ubah kelas siswa"
+                          >
+                            <option value="">Belum Diatur</option>
+                            {DAFTAR_KELAS.map((kls) => (
+                              <option key={kls} value={kls}>
+                                {kls}
+                              </option>
+                            ))}
+                          </select>
                         </td>
                         <td className="px-6 py-4.5 text-center">
                           <div className="inline-flex flex-col items-center">
@@ -331,14 +409,25 @@ export default function Admin() {
                           </span>
                         </td>
                         <td className="px-6 py-4.5 text-center">
-                          <button
-                            onClick={() => handleOpenDetail(s)}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-600 dark:text-indigo-400 text-xs font-bold transition-all active:scale-95 border border-indigo-100 dark:border-indigo-900/50 shadow-sm"
-                            title="Lihat rincian nilai per materi"
-                          >
-                            <Eye className="w-3.5 h-3.5" />
-                            <span>Rincian</span>
-                          </button>
+                          <div className="inline-flex items-center gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() => handleChatStudent(s)}
+                              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-600 dark:text-emerald-400 text-xs font-bold transition-all active:scale-95 border border-emerald-100 dark:border-emerald-900/50 shadow-sm cursor-pointer"
+                              title={`Kirim pesan ke ${s.nama}`}
+                            >
+                              <MessageSquare className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleOpenDetail(s)}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-600 dark:text-indigo-400 text-xs font-bold transition-all active:scale-95 border border-indigo-100 dark:border-indigo-900/50 shadow-sm cursor-pointer"
+                              title="Lihat rincian nilai per materi"
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                              <span>Rincian</span>
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     );
@@ -527,13 +616,139 @@ export default function Admin() {
             </div>
 
             {/* Modal Footer */}
-            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center">
+              <button
+                type="button"
+                onClick={() => {
+                  const target = selectedStudent;
+                  handleCloseDetail();
+                  handleChatStudent(target);
+                }}
+                className="btn btn-primary px-4 py-2 rounded-xl text-xs font-bold gap-1.5"
+              >
+                <MessageSquare className="w-3.5 h-3.5" />
+                <span>Kirim Pesan ke Siswa</span>
+              </button>
               <button
                 onClick={handleCloseDetail}
                 className="btn btn-ghost px-5 py-2 rounded-xl text-xs font-bold"
               >
                 Tutup
               </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Teacher Management Modal (Multi-Guru) */}
+      {teacherModalOpen && createPortal(
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 dark:bg-black/60 backdrop-blur-sm p-4 animate-fade-in"
+          onClick={() => setTeacherModalOpen(false)}
+        >
+          <div
+            className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-700/80 shadow-2xl p-6 animate-scale-in max-h-[88vh] flex flex-col overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+              <div>
+                <h3 className="font-display font-extrabold text-base text-[var(--color-text)]">
+                  Kelola Akun Guru / Pengajar
+                </h3>
+                <p className="text-xs text-[var(--color-text-secondary)] mt-0.5">
+                  Tambahkan guru pendamping agar dapat mengelola kelas & membalas diskusi siswa
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setTeacherModalOpen(false)}
+                className="p-2 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto py-4 space-y-5">
+              {/* Form Tambah Guru Baru */}
+              <form onSubmit={handleCreateTeacher} className="space-y-3 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-200/60 dark:border-slate-700/60">
+                <div className="text-xs font-extrabold text-[var(--color-text)] mb-1">
+                  + Tambah Guru Baru
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <input
+                    type="text"
+                    required
+                    placeholder="Nama Lengkap Guru (cth: Budi Santoso, S.Kom)"
+                    value={newTeacher.nama}
+                    onChange={(e) => setNewTeacher({ ...newTeacher, nama: e.target.value })}
+                    className="px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-medium focus:outline-none focus:border-indigo-500"
+                  />
+                  <input
+                    type="text"
+                    required
+                    placeholder="Username Login"
+                    value={newTeacher.username}
+                    onChange={(e) => setNewTeacher({ ...newTeacher, username: e.target.value })}
+                    className="px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-medium focus:outline-none focus:border-indigo-500"
+                  />
+                  <input
+                    type="password"
+                    required
+                    minLength={6}
+                    placeholder="Password (min. 6 karakter)"
+                    value={newTeacher.password}
+                    onChange={(e) => setNewTeacher({ ...newTeacher, password: e.target.value })}
+                    className="px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-medium focus:outline-none focus:border-indigo-500"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Jabatan / Wali Kelas (cth: Guru TIK IX.1)"
+                    value={newTeacher.jabatan}
+                    onChange={(e) => setNewTeacher({ ...newTeacher, jabatan: e.target.value })}
+                    className="px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-medium focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={savingTeacher}
+                  className="btn btn-primary w-full py-2 text-xs font-bold"
+                >
+                  {savingTeacher ? 'Menyimpan...' : 'Simpan Akun Guru'}
+                </button>
+              </form>
+
+              {/* Daftar Guru Aktif */}
+              <div>
+                <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-2">
+                  Daftar Guru Terdaftar ({teachers.length})
+                </h4>
+                <div className="space-y-2">
+                  {teachers.map((t) => (
+                    <div
+                      key={t.id}
+                      className="flex items-center justify-between p-3 rounded-2xl border border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-800/40"
+                    >
+                      <div>
+                        <div className="font-bold text-xs text-[var(--color-text)]">{t.nama}</div>
+                        <div className="text-[11px] text-slate-400 font-medium">
+                          @{t.username} • {t.kelas || 'Guru'}
+                        </div>
+                      </div>
+                      {t.id !== 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteTeacher(t.id)}
+                          className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors cursor-pointer"
+                          title="Hapus akun guru"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>,

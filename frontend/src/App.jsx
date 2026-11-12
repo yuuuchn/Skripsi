@@ -22,6 +22,7 @@ const AdminKuis = lazy(() => import('./pages/AdminKuis'));
 const Tentang = lazy(() => import('./pages/Tentang'));
 const DotField = lazy(() => import('./components/DotField'));
 const HandCursor = lazy(() => import('./components/HandCursor'));
+const ChatWidget = lazy(() => import('./components/ChatWidget'));
 
 // Simulated Top Navigation Loading Progress Bar
 function PageLoaderProgress() {
@@ -98,6 +99,7 @@ function AppContent() {
       {user && (
         <Suspense fallback={null}>
           <HandCursor />
+          <ChatWidget />
         </Suspense>
       )}
       <main className={`relative z-10 ${user ? 'pt-0' : ''}`}>
