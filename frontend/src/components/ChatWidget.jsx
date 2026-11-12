@@ -6,10 +6,12 @@ import { normalizeKelas } from '../utils/kelasUtils';
 import {
   MessageSquare,
   X,
+  Minus,
   Send,
   Users,
   GraduationCap,
   ChevronLeft,
+  ChevronRight,
   Trash2,
   Search,
   Sparkles,
@@ -33,6 +35,7 @@ export default function ChatWidget() {
   const myKelas = user?.role === 'siswa' ? normalizeKelas(user?.kelas) : '';
 
   const [open, setOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [tab, setTab] = useState('room'); // 'room' | 'dm'
   const [selectedRoom, setSelectedRoom] = useState('umum');
   const [selectedPartner, setSelectedPartner] = useState(null);
@@ -152,6 +155,7 @@ export default function ChatWidget() {
     const handleOpenDirectChat = (e) => {
       const targetUser = e.detail;
       if (!targetUser) return;
+      setIsCollapsed(false);
       setOpen(true);
       setTab('dm');
       setSelectedPartner(targetUser);
@@ -216,27 +220,60 @@ export default function ChatWidget() {
 
   return (
     <>
-      {/* Tombol Mengambang (Floating Button) di Kiri Bawah agar tidak bentrok dengan tombol Sensor Tangan AI di Kanan Bawah */}
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        className="fixed bottom-5 left-5 z-40 flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold text-xs shadow-xl shadow-indigo-500/25 hover:scale-105 active:scale-95 transition-all cursor-pointer border border-white/20"
-        title="Ruang Diskusi & Tanya Guru"
-      >
-        <div className="relative">
-          <MessageSquare className="w-4.5 h-4.5" />
-          {overview.unreadCount > 0 && (
-            <span className="absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-black flex items-center justify-center shadow">
-              {overview.unreadCount > 9 ? '9+' : overview.unreadCount}
-            </span>
-          )}
-        </div>
-        <span className="hidden sm:inline">Diskusi & Tanya Guru</span>
-      </button>
+      {/* Tombol Mengambang: Kiri Bawah di HP, Kanan Bawah (di atas Sensor Tangan) di Windows/Desktop, serta bisa di-minimize seperti HandCursor */}
+      <div className="fixed bottom-6 left-5 md:left-auto md:right-6 md:bottom-20 z-40 flex items-center">
+        {isCollapsed ? (
+          <button
+            type="button"
+            onClick={() => setIsCollapsed(false)}
+            className="w-11 h-11 rounded-2xl bg-white/95 dark:bg-slate-800/95 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 text-indigo-600 dark:text-indigo-400 shadow-xl active:scale-95 hover:scale-105 transition-all flex items-center justify-center relative group cursor-pointer"
+            title="Tampilkan tombol diskusi"
+          >
+            <MessageSquare className="w-5 h-5" />
+            {overview.unreadCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-black flex items-center justify-center shadow">
+                {overview.unreadCount > 9 ? '9+' : overview.unreadCount}
+              </span>
+            )}
+          </button>
+        ) : (
+          <div className="flex items-center gap-2 animate-scale-in">
+            <button
+              type="button"
+              onClick={() => {
+                setIsCollapsed(true);
+                setOpen(false);
+              }}
+              className="w-8 h-8 rounded-xl bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200/60 dark:border-slate-700/60 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 shadow-md active:scale-95 transition-all flex items-center justify-center cursor-pointer"
+              title="Sembunyikan menu diskusi"
+            >
+              <ChevronLeft className="w-4 h-4 md:hidden" />
+              <ChevronRight className="w-4 h-4 hidden md:block" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setOpen((v) => !v)}
+              className="flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold text-xs shadow-xl shadow-indigo-500/25 hover:scale-105 active:scale-95 transition-all cursor-pointer border border-white/20"
+              title="Ruang Diskusi & Tanya Guru"
+            >
+              <div className="relative">
+                <MessageSquare className="w-4.5 h-4.5" />
+                {overview.unreadCount > 0 && (
+                  <span className="absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-black flex items-center justify-center shadow">
+                    {overview.unreadCount > 9 ? '9+' : overview.unreadCount}
+                  </span>
+                )}
+              </div>
+              <span className="hidden sm:inline">Diskusi & Tanya Guru</span>
+            </button>
+          </div>
+        )}
+      </div>
 
       {/* Panel Jendela Chat */}
       {open && (
-        <div className="fixed bottom-20 left-4 right-4 sm:right-auto sm:left-5 z-50 sm:w-[390px] h-[520px] max-h-[78vh] bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-700/80 shadow-2xl flex flex-col overflow-hidden animate-scale-in">
+        <div className="fixed bottom-20 left-4 right-4 md:left-auto md:right-6 md:bottom-[136px] z-[60] md:w-[390px] h-[500px] max-h-[75vh] md:max-h-[calc(100vh-13rem)] bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-700/80 shadow-2xl flex flex-col overflow-hidden animate-scale-in">
           {/* Header */}
           <div className="bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-700 px-4 py-3.5 text-white flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2.5 min-w-0">
@@ -254,14 +291,27 @@ export default function ChatWidget() {
                 </p>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              className="p-1.5 rounded-xl text-white/80 hover:text-white hover:bg-white/15 transition-colors cursor-pointer"
-              title="Tutup Chat"
-            >
-              <X className="w-4.5 h-4.5" />
-            </button>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  setIsCollapsed(true);
+                }}
+                className="p-1.5 rounded-xl text-white/80 hover:text-white hover:bg-white/15 transition-colors cursor-pointer"
+                title="Minimize Chat"
+              >
+                <Minus className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                className="p-1.5 rounded-xl text-white/80 hover:text-white hover:bg-white/15 transition-colors cursor-pointer"
+                title="Tutup Chat"
+              >
+                <X className="w-4.5 h-4.5" />
+              </button>
+            </div>
           </div>
 
           {/* 2 Tab Utama: Diskusi Kelas & Japri Guru/Siswa */}
