@@ -25,8 +25,10 @@ export const api = {
 
     // 1. Stats publik
     if (cleanUrl === '/stats') {
-      const { count: materiCount } = await supabase.from('materi').select('*', { count: 'exact', head: true });
-      const { count: soalCount } = await supabase.from('quiz').select('*', { count: 'exact', head: true });
+      const [{ count: materiCount }, { count: soalCount }] = await Promise.all([
+        supabase.from('materi').select('*', { count: 'exact', head: true }),
+        supabase.from('quiz').select('*', { count: 'exact', head: true }),
+      ]);
       return { data: { materi: materiCount || 0, soal: soalCount || 0 } };
     }
 
@@ -52,17 +54,17 @@ export const api = {
 
     // 3. Materi list
     if (cleanUrl === '/materi') {
-      const { data: materiList, error } = await supabase
-        .from('materi')
-        .select('id, judul, urutan, icon')
-        .order('urutan', { ascending: true });
+      const [materiRes, progRes] = await Promise.all([
+        supabase.from('materi').select('id, judul, urutan, icon').order('urutan', { ascending: true }),
+        curUser?.id
+          ? supabase.from('progress').select('materi_id, selesai, nilai').eq('user_id', curUser.id)
+          : Promise.resolve({ data: null }),
+      ]);
+      const { data: materiList, error } = materiRes;
       if (error) throw error;
 
       if (curUser?.id) {
-        const { data: progList } = await supabase
-          .from('progress')
-          .select('materi_id, selesai, nilai')
-          .eq('user_id', curUser.id);
+        const progList = progRes.data;
         const map = new Map((progList || []).map((p) => [p.materi_id, p]));
         for (const m of materiList) {
           const p = map.get(m.id);
@@ -76,19 +78,20 @@ export const api = {
     // 4. Detail Materi (/materi/:id)
     if (cleanUrl.startsWith('/materi/')) {
       const id = parseInt(cleanUrl.split('/')[2], 10);
-      const { data: materi, error } = await supabase.from('materi').select('*').eq('id', id).single();
+      const [materiRes, progRes] = await Promise.all([
+        supabase.from('materi').select('*').eq('id', id).single(),
+        curUser?.id
+          ? supabase.from('progress').select('selesai, nilai').eq('user_id', curUser.id).eq('materi_id', id).maybeSingle()
+          : Promise.resolve({ data: null }),
+      ]);
+      const { data: materi, error } = materiRes;
       if (error || !materi) {
         const err = new Error('Materi tidak ditemukan');
         err.response = { status: 404 };
         throw err;
       }
       if (curUser?.id) {
-        const { data: progress } = await supabase
-          .from('progress')
-          .select('selesai, nilai')
-          .eq('user_id', curUser.id)
-          .eq('materi_id', id)
-          .maybeSingle();
+        const progress = progRes.data;
         materi.selesai = progress ? progress.selesai : 0;
         materi.nilai = progress ? progress.nilai : null;
       }
@@ -126,8 +129,10 @@ export const api = {
     // 7. Progress user (/progress)
     if (cleanUrl === '/progress') {
       if (!curUser?.id) return { data: { progress: [], total_materi: 0, selesai: 0, progress_persen: 0 } };
-      const { data: materiList } = await supabase.from('materi').select('id, judul, urutan').order('urutan');
-      const { data: userProg } = await supabase.from('progress').select('materi_id, selesai, nilai').eq('user_id', curUser.id);
+      const [{ data: materiList }, { data: userProg }] = await Promise.all([
+        supabase.from('materi').select('id, judul, urutan').order('urutan'),
+        supabase.from('progress').select('materi_id, selesai, nilai').eq('user_id', curUser.id),
+      ]);
       const progMap = new Map((userProg || []).map((p) => [p.materi_id, p]));
 
       const allProgress = (materiList || []).map((m) => {
@@ -156,12 +161,10 @@ export const api = {
     // 8. Progress nilai (/progress/nilai)
     if (cleanUrl === '/progress/nilai') {
       if (!curUser?.id) return { data: [] };
-      const { data: userProg } = await supabase
-        .from('progress')
-        .select('materi_id, selesai, nilai')
-        .eq('user_id', curUser.id)
-        .not('nilai', 'is', null);
-      const { data: materiList } = await supabase.from('materi').select('id, judul, urutan').order('urutan');
+      const [{ data: userProg }, { data: materiList }] = await Promise.all([
+        supabase.from('progress').select('materi_id, selesai, nilai').eq('user_id', curUser.id).not('nilai', 'is', null),
+        supabase.from('materi').select('id, judul, urutan').order('urutan'),
+      ]);
       const matMap = new Map((materiList || []).map((m) => [m.id, m]));
 
       const list = (userProg || [])
@@ -182,8 +185,10 @@ export const api = {
 
     // 9. Leaderboard (/progress/leaderboard)
     if (cleanUrl === '/progress/leaderboard') {
-      const { data: students } = await supabase.from('users').select('id, nama, kelas').eq('role', 'siswa');
-      const { data: allProg } = await supabase.from('progress').select('user_id, selesai, nilai');
+      const [{ data: students }, { data: allProg }] = await Promise.all([
+        supabase.from('users').select('id, nama, kelas').eq('role', 'siswa'),
+        supabase.from('progress').select('user_id, selesai, nilai'),
+      ]);
 
       const progByUser = new Map();
       (allProg || []).forEach((p) => {
@@ -221,9 +226,11 @@ export const api = {
       const limit = Math.min(100, Math.max(1, parseInt(params.get('limit') || '20', 10)));
       const search = (params.get('search') || '').trim().toLowerCase();
 
-      const { data: allStudents } = await supabase.from('users').select('id, nama, username, kelas').eq('role', 'siswa').order('nama');
-      const { data: allProg } = await supabase.from('progress').select('user_id, selesai, nilai');
-      const { data: allMateri } = await supabase.from('materi').select('id');
+      const [{ data: allStudents }, { data: allProg }, { data: allMateri }] = await Promise.all([
+        supabase.from('users').select('id, nama, username, kelas').eq('role', 'siswa').order('nama'),
+        supabase.from('progress').select('user_id, selesai, nilai'),
+        supabase.from('materi').select('id'),
+      ]);
       const totalMateriCount = allMateri ? allMateri.length : 0;
 
       const progMap = new Map();
@@ -276,9 +283,11 @@ export const api = {
 
     // 11. Admin chart (/progress/admin/chart)
     if (cleanUrl === '/progress/admin/chart') {
-      const { data: materiList } = await supabase.from('materi').select('id, judul, urutan').order('urutan');
-      const { data: allProg } = await supabase.from('progress').select('materi_id, selesai, nilai');
-      const { data: allStudents } = await supabase.from('users').select('id').eq('role', 'siswa');
+      const [{ data: materiList }, { data: allProg }, { data: allStudents }] = await Promise.all([
+        supabase.from('materi').select('id, judul, urutan').order('urutan'),
+        supabase.from('progress').select('user_id, materi_id, selesai, nilai'),
+        supabase.from('users').select('id').eq('role', 'siswa'),
+      ]);
 
       const progByMateri = new Map();
       (allProg || []).forEach((p) => {
@@ -330,19 +339,17 @@ export const api = {
     // 12. Admin student detail (/progress/admin/student/:id)
     if (cleanUrl.startsWith('/progress/admin/student/')) {
       const studentId = parseInt(cleanUrl.split('/')[4], 10);
-      const { data: student, error } = await supabase
-        .from('users')
-        .select('id, nama, username, kelas, created_at')
-        .eq('id', studentId)
-        .eq('role', 'siswa')
-        .single();
+      const [studentRes, { data: materiList }, { data: userProg }] = await Promise.all([
+        supabase.from('users').select('id, nama, username, kelas, created_at').eq('id', studentId).eq('role', 'siswa').single(),
+        supabase.from('materi').select('id, judul, urutan, icon').order('urutan'),
+        supabase.from('progress').select('materi_id, selesai, nilai').eq('user_id', studentId),
+      ]);
+      const { data: student, error } = studentRes;
       if (error || !student) {
         const err = new Error('Siswa tidak ditemukan');
         err.response = { status: 404 };
         throw err;
       }
-      const { data: materiList } = await supabase.from('materi').select('id, judul, urutan, icon').order('urutan');
-      const { data: userProg } = await supabase.from('progress').select('materi_id, selesai, nilai').eq('user_id', studentId);
       const map = new Map((userProg || []).map((p) => [p.materi_id, p]));
 
       const progress = (materiList || []).map((m) => {
@@ -375,9 +382,11 @@ export const api = {
 
     // 13. Admin export (/progress/admin/export)
     if (cleanUrl === '/progress/admin/export') {
-      const { data: students } = await supabase.from('users').select('id, nama, username, kelas').eq('role', 'siswa').order('nama');
-      const { data: allProg } = await supabase.from('progress').select('user_id, selesai, nilai');
-      const { data: allMateri } = await supabase.from('materi').select('id');
+      const [{ data: students }, { data: allProg }, { data: allMateri }] = await Promise.all([
+        supabase.from('users').select('id, nama, username, kelas').eq('role', 'siswa').order('nama'),
+        supabase.from('progress').select('user_id, selesai, nilai'),
+        supabase.from('materi').select('id'),
+      ]);
       const total_materi = allMateri ? allMateri.length : 0;
 
       const progMap = new Map();
@@ -479,11 +488,10 @@ export const api = {
         err.response = { status: 401 };
         throw err;
       }
-      const { data: soalList } = await supabase
-        .from('quiz')
-        .select('id, soal, opsi_a, opsi_b, opsi_c, opsi_d, jawaban')
-        .eq('materi_id', materi_id)
-        .order('id');
+      const [{ data: soalList }, { data: existProg }] = await Promise.all([
+        supabase.from('quiz').select('id, soal, opsi_a, opsi_b, opsi_c, opsi_d, jawaban').eq('materi_id', materi_id).order('id'),
+        supabase.from('progress').select('nilai').eq('user_id', curUser.id).eq('materi_id', materi_id).maybeSingle(),
+      ]);
       if (!soalList || soalList.length === 0) {
         const err = new Error('Soal tidak ditemukan');
         err.response = { status: 404 };
@@ -511,13 +519,6 @@ export const api = {
 
       const total = soalList.length;
       const nilai = Math.round((benar / total) * 100);
-
-      const { data: existProg } = await supabase
-        .from('progress')
-        .select('nilai')
-        .eq('user_id', curUser.id)
-        .eq('materi_id', materi_id)
-        .maybeSingle();
       const nilaiTersimpan = existProg?.nilai !== null && existProg?.nilai !== undefined ? Math.max(existProg.nilai, nilai) : nilai;
 
       await supabase.from('progress').upsert(
@@ -569,9 +570,9 @@ export const api = {
     // 1. Reorder materi
     if (url === '/materi/reorder') {
       const { order } = payload;
-      for (let i = 0; i < order.length; i++) {
-        await supabase.from('materi').update({ urutan: i + 1 }).eq('id', order[i]);
-      }
+      await Promise.all(
+        order.map((id, i) => supabase.from('materi').update({ urutan: i + 1 }).eq('id', id))
+      );
       return { data: { ok: true } };
     }
 
@@ -604,8 +605,10 @@ export const api = {
     // 1. Delete materi (/materi/:id)
     if (url.startsWith('/materi/')) {
       const id = parseInt(url.split('/')[2], 10);
-      await supabase.from('quiz').delete().eq('materi_id', id);
-      await supabase.from('progress').delete().eq('materi_id', id);
+      await Promise.all([
+        supabase.from('quiz').delete().eq('materi_id', id),
+        supabase.from('progress').delete().eq('materi_id', id),
+      ]);
       const { error } = await supabase.from('materi').delete().eq('id', id);
       if (error) throw error;
       return { data: { ok: true } };
