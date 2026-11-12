@@ -13,26 +13,12 @@ import {
   IlustrasiDampakJaringan,
 } from '../components/NetworkIllustration';
 import PerangkatJaringan from '../components/PerangkatJaringan';
-import { ArrowLeft, ArrowRight, BookOpen, RefreshCw, Pencil, ChevronRight, HelpCircle, Laptop, History, Globe, Cable, Router, ShieldCheck, Trophy } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BookOpen, RefreshCw, Pencil, ChevronRight, HelpCircle, Trophy } from 'lucide-react';
+import { iconMap } from '../utils/materiIcons';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
-
-const iconMap = {
-  '💻': Laptop,
-  '📜': History,
-  '🌐': Globe,
-  '🔌': Cable,
-  '📡': Router,
-  '✅': ShieldCheck,
-  'Laptop': Laptop,
-  'History': History,
-  'Globe': Globe,
-  'Cable': Cable,
-  'Router': Router,
-  'ShieldCheck': ShieldCheck
-};
 
 const materiGradients = {
   1: 'from-indigo-600 to-purple-600 shadow-indigo-500/10',

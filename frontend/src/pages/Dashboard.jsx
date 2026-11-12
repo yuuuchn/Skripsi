@@ -2,29 +2,15 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
-import { BookOpen, CheckCircle, BarChart3, ArrowRight, Star, Trophy, Zap, Clock, Laptop, History, Globe, Cable, Router, ShieldCheck, HelpCircle } from 'lucide-react';
+import { BookOpen, CheckCircle, BarChart3, ArrowRight, Star, Trophy, Zap, Clock, HelpCircle } from 'lucide-react';
 import BorderGlow from '../components/BorderGlow';
 import ScrollReveal from '../components/ScrollReveal';
 import useTilt from '../hooks/useTilt';
+import { iconMap } from '../utils/materiIcons';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
-
-const iconMap = {
-  '💻': Laptop,
-  '📜': History,
-  '🌐': Globe,
-  '🔌': Cable,
-  '📡': Router,
-  '✅': ShieldCheck,
-  'Laptop': Laptop,
-  'History': History,
-  'Globe': Globe,
-  'Cable': Cable,
-  'Router': Router,
-  'ShieldCheck': ShieldCheck
-};
 
 const materiColors = [
   { from: '#6366f1', to: '#818cf8', shadow: 'rgba(99, 102, 241, 0.15)' },

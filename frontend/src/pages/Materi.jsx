@@ -1,28 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/axios';
-import { BookOpen, CheckCircle, ArrowRight, Clock, Star, ChevronRight, Laptop, History, Globe, Cable, Router, ShieldCheck, HelpCircle } from 'lucide-react';
+import { BookOpen, CheckCircle, ArrowRight, Clock, Star, ChevronRight, HelpCircle } from 'lucide-react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import ScrollReveal from '../components/ScrollReveal';
 import useTilt from '../hooks/useTilt';
+import { iconMap } from '../utils/materiIcons';
 
 gsap.registerPlugin(ScrollTrigger);
-
-const iconMap = {
-  '💻': Laptop,
-  '📜': History,
-  '🌐': Globe,
-  '🔌': Cable,
-  '📡': Router,
-  '✅': ShieldCheck,
-  'Laptop': Laptop,
-  'History': History,
-  'Globe': Globe,
-  'Cable': Cable,
-  'Router': Router,
-  'ShieldCheck': ShieldCheck
-};
 
 const materiColors = [
   { from: '#6366f1', to: '#818cf8' },

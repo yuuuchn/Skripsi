@@ -5,15 +5,11 @@ import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import MateriEditor from '../components/MateriEditor';
+import { MATERI_ICONS, getMateriIcon } from '../utils/materiIcons';
 import {
-  BookOpen, Plus, Pencil, Trash2, ArrowUp, ArrowDown, ArrowLeft, Save, X,
-  Laptop, History, Globe, Cable, Router, ShieldCheck, HelpCircle,
+  Plus, Pencil, Trash2, ArrowUp, ArrowDown, ArrowLeft, Save, X,
+  ChevronDown, Search, Check,
 } from 'lucide-react';
-
-const iconMap = {
-  Laptop, History, Globe, Cable, Router, ShieldCheck, BookOpen,
-};
-const iconOptions = Object.keys(iconMap);
 
 export default function AdminMateri() {
   const { user } = useAuth();
@@ -25,6 +21,8 @@ export default function AdminMateri() {
   const [form, setForm] = useState({ judul: '', konten: '', icon: 'BookOpen' });
   const [saving, setSaving] = useState(false);
   const [confirmDel, setConfirmDel] = useState(null);
+  const [showIconPicker, setShowIconPicker] = useState(false);
+  const [iconSearch, setIconSearch] = useState('');
 
   useEffect(() => {
     if (user && user.role !== 'guru') navigate('/dashboard');
@@ -109,28 +107,149 @@ export default function AdminMateri() {
             placeholder="mis. Apa Itu Jaringan Komputer?"
           />
 
-          <label className="block text-xs font-bold text-[var(--color-text-secondary)] mb-1.5">Ikon</label>
-          <div className="flex flex-wrap gap-2 mb-5">
-            {iconOptions.map((name) => {
-              const Ic = iconMap[name];
-              const active = form.icon === name;
+          <label className="block text-xs font-bold text-[var(--color-text-secondary)] mb-1.5">Ikon Materi</label>
+          <div className="mb-5">
+            {(() => {
+              const selectedMeta = MATERI_ICONS.find((ic) => ic.name === form.icon) || {
+                name: form.icon || 'BookOpen',
+                label: form.icon || 'Buku Materi',
+                category: 'Ikon Materi',
+                component: getMateriIcon(form.icon),
+              };
+              const SelectedIc = selectedMeta.component;
               return (
                 <button
-                  key={name}
                   type="button"
-                  onClick={() => setForm({ ...form, icon: name })}
-                  title={name}
-                  className={`p-2.5 rounded-xl border transition-all ${
-                    active
-                      ? 'border-[var(--color-brand)] bg-[var(--color-brand-soft)] text-[var(--color-brand-deep)]'
-                      : 'border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-brand)]'
-                  }`}
+                  onClick={() => {
+                    setIconSearch('');
+                    setShowIconPicker(true);
+                  }}
+                  className="w-full sm:w-auto min-w-[260px] flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-xl border border-[var(--color-border)] hover:border-[var(--color-brand)] bg-[var(--color-card)] transition-all group cursor-pointer"
                 >
-                  <Ic className="w-5 h-5" />
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-[var(--color-brand-soft)] text-[var(--color-brand-deep)] flex items-center justify-center shrink-0">
+                      <SelectedIc className="w-5 h-5" />
+                    </div>
+                    <div className="text-left">
+                      <div className="text-xs font-bold text-[var(--color-text)]">{selectedMeta.label}</div>
+                      <div className="text-[11px] text-[var(--color-text-secondary)]">{selectedMeta.category}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-[var(--color-brand)] pl-2">
+                    <span>Pilih Ikon</span>
+                    <ChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
+                  </div>
                 </button>
               );
-            })}
+            })()}
           </div>
+
+          {showIconPicker && createPortal(
+            <div
+              className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 dark:bg-black/60 backdrop-blur-sm p-4 animate-fade-in"
+              onClick={() => setShowIconPicker(false)}
+            >
+              <div
+                className="w-full max-w-lg bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-2xl p-5 md:p-6 animate-scale-in flex flex-col max-h-[82vh]"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h3 className="font-display font-black text-base text-[var(--color-text)]">Pilih Ikon Materi</h3>
+                    <p className="text-xs text-[var(--color-text-secondary)]">
+                      Tersedia {MATERI_ICONS.length} pilihan ikon bertema jaringan &amp; pembelajaran
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowIconPicker(false)}
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                  >
+                    <X className="w-4.5 h-4.5" />
+                  </button>
+                </div>
+
+                {/* Search Input */}
+                <div className="relative mb-4">
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <input
+                    type="text"
+                    autoFocus
+                    value={iconSearch}
+                    onChange={(e) => setIconSearch(e.target.value)}
+                    placeholder="Cari ikon (mis. router, wifi, server, keamanan, sejarah...)"
+                    className="form-input w-full pl-9 py-2 text-xs"
+                  />
+                </div>
+
+                {/* Grouped Icon Grid */}
+                <div className="overflow-y-auto pr-1 space-y-5 flex-1">
+                  {(() => {
+                    const q = iconSearch.trim().toLowerCase();
+                    const filtered = q
+                      ? MATERI_ICONS.filter(
+                          (ic) =>
+                            ic.label.toLowerCase().includes(q) ||
+                            ic.name.toLowerCase().includes(q) ||
+                            ic.category.toLowerCase().includes(q)
+                        )
+                      : MATERI_ICONS;
+
+                    if (filtered.length === 0) {
+                      return (
+                        <div className="text-center py-10 text-xs text-[var(--color-text-secondary)]">
+                          Ikon dengan kata kunci &quot;{iconSearch}&quot; tidak ditemukan.
+                        </div>
+                      );
+                    }
+
+                    const categories = [...new Set(filtered.map((ic) => ic.category))];
+                    return categories.map((cat) => (
+                      <div key={cat}>
+                        <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-2">
+                          {cat}
+                        </div>
+                        <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                          {filtered
+                            .filter((ic) => ic.category === cat)
+                            .map((ic) => {
+                              const Ic = ic.component;
+                              const active = form.icon === ic.name;
+                              return (
+                                <button
+                                  key={ic.name}
+                                  type="button"
+                                  onClick={() => {
+                                    setForm({ ...form, icon: ic.name });
+                                    setShowIconPicker(false);
+                                  }}
+                                  className={`relative flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl border text-center transition-all cursor-pointer ${
+                                    active
+                                      ? 'border-[var(--color-brand)] bg-[var(--color-brand-soft)] text-[var(--color-brand-deep)] ring-2 ring-indigo-500/20'
+                                      : 'border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-brand)] hover:text-[var(--color-text)] hover:bg-slate-50 dark:hover:bg-slate-700/40'
+                                  }`}
+                                >
+                                  {active && (
+                                    <span className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-indigo-600 text-white flex items-center justify-center">
+                                      <Check className="w-2.5 h-2.5" />
+                                    </span>
+                                  )}
+                                  <Ic className="w-5.5 h-5.5 shrink-0" />
+                                  <span className="text-[10px] font-bold leading-tight line-clamp-1">
+                                    {ic.label.split(' / ')[0]}
+                                  </span>
+                                </button>
+                              );
+                            })}
+                        </div>
+                      </div>
+                    ));
+                  })()}
+                </div>
+              </div>
+            </div>,
+            document.body
+          )}
 
           <label className="block text-xs font-bold text-[var(--color-text-secondary)] mb-1.5">Isi Materi</label>
           <MateriEditor value={form.konten} onChange={(html) => setForm((f) => ({ ...f, konten: html }))} />
@@ -170,7 +289,7 @@ export default function AdminMateri() {
       ) : (
         <div className="space-y-2.5">
           {list.map((m, i) => {
-            const Ic = iconMap[m.icon] || HelpCircle;
+            const Ic = getMateriIcon(m.icon);
             return (
               <div key={m.id} className="card p-4 flex items-center gap-3">
                 <div className="flex flex-col">
