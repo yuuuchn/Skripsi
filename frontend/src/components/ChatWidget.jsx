@@ -309,7 +309,7 @@ export default function ChatWidget() {
                 >
                   {teacherRooms.map((r) => (
                     <option key={r} value={r}>
-                      {r === 'umum' ? '🌐 Semua Kelas (Umum)' : `🏫 Ruang Kelas ${r}`}
+                      {r === 'umum' ? 'Semua Kelas (Umum)' : `Ruang Kelas ${r}`}
                     </option>
                   ))}
                 </select>
