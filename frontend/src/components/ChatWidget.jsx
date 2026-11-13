@@ -103,13 +103,6 @@ export default function ChatWidget() {
     }
   }, [myKelas]);
 
-  // Jika siswa dan hanya ada 1 guru, otomatis pilih guru tersebut saat buka tab DM
-  useEffect(() => {
-    if (!isGuru && tab === 'dm' && !selectedPartner && overview.teachers.length === 1) {
-      setSelectedPartner(overview.teachers[0]);
-    }
-  }, [isGuru, tab, selectedPartner, overview.teachers]);
-
   // Load overview saat pertama kali mount dan saat widget dibuka
   useEffect(() => {
     fetchOverview();
