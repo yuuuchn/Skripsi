@@ -95,7 +95,7 @@ export default function Login() {
     setLoading(true);
     try {
       const data = await login(form.username, form.password);
-      navigate(data.user.role === 'guru' ? '/admin' : '/dashboard');
+      navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.error || 'Gagal masuk');
     } finally {

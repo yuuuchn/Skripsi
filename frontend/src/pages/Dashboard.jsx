@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
-import { BookOpen, CheckCircle, BarChart3, ArrowRight, Star, Trophy, Zap, Clock, HelpCircle, RefreshCw, AlertCircle } from 'lucide-react';
+import { BookOpen, CheckCircle, BarChart3, ArrowRight, Star, Trophy, Zap, Clock, HelpCircle, RefreshCw, AlertCircle, Users, Award, TrendingDown, UserRoundCheck, ClipboardList, GraduationCap } from 'lucide-react';
 import BorderGlow from '../components/BorderGlow';
 import ScrollReveal from '../components/ScrollReveal';
 import useTilt from '../hooks/useTilt';
@@ -43,8 +43,10 @@ function DashboardSkeleton() {
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const isGuru = user?.role === 'guru';
   const [progress, setProgress] = useState(null);
   const [materiList, setMateriList] = useState([]);
+  const [teacherStats, setTeacherStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
@@ -58,23 +60,30 @@ export default function Dashboard() {
     let active = true;
     setLoading(true);
     setLoadError(false);
-    Promise.all([
-      api.get('/materi'),
-      api.get('/progress'),
-    ]).then(([materiRes, progressRes]) => {
+    const requests = isGuru
+      ? [api.get(`/progress/admin?page=1&limit=1`), api.get('/progress/admin/chart'), api.get('/materi')]
+      : [api.get('/materi'), api.get('/progress')];
+    Promise.all(requests).then((results) => {
       if (!active) return;
-      setMateriList(materiRes.data);
-      setProgress(progressRes.data);
+      if (isGuru) {
+        const [summaryRes, chartRes, materiRes] = results;
+        setTeacherStats({ ...summaryRes.data.stats, chart: chartRes.data });
+        setMateriList(materiRes.data);
+      } else {
+        const [materiRes, progressRes] = results;
+        setMateriList(materiRes.data);
+        setProgress(progressRes.data);
+      }
     }).catch(() => {
       if (active) setLoadError(true);
     }).finally(() => {
       if (active) setLoading(false);
     });
     return () => { active = false; };
-  }, [reloadKey]);
+  }, [reloadKey, isGuru]);
 
   useEffect(() => {
-    if (materiList.length === 0 || !progress) return;
+    if (isGuru || materiList.length === 0 || !progress) return;
 
     // 1. Stats Cards staggered reveal on scroll
     const statsCards = statsContainerRef.current?.querySelectorAll('.stats-card');
@@ -158,11 +167,11 @@ export default function Dashboard() {
     return () => {
       ScrollTrigger.getAll().forEach(t => t.kill());
     };
-  }, [materiList, progress]);
+  }, [materiList, progress, isGuru]);
 
   if (loading) return <DashboardSkeleton />;
 
-  if (loadError && (!progress || materiList.length === 0)) {
+  if (loadError && (isGuru ? !teacherStats : !progress || materiList.length === 0)) {
     return (
       <div className="max-w-xl mx-auto px-4 py-20 text-center">
         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-rose-200 bg-rose-50 text-rose-600 dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-400">
@@ -173,6 +182,122 @@ export default function Dashboard() {
         <button type="button" onClick={() => setReloadKey((key) => key + 1)} className="btn btn-primary mt-5 gap-2 rounded-xl">
           <RefreshCw className="h-4 w-4" /> Coba Lagi
         </button>
+      </div>
+    );
+  }
+
+  if (isGuru) {
+    const stats = teacherStats || {};
+    const statusRows = [
+      { label: 'Sangat Baik', value: stats.chart?.distribusi?.sangat_baik || 0, color: 'bg-emerald-500' },
+      { label: 'Cukup Baik', value: stats.chart?.distribusi?.cukup_baik || 0, color: 'bg-amber-500' },
+      { label: 'Butuh Bimbingan', value: stats.chart?.distribusi?.butuh_bimbingan || 0, color: 'bg-rose-500' },
+      { label: 'Belum Mulai', value: stats.chart?.distribusi?.belum_mulai || 0, color: 'bg-slate-400' },
+    ];
+    const totalStatus = statusRows.reduce((sum, row) => sum + row.value, 0);
+
+    return (
+      <div className="max-w-6xl mx-auto px-4 py-8 space-y-7">
+        <section className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900 md:p-8">
+          <div className="absolute inset-y-0 right-0 hidden w-1/3 bg-gradient-to-l from-cyan-50/80 via-indigo-50/50 to-transparent dark:from-cyan-950/20 dark:via-indigo-950/20 md:block" />
+          <div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="max-w-2xl">
+              <div className="mb-3 inline-flex items-center gap-2 rounded-lg border border-cyan-200 bg-cyan-50 px-2.5 py-1 text-xs font-bold text-cyan-800 dark:border-cyan-900/60 dark:bg-cyan-950/40 dark:text-cyan-300">
+                <GraduationCap className="h-4 w-4" /> Ruang kerja pengajar
+              </div>
+              <h1 className="font-display text-3xl font-black text-slate-900 dark:text-white md:text-4xl">
+                Selamat datang, {user?.nama?.split(' ')[0] || 'Guru'}
+              </h1>
+              <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300 md:text-base">
+                Pantau capaian belajar dan lanjutkan pengelolaan pembelajaran jaringan komputer.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Link to="/admin" className="btn btn-primary gap-2 rounded-xl">
+                <BarChart3 className="h-4 w-4" /> Panel Guru
+              </Link>
+              <Link to="/admin/materi" className="btn btn-ghost gap-2 rounded-xl">
+                <BookOpen className="h-4 w-4" /> Kelola Materi
+              </Link>
+              <Link to="/admin/kuis" className="btn btn-ghost gap-2 rounded-xl">
+                <ClipboardList className="h-4 w-4" /> Kelola Kuis
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        <section aria-label="Ringkasan kelas" className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
+          {[
+            { label: 'Total Siswa', value: stats.total_siswa ?? 0, icon: Users, color: 'text-indigo-600 dark:text-indigo-400', surface: 'bg-indigo-50 dark:bg-indigo-950/40' },
+            { label: 'Rata-rata Kelas', value: stats.rata_kelas ?? 0, icon: Award, color: 'text-amber-600 dark:text-amber-400', surface: 'bg-amber-50 dark:bg-amber-950/40' },
+            { label: 'Tuntas Semua', value: stats.tuntas ?? 0, icon: UserRoundCheck, color: 'text-emerald-600 dark:text-emerald-400', surface: 'bg-emerald-50 dark:bg-emerald-950/40' },
+            { label: 'Butuh Bimbingan', value: stats.butuh_bimbingan ?? 0, icon: TrendingDown, color: 'text-rose-600 dark:text-rose-400', surface: 'bg-rose-50 dark:bg-rose-950/40' },
+          ].map((item) => (
+            <div key={item.label} className="card flex min-h-24 items-center gap-3 p-4">
+              <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${item.surface} ${item.color}`}>
+                <item.icon className="h-5 w-5" />
+              </span>
+              <span className="min-w-0">
+                <span className="block text-2xl font-black leading-none text-[var(--color-text)]">{item.value}</span>
+                <span className="mt-1 block text-[10px] font-bold uppercase leading-tight text-[var(--color-text-secondary)] sm:text-xs">{item.label}</span>
+              </span>
+            </div>
+          ))}
+        </section>
+
+        <section className="grid gap-4 lg:grid-cols-5">
+          <div className="card p-5 lg:col-span-3">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <div>
+                <h2 className="font-display text-base font-extrabold text-[var(--color-text)]">Kondisi capaian siswa</h2>
+                <p className="mt-1 text-xs text-[var(--color-text-secondary)]">Ringkasan berdasarkan hasil kuis siswa</p>
+              </div>
+              <Link to="/admin" className="shrink-0 text-xs font-bold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">Lihat detail <ArrowRight className="inline h-3.5 w-3.5" /></Link>
+            </div>
+            {totalStatus === 0 ? (
+              <div className="flex min-h-32 items-center justify-center text-sm text-[var(--color-text-secondary)]">Belum ada data capaian untuk ditampilkan.</div>
+            ) : (
+              <div className="space-y-4">
+                {statusRows.map((row) => (
+                  <div key={row.label}>
+                    <div className="mb-1.5 flex items-center justify-between gap-3 text-xs">
+                      <span className="font-semibold text-[var(--color-text-secondary)]">{row.label}</span>
+                      <span className="font-bold text-[var(--color-text)]">{row.value} siswa</span>
+                    </div>
+                    <div className="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                      <div className={`h-full rounded-full ${row.color}`} style={{ width: `${(row.value / totalStatus) * 100}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="card p-5 lg:col-span-2">
+            <div className="mb-4">
+              <h2 className="font-display text-base font-extrabold text-[var(--color-text)]">Akses cepat</h2>
+              <p className="mt-1 text-xs text-[var(--color-text-secondary)]">Tindakan yang sering digunakan</p>
+            </div>
+            <div className="divide-y divide-slate-100 dark:divide-slate-800">
+              {[
+                { to: '/admin', icon: Users, title: 'Daftar kemajuan siswa', description: 'Lihat nilai dan progres per siswa' },
+                { to: '/admin/materi', icon: BookOpen, title: 'Kelola materi', description: `${materiList.length} materi tersedia` },
+                { to: '/admin/kuis', icon: ClipboardList, title: 'Kelola kuis', description: 'Atur soal evaluasi per materi' },
+              ].map((action) => (
+                <Link key={action.to} to={action.to} className="group flex items-center gap-3 py-3 first:pt-0 last:pb-0">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-600 transition-colors group-hover:bg-indigo-50 group-hover:text-indigo-600 dark:bg-slate-800 dark:text-slate-300 dark:group-hover:bg-indigo-950/50 dark:group-hover:text-indigo-300">
+                    <action.icon className="h-4 w-4" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-bold text-[var(--color-text)]">{action.title}</span>
+                    <span className="block truncate text-xs text-[var(--color-text-secondary)]">{action.description}</span>
+                  </span>
+                  <ArrowRight className="h-4 w-4 shrink-0 text-slate-400 transition-transform group-hover:translate-x-0.5 group-hover:text-indigo-500" />
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
       </div>
     );
   }

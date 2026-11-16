@@ -96,9 +96,13 @@ function AppContent() {
         </Suspense>
       )}
       {user && <Navbar />}
-      {user && (
+      {user?.role === 'siswa' && (
         <Suspense fallback={null}>
           <HandCursor />
+        </Suspense>
+      )}
+      {user && (
+        <Suspense fallback={null}>
           <ChatWidget />
         </Suspense>
       )}
@@ -108,15 +112,15 @@ function AppContent() {
             <Routes>
               <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <PageTransition><Login /></PageTransition>} />
               <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <PageTransition><Register /></PageTransition>} />
-              <Route path="/dashboard" element={<ProtectedRoute><PageTransition><Dashboard /></PageTransition></ProtectedRoute>} />
+              <Route path="/dashboard" element={<ProtectedRoute roles={['siswa', 'guru']}><PageTransition><Dashboard /></PageTransition></ProtectedRoute>} />
               <Route path="/materi" element={<ProtectedRoute><PageTransition><Materi /></PageTransition></ProtectedRoute>} />
               <Route path="/materi/:id" element={<ProtectedRoute><PageTransition><DetailMateri /></PageTransition></ProtectedRoute>} />
               <Route path="/kuis/:materi_id" element={<ProtectedRoute><PageTransition><Kuis /></PageTransition></ProtectedRoute>} />
               <Route path="/nilai" element={<ProtectedRoute><PageTransition><Nilai /></PageTransition></ProtectedRoute>} />
               <Route path="/tentang" element={<ProtectedRoute><PageTransition><Tentang /></PageTransition></ProtectedRoute>} />
-              <Route path="/admin" element={<ProtectedRoute><PageTransition><Admin /></PageTransition></ProtectedRoute>} />
-              <Route path="/admin/materi" element={<ProtectedRoute><PageTransition><AdminMateri /></PageTransition></ProtectedRoute>} />
-              <Route path="/admin/kuis" element={<ProtectedRoute><PageTransition><AdminKuis /></PageTransition></ProtectedRoute>} />
+              <Route path="/admin" element={<ProtectedRoute roles={['guru']}><PageTransition><Admin /></PageTransition></ProtectedRoute>} />
+              <Route path="/admin/materi" element={<ProtectedRoute roles={['guru']}><PageTransition><AdminMateri /></PageTransition></ProtectedRoute>} />
+              <Route path="/admin/kuis" element={<ProtectedRoute roles={['guru']}><PageTransition><AdminKuis /></PageTransition></ProtectedRoute>} />
               <Route path="*" element={<Navigate to="/dashboard" />} />
             </Routes>
           </Suspense>
