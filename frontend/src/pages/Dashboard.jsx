@@ -191,7 +191,7 @@ export default function Dashboard() {
     const statusRows = [
       { label: 'Sangat Baik', value: stats.chart?.distribusi?.sangat_baik || 0, color: 'bg-emerald-500' },
       { label: 'Cukup Baik', value: stats.chart?.distribusi?.cukup_baik || 0, color: 'bg-amber-500' },
-      { label: 'Butuh Bimbingan', value: stats.chart?.distribusi?.butuh_bimbingan || 0, color: 'bg-rose-500' },
+      { label: 'Butuh Bimbingan', value: stats.chart?.distribusi?.butuh_bimbingan || 0, color: 'bg-rose-400' },
       { label: 'Belum Mulai', value: stats.chart?.distribusi?.belum_mulai || 0, color: 'bg-slate-400' },
     ];
     const totalStatus = statusRows.reduce((sum, row) => sum + row.value, 0);
@@ -212,15 +212,9 @@ export default function Dashboard() {
                 Pantau capaian belajar dan lanjutkan pengelolaan pembelajaran jaringan komputer.
               </p>
             </div>
-            <div className="flex flex-wrap gap-2">
-              <Link to="/admin" className="btn btn-primary gap-2 rounded-xl">
-                <BarChart3 className="h-4 w-4" /> Panel Guru
-              </Link>
-              <Link to="/admin/materi" className="btn btn-ghost gap-2 rounded-xl">
-                <BookOpen className="h-4 w-4" /> Kelola Materi
-              </Link>
-              <Link to="/admin/kuis" className="btn btn-ghost gap-2 rounded-xl">
-                <ClipboardList className="h-4 w-4" /> Kelola Kuis
+            <div className="shrink-0">
+              <Link to="/admin" className="btn btn-primary w-full gap-2 rounded-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-indigo-500 md:w-auto">
+                <BarChart3 className="h-4 w-4 shrink-0" /> Lihat Kemajuan Siswa
               </Link>
             </div>
           </div>
@@ -228,18 +222,19 @@ export default function Dashboard() {
 
         <section aria-label="Ringkasan kelas" className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
           {[
-            { label: 'Total Siswa', value: stats.total_siswa ?? 0, icon: Users, color: 'text-indigo-600 dark:text-indigo-400', surface: 'bg-indigo-50 dark:bg-indigo-950/40' },
-            { label: 'Rata-rata Kelas', value: stats.rata_kelas ?? 0, icon: Award, color: 'text-amber-600 dark:text-amber-400', surface: 'bg-amber-50 dark:bg-amber-950/40' },
-            { label: 'Tuntas Semua', value: stats.tuntas ?? 0, icon: UserRoundCheck, color: 'text-emerald-600 dark:text-emerald-400', surface: 'bg-emerald-50 dark:bg-emerald-950/40' },
-            { label: 'Butuh Bimbingan', value: stats.butuh_bimbingan ?? 0, icon: TrendingDown, color: 'text-rose-600 dark:text-rose-400', surface: 'bg-rose-50 dark:bg-rose-950/40' },
+            { label: 'Total Siswa', value: stats.total_siswa ?? 0, detail: 'Siswa terdaftar', icon: Users, color: 'text-indigo-600 dark:text-indigo-400', surface: 'bg-indigo-50 dark:bg-indigo-950/40' },
+            { label: 'Rata-rata Kelas', value: stats.rata_kelas ?? 0, detail: 'Skala nilai 0–100', icon: Award, color: 'text-amber-600 dark:text-amber-400', surface: 'bg-amber-50 dark:bg-amber-950/40' },
+            { label: 'Selesai Semua Materi', value: stats.tuntas ?? 0, detail: `Dari ${stats.total_siswa ?? 0} siswa`, icon: UserRoundCheck, color: 'text-emerald-600 dark:text-emerald-400', surface: 'bg-emerald-50 dark:bg-emerald-950/40' },
+            { label: 'Butuh Bimbingan', value: stats.butuh_bimbingan ?? 0, detail: 'Sudah mulai, nilai < 60', icon: TrendingDown, color: 'text-rose-600 dark:text-rose-300', surface: 'bg-rose-50 dark:bg-rose-950/40' },
           ].map((item) => (
-            <div key={item.label} className="card flex min-h-24 items-center gap-3 p-4">
+            <div key={item.label} className="card flex min-h-28 flex-col items-start gap-3 p-4 xl:flex-row xl:items-center">
               <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${item.surface} ${item.color}`}>
                 <item.icon className="h-5 w-5" />
               </span>
               <span className="min-w-0">
                 <span className="block text-2xl font-black leading-none text-[var(--color-text)]">{item.value}</span>
-                <span className="mt-1 block text-[10px] font-bold uppercase leading-tight text-[var(--color-text-secondary)] sm:text-xs">{item.label}</span>
+                <span className="mt-2 block text-sm font-semibold leading-snug text-slate-700 dark:text-slate-200">{item.label}</span>
+                <span className="mt-1 block text-xs leading-relaxed text-slate-500 dark:text-slate-400">{item.detail}</span>
               </span>
             </div>
           ))}
@@ -247,12 +242,11 @@ export default function Dashboard() {
 
         <section className="grid gap-4 lg:grid-cols-5">
           <div className="card p-5 lg:col-span-3">
-            <div className="mb-4 flex items-center justify-between gap-3">
+            <div className="mb-5">
               <div>
                 <h2 className="font-display text-base font-extrabold text-[var(--color-text)]">Kondisi capaian siswa</h2>
-                <p className="mt-1 text-xs text-[var(--color-text-secondary)]">Ringkasan berdasarkan hasil kuis siswa</p>
+                <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{stats.total_siswa ?? 0} siswa terdaftar. Distribusi berdasarkan progres dan nilai kuis.</p>
               </div>
-              <Link to="/admin" className="shrink-0 text-xs font-bold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">Lihat detail <ArrowRight className="inline h-3.5 w-3.5" /></Link>
             </div>
             {totalStatus === 0 ? (
               <div className="flex min-h-32 items-center justify-center text-sm text-[var(--color-text-secondary)]">Belum ada data capaian untuk ditampilkan.</div>
@@ -260,9 +254,9 @@ export default function Dashboard() {
               <div className="space-y-4">
                 {statusRows.map((row) => (
                   <div key={row.label}>
-                    <div className="mb-1.5 flex items-center justify-between gap-3 text-xs">
-                      <span className="font-semibold text-[var(--color-text-secondary)]">{row.label}</span>
-                      <span className="font-bold text-[var(--color-text)]">{row.value} siswa</span>
+                    <div className="mb-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-sm">
+                      <span className="font-medium text-slate-700 dark:text-slate-200">{row.label}</span>
+                      <span className="text-xs font-bold text-[var(--color-text)]">{row.value} siswa · {Math.round((row.value / totalStatus) * 100)}%</span>
                     </div>
                     <div className="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                       <div className={`h-full rounded-full ${row.color}`} style={{ width: `${(row.value / totalStatus) * 100}%` }} />
@@ -276,21 +270,20 @@ export default function Dashboard() {
           <div className="card p-5 lg:col-span-2">
             <div className="mb-4">
               <h2 className="font-display text-base font-extrabold text-[var(--color-text)]">Akses cepat</h2>
-              <p className="mt-1 text-xs text-[var(--color-text-secondary)]">Tindakan yang sering digunakan</p>
+              <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">Kelola konten pembelajaran</p>
             </div>
             <div className="divide-y divide-slate-100 dark:divide-slate-800">
               {[
-                { to: '/admin', icon: Users, title: 'Daftar kemajuan siswa', description: 'Lihat nilai dan progres per siswa' },
                 { to: '/admin/materi', icon: BookOpen, title: 'Kelola materi', description: `${materiList.length} materi tersedia` },
                 { to: '/admin/kuis', icon: ClipboardList, title: 'Kelola kuis', description: 'Atur soal evaluasi per materi' },
               ].map((action) => (
-                <Link key={action.to} to={action.to} className="group flex items-center gap-3 py-3 first:pt-0 last:pb-0">
+                <Link key={action.to} to={action.to} className="group flex items-center gap-3 rounded-lg py-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-indigo-500 first:pt-0 last:pb-0">
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-600 transition-colors group-hover:bg-indigo-50 group-hover:text-indigo-600 dark:bg-slate-800 dark:text-slate-300 dark:group-hover:bg-indigo-950/50 dark:group-hover:text-indigo-300">
                     <action.icon className="h-4 w-4" />
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block text-sm font-bold text-[var(--color-text)]">{action.title}</span>
-                    <span className="block truncate text-xs text-[var(--color-text-secondary)]">{action.description}</span>
+                    <span className="mt-1 block text-sm text-slate-600 dark:text-slate-300">{action.description}</span>
                   </span>
                   <ArrowRight className="h-4 w-4 shrink-0 text-slate-400 transition-transform group-hover:translate-x-0.5 group-hover:text-indigo-500" />
                 </Link>
