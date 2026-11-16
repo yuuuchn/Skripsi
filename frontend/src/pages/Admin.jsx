@@ -413,10 +413,12 @@ export default function Admin() {
                             <button
                               type="button"
                               onClick={() => handleChatStudent(s)}
-                              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-600 dark:text-emerald-400 text-xs font-bold transition-all active:scale-95 border border-emerald-100 dark:border-emerald-900/50 shadow-sm cursor-pointer"
+                              className="inline-flex items-center justify-center gap-1.5 h-9 px-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-600 dark:text-emerald-400 text-xs font-bold transition-all active:scale-95 border border-emerald-100 dark:border-emerald-900/50 shadow-sm cursor-pointer"
                               title={`Kirim pesan ke ${s.nama}`}
+                              aria-label={`Kirim pesan ke ${s.nama}`}
                             >
-                              <MessageSquare className="w-3.5 h-3.5" />
+                              <MessageSquare className="w-4.5 h-4.5" strokeWidth={2.25} />
+                              <span className="hidden xl:inline">Pesan</span>
                             </button>
                             <button
                               type="button"
