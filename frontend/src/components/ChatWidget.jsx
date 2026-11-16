@@ -210,12 +210,14 @@ export default function ChatWidget() {
 
   return (
     <>
-      {/* Tombol Mengambang Ikon Saja (Tanpa Teks Keterangan): Kiri Bawah di HP, Kanan Bawah (di atas Sensor Tangan) di Windows/Desktop */}
+      {/* Keep student chat on the left, away from the hand-tracking controls. */}
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="fixed bottom-5 left-4 md:left-auto md:right-6 md:bottom-6 z-40 w-12 h-12 rounded-2xl bg-indigo-600 text-white shadow-xl shadow-indigo-900/20 hover:bg-indigo-700 hover:scale-105 active:scale-95 transition-all cursor-pointer border border-white/20 flex items-center justify-center"
+        className={`fixed bottom-5 left-4 ${isGuru ? 'md:left-auto md:right-6' : 'md:left-6'} md:bottom-6 z-40 w-12 h-12 rounded-2xl bg-indigo-600 text-white shadow-xl shadow-indigo-900/20 hover:bg-indigo-700 hover:scale-105 active:scale-95 transition-all cursor-pointer border border-white/20 flex items-center justify-center`}
         title="Ruang Diskusi & Tanya Guru"
+        aria-label={open ? 'Tutup chat' : 'Buka chat'}
+        aria-expanded={open}
       >
         <MessageSquare className="w-5 h-5" />
         {overview.unreadCount > 0 && (
@@ -227,7 +229,7 @@ export default function ChatWidget() {
 
       {/* Panel Jendela Chat */}
       {open && (
-        <div className="fixed inset-x-3 bottom-[76px] z-[60] mx-auto flex h-[min(620px,calc(100dvh-112px))] min-h-[360px] w-auto max-w-[440px] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-950/20 animate-scale-in dark:border-slate-700 dark:bg-slate-900 md:inset-x-auto md:right-6 md:bottom-[88px] md:mx-0 md:h-[min(620px,calc(100dvh-120px))] md:w-[390px] md:rounded-2xl">
+        <div className={`fixed inset-x-3 bottom-[76px] z-[60] mx-auto flex h-[min(620px,calc(100dvh-112px))] min-h-[360px] w-auto max-w-[440px] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-950/20 animate-scale-in dark:border-slate-700 dark:bg-slate-900 md:inset-x-auto ${isGuru ? 'md:right-6' : 'md:left-6'} md:bottom-[88px] md:mx-0 md:h-[min(620px,calc(100dvh-120px))] md:w-[390px] md:rounded-2xl`}>
           {/* Header */}
           <div className="bg-indigo-700 px-4 py-3 text-white flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2.5 min-w-0">
