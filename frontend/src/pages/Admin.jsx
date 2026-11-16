@@ -578,21 +578,21 @@ export default function Admin() {
           onClick={handleCloseDetail}
         >
           <div
-            className="w-full max-w-xl bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-700/80 shadow-2xl p-6 md:p-7 animate-scale-in max-h-[88vh] flex flex-col overflow-hidden"
+            className="w-full max-w-xl bg-white dark:bg-slate-900 rounded-2xl md:rounded-3xl border border-slate-200/80 dark:border-slate-700/80 shadow-2xl p-4 sm:p-6 md:p-7 animate-scale-in max-h-[90dvh] flex flex-col overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-base shadow-md shadow-indigo-500/20">
+            <div className="flex items-center justify-between gap-3 pb-3 sm:pb-4 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex min-w-0 items-center gap-3">
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-base shadow-md shadow-indigo-500/20 shrink-0">
                   {selectedStudent.nama?.charAt(0).toUpperCase()}
                 </div>
-                <div>
-                  <h3 className="font-display font-extrabold text-base md:text-lg text-[var(--color-text)] leading-tight">
+                <div className="min-w-0">
+                  <h3 className="font-display font-extrabold text-sm sm:text-base md:text-lg text-[var(--color-text)] leading-tight truncate">
                     {selectedStudent.nama}
                   </h3>
-                  <div className="flex items-center gap-2 mt-1 text-xs text-[var(--color-text-secondary)] font-medium">
-                    <span className="font-mono bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md text-slate-600 dark:text-slate-300">
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1 text-[11px] sm:text-xs text-[var(--color-text-secondary)] font-medium">
+                    <span className="font-mono bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md text-slate-600 dark:text-slate-300 truncate max-w-[45vw]">
                       @{selectedStudent.username}
                     </span>
                     <span>•</span>
@@ -610,7 +610,7 @@ export default function Admin() {
             </div>
 
             {/* Modal Body */}
-            <div className="flex-1 overflow-y-auto py-5 space-y-5 pr-1">
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain py-4 sm:py-5 space-y-4 sm:space-y-5 pr-1">
               {loadingDetail ? (
                 <div className="flex flex-col items-center justify-center py-16 gap-3">
                   <div className="w-8 h-8 border-3 border-indigo-600 border-t-transparent rounded-full animate-spin" />
@@ -625,20 +625,20 @@ export default function Admin() {
               ) : studentDetail ? (
                 <>
                   {/* Summary Metric Cards */}
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    <div className="card p-3.5 bg-slate-50/70 dark:bg-slate-800/40 border-slate-100 dark:border-slate-800">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
+                    <div className="card p-3 sm:p-3.5 bg-slate-50/70 dark:bg-slate-800/40 border-slate-100 dark:border-slate-800">
                       <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Rata-rata Nilai</div>
                       <div className="font-display font-black text-2xl text-indigo-600 dark:text-indigo-400 mt-1">
                         {studentDetail.rata_rata}
                       </div>
                     </div>
-                    <div className="card p-3.5 bg-slate-50/70 dark:bg-slate-800/40 border-slate-100 dark:border-slate-800">
+                    <div className="card p-3 sm:p-3.5 bg-slate-50/70 dark:bg-slate-800/40 border-slate-100 dark:border-slate-800">
                       <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Materi Tuntas</div>
                       <div className="font-display font-black text-2xl text-emerald-600 dark:text-emerald-400 mt-1">
                         {studentDetail.materi_selesai} / {studentDetail.total_materi}
                       </div>
                     </div>
-                    <div className="card p-3.5 bg-slate-50/70 dark:bg-slate-800/40 border-slate-100 dark:border-slate-800 col-span-2 sm:col-span-1">
+                    <div className="card p-3 sm:p-3.5 bg-slate-50/70 dark:bg-slate-800/40 border-slate-100 dark:border-slate-800 col-span-2 sm:col-span-1">
                       <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status Evaluasi</div>
                       <div className="font-display font-black text-sm text-[var(--color-text)] mt-2">
                         {studentDetail.rata_rata >= 80 ? (
@@ -666,14 +666,14 @@ export default function Admin() {
                         return (
                           <div
                             key={m.materi_id}
-                            className="flex items-center justify-between p-3 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-800/60 hover:bg-slate-50/60 dark:hover:bg-slate-800 transition-colors"
+                            className="flex items-center justify-between gap-2 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-800/60 hover:bg-slate-50/60 dark:hover:bg-slate-800 transition-colors"
                           >
-                            <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/40 flex items-center justify-center font-mono text-xs font-bold text-indigo-600 dark:text-indigo-400 shrink-0">
+                              <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+                              <div className="w-8 h-8 rounded-lg sm:rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/40 flex items-center justify-center font-mono text-xs font-bold text-indigo-600 dark:text-indigo-400 shrink-0">
                                 {m.urutan}
                               </div>
-                              <div>
-                                <div className="font-bold text-xs text-[var(--color-text)]">
+                              <div className="min-w-0">
+                                <div className="font-bold text-xs text-[var(--color-text)] leading-snug">
                                   {m.judul}
                                 </div>
                                 <div className="text-[10px] text-slate-400 font-semibold mt-0.5">
@@ -682,7 +682,7 @@ export default function Admin() {
                               </div>
                             </div>
 
-                            <div className="text-right">
+                            <div className="w-[92px] sm:w-auto shrink-0 text-right">
                               {hasScore ? (
                                 <div className="flex items-center gap-1.5">
                                   <span className={`font-display font-black text-base ${scoreColor}`}>
@@ -691,7 +691,7 @@ export default function Admin() {
                                   <span className="text-[10px] font-bold text-slate-400">/ 100</span>
                                 </div>
                               ) : (
-                                <span className="text-[10px] font-semibold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-lg">
+                                <span className="inline-block whitespace-nowrap text-[10px] font-semibold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-lg">
                                   Belum Kuis
                                 </span>
                               )}
@@ -706,7 +706,7 @@ export default function Admin() {
             </div>
 
             {/* Modal Footer */}
-            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center">
+            <div className="shrink-0 pt-3 sm:pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => {
@@ -714,14 +714,14 @@ export default function Admin() {
                   handleCloseDetail();
                   handleChatStudent(target);
                 }}
-                className="btn btn-primary px-4 py-2 rounded-xl text-xs font-bold gap-1.5"
+                className="btn btn-primary flex-1 sm:flex-none justify-center px-3 sm:px-4 py-2.5 rounded-xl text-xs font-bold gap-2 whitespace-nowrap"
               >
-                <MessageSquare className="w-3.5 h-3.5" />
-                <span>Kirim Pesan ke Siswa</span>
+                <MessageSquare className="w-4 h-4 shrink-0" />
+                <span>Kirim Pesan</span>
               </button>
               <button
                 onClick={handleCloseDetail}
-                className="btn btn-ghost px-5 py-2 rounded-xl text-xs font-bold"
+                className="btn btn-ghost px-4 sm:px-5 py-2.5 rounded-xl text-xs font-bold"
               >
                 Tutup
               </button>
