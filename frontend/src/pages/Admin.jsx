@@ -446,7 +446,14 @@ export default function Admin() {
                         <td className="px-6 py-4.5">
                           <div className="font-bold text-sm text-[var(--color-text)]">{s.nama}</div>
                         </td>
-                        <td className="px-6 py-4.5 text-xs text-slate-500 dark:text-slate-400 font-mono font-bold bg-slate-50 dark:bg-slate-800 border border-slate-100/50 dark:border-slate-700/50 rounded-lg px-2 py-1 inline-block mt-2.5">{s.username}</td>
+                        <td className="px-4 py-4.5">
+                          <span
+                            title={s.username}
+                            className="inline-block max-w-28 truncate whitespace-nowrap rounded-lg border border-slate-100/50 bg-slate-50 px-2 py-1 font-mono text-xs font-bold text-slate-500 dark:border-slate-700/50 dark:bg-slate-800 dark:text-slate-400"
+                          >
+                            {s.username}
+                          </span>
+                        </td>
                         <td className="px-6 py-4.5">
                           <select
                             value={s.kelas || ''}
