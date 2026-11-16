@@ -7,6 +7,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import ScrollReveal from '../components/ScrollReveal';
 import useTilt from '../hooks/useTilt';
 import { iconMap } from '../utils/materiIcons';
+import MateriThumbnail from '../components/MateriThumbnail';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -128,7 +129,8 @@ export default function Materi() {
               className="card card-elevated overflow-hidden group flex flex-col justify-between border-slate-200/60 dark:border-slate-700/50 materi-card opacity-0"
             >
               <div>
-                <div className="h-2.5" style={{ background: `linear-gradient(90deg, ${color.from}, ${color.to})` }} />
+                <div className="h-1.5" style={{ background: `linear-gradient(90deg, ${color.from}, ${color.to})` }} />
+                <MateriThumbnail materiId={m.id} index={idx} />
                 <div className="p-6">
                   <div className="flex items-start gap-4">
                     <div className="w-14 h-14 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center shadow-sm border border-slate-100/80 dark:border-slate-700/80 shrink-0 group-hover:scale-108 group-hover:rotate-3 transition-transform duration-300">

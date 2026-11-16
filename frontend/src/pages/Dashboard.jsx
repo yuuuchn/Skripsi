@@ -7,6 +7,7 @@ import BorderGlow from '../components/BorderGlow';
 import ScrollReveal from '../components/ScrollReveal';
 import useTilt from '../hooks/useTilt';
 import { iconMap } from '../utils/materiIcons';
+import MateriThumbnail from '../components/MateriThumbnail';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -263,10 +264,8 @@ export default function Dashboard() {
                 className="card card-elevated overflow-hidden group flex flex-col justify-between border-slate-200/60 dark:border-slate-700/50 materi-card opacity-0"
               >
                 <div>
-                  <div
-                    className="h-2.5"
-                    style={{ background: `linear-gradient(90deg, ${color.from}, ${color.to})` }}
-                  />
+                  <div className="h-1.5" style={{ background: `linear-gradient(90deg, ${color.from}, ${color.to})` }} />
+                  <MateriThumbnail materiId={m.id} index={idx} />
                   <div className="p-6">
                     <div className="flex items-center gap-3.5 mb-3">
                       <div className="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center shadow-sm border border-slate-100 dark:border-slate-700 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
