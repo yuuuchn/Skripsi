@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
-import { BookOpen, CheckCircle, BarChart3, ArrowRight, Star, Trophy, Zap, Clock, HelpCircle } from 'lucide-react';
+import { BookOpen, CheckCircle, BarChart3, ArrowRight, Star, Trophy, Zap, Clock, HelpCircle, RefreshCw, AlertCircle } from 'lucide-react';
 import BorderGlow from '../components/BorderGlow';
 import ScrollReveal from '../components/ScrollReveal';
 import useTilt from '../hooks/useTilt';
@@ -46,6 +46,8 @@ export default function Dashboard() {
   const [progress, setProgress] = useState(null);
   const [materiList, setMateriList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
 
   const statsContainerRef = useRef(null);
   const progressCardRef = useRef(null);
@@ -53,14 +55,23 @@ export default function Dashboard() {
   const tilt = useTilt();
 
   useEffect(() => {
+    let active = true;
+    setLoading(true);
+    setLoadError(false);
     Promise.all([
       api.get('/materi'),
       api.get('/progress'),
     ]).then(([materiRes, progressRes]) => {
+      if (!active) return;
       setMateriList(materiRes.data);
       setProgress(progressRes.data);
-    }).finally(() => setLoading(false));
-  }, []);
+    }).catch(() => {
+      if (active) setLoadError(true);
+    }).finally(() => {
+      if (active) setLoading(false);
+    });
+    return () => { active = false; };
+  }, [reloadKey]);
 
   useEffect(() => {
     if (materiList.length === 0 || !progress) return;
@@ -150,6 +161,21 @@ export default function Dashboard() {
   }, [materiList, progress]);
 
   if (loading) return <DashboardSkeleton />;
+
+  if (loadError && (!progress || materiList.length === 0)) {
+    return (
+      <div className="max-w-xl mx-auto px-4 py-20 text-center">
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-rose-200 bg-rose-50 text-rose-600 dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-400">
+          <AlertCircle className="h-7 w-7" />
+        </div>
+        <h1 className="font-display text-xl font-extrabold text-[var(--color-text)]">Dashboard belum dapat dimuat</h1>
+        <p className="mt-2 text-sm text-[var(--color-text-secondary)]">Periksa koneksi internet, lalu coba muat data kembali.</p>
+        <button type="button" onClick={() => setReloadKey((key) => key + 1)} className="btn btn-primary mt-5 gap-2 rounded-xl">
+          <RefreshCw className="h-4 w-4" /> Coba Lagi
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">

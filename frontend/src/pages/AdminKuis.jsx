@@ -19,6 +19,10 @@ export default function AdminKuis() {
   const [materiId, setMateriId] = useState('');
   const [soalList, setSoalList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [materiLoadError, setMateriLoadError] = useState(false);
+  const [quizLoadError, setQuizLoadError] = useState(false);
+  const [materiReloadKey, setMateriReloadKey] = useState(0);
+  const [quizReloadKey, setQuizReloadKey] = useState(0);
   const [editing, setEditing] = useState(null); // null=list, {}=create, {id..}=edit
   const [form, setForm] = useState(emptyForm());
   const [saving, setSaving] = useState(false);
@@ -29,18 +33,37 @@ export default function AdminKuis() {
   }, [user, navigate]);
 
   useEffect(() => {
+    let active = true;
     api.get('/materi').then((res) => {
+      if (!active) return;
       setMateriList(res.data);
       if (res.data.length) setMateriId(String(res.data[0].id));
+      setMateriLoadError(false);
+    }).catch(() => {
+      if (active) setMateriLoadError(true);
     });
-  }, []);
+    return () => { active = false; };
+  }, [materiReloadKey]);
 
   const load = () => {
     if (!materiId) return;
+    let active = true;
     setLoading(true);
-    api.get(`/quiz/manage/${materiId}`).then((res) => setSoalList(res.data)).finally(() => setLoading(false));
+    setQuizLoadError(false);
+    api.get(`/quiz/manage/${materiId}`).then((res) => {
+      if (active) setSoalList(res.data);
+    }).catch(() => {
+      if (active) setQuizLoadError(true);
+    }).finally(() => {
+      if (active) setLoading(false);
+    });
+    return () => { active = false; };
   };
-  useEffect(() => { load(); setEditing(null); }, [materiId]);
+  useEffect(() => {
+    const cleanup = load();
+    setEditing(null);
+    return cleanup;
+  }, [materiId, quizReloadKey]);
 
   const openCreate = () => { setForm(emptyForm()); setEditing({}); };
   const openEdit = (s) => {
@@ -168,7 +191,17 @@ export default function AdminKuis() {
         ))}
       </select>
 
-      {loading ? (
+      {materiLoadError ? (
+        <div className="card p-6 text-center border-rose-200 dark:border-rose-900/50">
+          <p className="text-sm text-[var(--color-text-secondary)]">Daftar materi gagal dimuat.</p>
+          <button type="button" onClick={() => setMateriReloadKey((key) => key + 1)} className="btn btn-primary mt-4 rounded-xl">Coba Lagi</button>
+        </div>
+      ) : quizLoadError ? (
+        <div className="card p-6 text-center border-rose-200 dark:border-rose-900/50">
+          <p className="text-sm text-[var(--color-text-secondary)]">Daftar soal gagal dimuat.</p>
+          <button type="button" onClick={() => setQuizReloadKey((key) => key + 1)} className="btn btn-primary mt-4 rounded-xl">Coba Lagi</button>
+        </div>
+      ) : loading ? (
         <div className="text-center text-[var(--color-text-secondary)] py-16">Memuat...</div>
       ) : soalList.length === 0 ? (
         <div className="card p-6 flex items-start gap-3 text-[var(--color-text-secondary)]">

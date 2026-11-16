@@ -17,6 +17,7 @@ export default function AdminMateri() {
   const navigate = useNavigate();
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [editing, setEditing] = useState(null); // null=list view, {}=create, {id..}=edit
   const [form, setForm] = useState({ judul: '', konten: '', icon: 'BookOpen' });
   const [saving, setSaving] = useState(false);
@@ -30,7 +31,10 @@ export default function AdminMateri() {
 
   const load = () => {
     setLoading(true);
-    api.get('/materi').then((res) => setList(res.data)).finally(() => setLoading(false));
+    setLoadError(false);
+    api.get('/materi').then((res) => setList(res.data)).catch(() => {
+      setLoadError(true);
+    }).finally(() => setLoading(false));
   };
   useEffect(load, []);
 
@@ -39,9 +43,13 @@ export default function AdminMateri() {
     setEditing({});
   };
   const openEdit = async (m) => {
-    const res = await api.get(`/materi/${m.id}`);
-    setForm({ judul: res.data.judul, konten: res.data.konten, icon: res.data.icon || 'BookOpen' });
-    setEditing(res.data);
+    try {
+      const res = await api.get(`/materi/${m.id}`);
+      setForm({ judul: res.data.judul, konten: res.data.konten, icon: res.data.icon || 'BookOpen' });
+      setEditing(res.data);
+    } catch {
+      toast.error('Gagal memuat materi untuk diedit');
+    }
   };
 
   const save = async () => {
@@ -79,12 +87,18 @@ export default function AdminMateri() {
   };
 
   const move = async (idx, dir) => {
+    const previous = list;
     const next = [...list];
     const j = idx + dir;
     if (j < 0 || j >= next.length) return;
     [next[idx], next[j]] = [next[j], next[idx]];
     setList(next);
-    await api.put('/materi/reorder', { order: next.map((m) => m.id) });
+    try {
+      await api.put('/materi/reorder', { order: next.map((m) => m.id) });
+    } catch {
+      setList(previous);
+      toast.error('Gagal menyimpan urutan materi');
+    }
   };
 
   // ---------- FORM VIEW ----------
@@ -284,6 +298,11 @@ export default function AdminMateri() {
 
       {loading ? (
         <div className="text-center text-[var(--color-text-secondary)] py-16">Memuat...</div>
+      ) : loadError ? (
+        <div className="card p-10 text-center border-rose-200 dark:border-rose-900/50">
+          <p className="text-sm font-semibold text-[var(--color-text-secondary)]">Daftar materi gagal dimuat.</p>
+          <button type="button" onClick={load} className="btn btn-primary mt-4 rounded-xl">Coba Lagi</button>
+        </div>
       ) : list.length === 0 ? (
         <div className="card p-10 text-center text-[var(--color-text-secondary)]">Belum ada materi. Klik "Tambah".</div>
       ) : (

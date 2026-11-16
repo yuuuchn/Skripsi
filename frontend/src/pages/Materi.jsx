@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/axios';
-import { BookOpen, CheckCircle, ArrowRight, Clock, Star, ChevronRight, HelpCircle } from 'lucide-react';
+import { BookOpen, CheckCircle, ArrowRight, Clock, Star, ChevronRight, HelpCircle, AlertCircle, RefreshCw } from 'lucide-react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import ScrollReveal from '../components/ScrollReveal';
@@ -39,15 +39,25 @@ function MateriSkeleton() {
 export default function Materi() {
   const [materiList, setMateriList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
   const headerRef = useRef(null);
   const gridRef = useRef(null);
   const tilt = useTilt();
 
   useEffect(() => {
+    let active = true;
+    setLoading(true);
+    setLoadError(false);
     api.get('/materi').then((res) => {
-      setMateriList(res.data);
-    }).finally(() => setLoading(false));
-  }, []);
+      if (active) setMateriList(res.data);
+    }).catch(() => {
+      if (active) setLoadError(true);
+    }).finally(() => {
+      if (active) setLoading(false);
+    });
+    return () => { active = false; };
+  }, [reloadKey]);
 
   useEffect(() => {
     if (loading) return;
@@ -91,6 +101,21 @@ export default function Materi() {
   }, [loading, materiList]);
 
   if (loading) return <MateriSkeleton />;
+
+  if (loadError && materiList.length === 0) {
+    return (
+      <div className="max-w-xl mx-auto px-4 py-20 text-center">
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-rose-200 bg-rose-50 text-rose-600 dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-400">
+          <AlertCircle className="h-7 w-7" />
+        </div>
+        <h1 className="font-display text-xl font-extrabold text-[var(--color-text)]">Materi belum dapat dimuat</h1>
+        <p className="mt-2 text-sm text-[var(--color-text-secondary)]">Periksa koneksi internet, lalu coba lagi.</p>
+        <button type="button" onClick={() => setReloadKey((key) => key + 1)} className="btn btn-primary mt-5 gap-2 rounded-xl">
+          <RefreshCw className="h-4 w-4" /> Coba Lagi
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">

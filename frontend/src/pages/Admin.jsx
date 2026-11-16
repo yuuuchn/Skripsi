@@ -12,6 +12,8 @@ export default function Admin() {
   const [stats, setStats] = useState(null);
   const [chart, setChart] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [exporting, setExporting] = useState(false);
@@ -22,6 +24,7 @@ export default function Admin() {
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [studentDetail, setStudentDetail] = useState(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
+  const [detailError, setDetailError] = useState(false);
   const [teacherModalOpen, setTeacherModalOpen] = useState(false);
   const [teachers, setTeachers] = useState([]);
   const [newTeacher, setNewTeacher] = useState({ nama: '', username: '', password: '', jabatan: 'Guru TIK' });
@@ -39,17 +42,26 @@ export default function Admin() {
   }, [searchQuery]);
 
   useEffect(() => {
+    let active = true;
     setLoading(true);
+    setLoadError(false);
     const q = debouncedSearch ? `&search=${encodeURIComponent(debouncedSearch)}` : '';
     api.get(`/progress/admin?page=${page}&limit=${limit}${q}`)
       .then((res) => {
+        if (!active) return;
         setSiswaList(res.data.siswa);
         setTotal(res.data.total);
         setTotalPages(res.data.totalPages);
         setStats(res.data.stats);
       })
-      .finally(() => setLoading(false));
-  }, [page, debouncedSearch]);
+      .catch(() => {
+        if (active) setLoadError(true);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => { active = false; };
+  }, [page, debouncedSearch, reloadKey]);
 
   // Data grafik dan total materi
   useEffect(() => {
@@ -61,12 +73,14 @@ export default function Admin() {
 
   const handleOpenDetail = async (student) => {
     setSelectedStudent(student);
+    setStudentDetail(null);
+    setDetailError(false);
     setLoadingDetail(true);
     try {
       const res = await api.get(`/progress/admin/student/${student.id}`);
       setStudentDetail(res.data);
     } catch (err) {
-      console.error(err);
+      setDetailError(true);
     } finally {
       setLoadingDetail(false);
     }
@@ -75,6 +89,7 @@ export default function Admin() {
   const handleCloseDetail = () => {
     setSelectedStudent(null);
     setStudentDetail(null);
+    setDetailError(false);
   };
 
   const handleUpdateStudentKelas = async (studentId, newKelas) => {
@@ -205,7 +220,14 @@ export default function Admin() {
         </div>
       </div>
 
-      {total === 0 && !debouncedSearch ? (
+      {loadError && siswaList.length === 0 ? (
+        <div className="card p-10 text-center border-rose-200 dark:border-rose-900/50">
+          <AlertCircle className="mx-auto mb-3 h-8 w-8 text-rose-500" />
+          <h2 className="font-display text-lg font-extrabold text-[var(--color-text)]">Data siswa gagal dimuat</h2>
+          <p className="mt-1 text-sm text-[var(--color-text-secondary)]">Periksa koneksi, lalu coba muat ulang daftar.</p>
+          <button type="button" onClick={() => setReloadKey((key) => key + 1)} className="btn btn-primary mt-4 rounded-xl">Coba Lagi</button>
+        </div>
+      ) : total === 0 && !debouncedSearch ? (
         <div className="card p-12 text-center border-slate-200/60 dark:border-slate-700/60 max-w-lg mx-auto shadow-sm animate-fade-in-up">
           <div className="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-4 border border-slate-200 dark:border-slate-700">
             <AlertCircle className="w-8 h-8 text-slate-400 dark:text-slate-500" />
@@ -533,6 +555,12 @@ export default function Admin() {
                 <div className="flex flex-col items-center justify-center py-16 gap-3">
                   <div className="w-8 h-8 border-3 border-indigo-600 border-t-transparent rounded-full animate-spin" />
                   <span className="text-xs font-bold text-slate-400">Memuat rincian capaian siswa...</span>
+                </div>
+              ) : detailError ? (
+                <div className="py-14 text-center">
+                  <AlertCircle className="mx-auto mb-3 h-8 w-8 text-rose-500" />
+                  <p className="text-sm font-semibold text-[var(--color-text-secondary)]">Rincian siswa gagal dimuat.</p>
+                  <button type="button" onClick={() => handleOpenDetail(selectedStudent)} className="btn btn-primary mt-4 rounded-xl">Coba Lagi</button>
                 </div>
               ) : studentDetail ? (
                 <>
